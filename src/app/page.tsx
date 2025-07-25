@@ -15,9 +15,9 @@ export default function Home() {
             </h1>
           </div>
 
-          <div className="flex flex-col space-y-4">
+          <div className="relative flex flex-col space-y-4">
             <Link href="/cv">
-              <div className="cursor-pointer px-6 py-4 text-2xl font-extrabold text-purple-800 bg-gradient-to-r from-[#FFB6C1] to-[#BAE6FD] text-center rounded-md border border-black shadow-md transition hover:scale-105">
+              <div className="absolute top-14 left-3 cursor-pointer px-2 py-2 text-2xl font-extrabold text-purple-800 bg-gradient-to-r from-[#FFB6C1] to-[#BAE6FD] text-center rounded-md border border-black shadow-md transition hover:scale-105">
                 CV & COMPÉTENCES
               </div>
             </Link>
