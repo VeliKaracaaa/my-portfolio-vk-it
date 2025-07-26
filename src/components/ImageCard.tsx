@@ -18,11 +18,11 @@ export default function ImageCard({
   Text,
   image,
   imageAlt,
-  topPosition = "top-14", // Valeur par défaut
-  leftPosition = "left-3", // Valeur par défaut
-  paddingX = "px-4", // Valeur par défaut
-  paddingY = "py-2", // Valeur par défaut
-  sizeText = "text-2xl", // Valeur par défaut
+  topPosition, // Valeur par défaut
+  leftPosition, // Valeur par défaut
+  paddingX, // Valeur par défaut
+  paddingY, // Valeur par défaut
+  sizeText, // Valeur par défaut
 }: ImageCardProps) {
   return (
     <div className="relative flex flex-col space-y-4">
