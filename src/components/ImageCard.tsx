@@ -6,11 +6,12 @@ interface ImageCardProps {
   Text: string;
   image: StaticImageData;
   imageAlt: string;
-  topPosition?: string; // Optionnel avec '?'
-  leftPosition?: string; // Optionnel avec '?'
-  paddingX?: string; // Optionnel avec '?'
-  paddingY?: string; // Optionnel avec '?'
-  sizeText?: string; // Optionnel avec '?'
+  centered?: boolean;
+  topPosition?: string;
+  leftPosition?: string;
+  paddingX?: string;
+  paddingY?: string;
+  sizeText?: string;
 }
 
 export default function ImageCard({
@@ -18,22 +19,27 @@ export default function ImageCard({
   Text,
   image,
   imageAlt,
-  topPosition, // Valeur par défaut
-  leftPosition, // Valeur par défaut
-  paddingX, // Valeur par défaut
-  paddingY, // Valeur par défaut
-  sizeText, // Valeur par défaut
+  centered,
+  topPosition,
+  leftPosition,
+  paddingX,
+  paddingY,
+  sizeText,
 }: ImageCardProps) {
   return (
-    <div className="relative flex flex-col space-y-4">
+    <div className="relative flex flex-col h-full min-h-0">
       <Link href={href}>
         <div
-          className={`absolute ${topPosition} ${leftPosition} cursor-pointer ${paddingX} ${paddingY} ${sizeText} font-extrabold text-purple-800 bg-gradient-to-r from-[#FFB6C1] to-[#BAE6FD] text-center  border border-black shadow-md transition hover:scale-105`}
+          className={`absolute z-10 ${topPosition} ${leftPosition} ${
+            topPosition || ""
+          } ${
+            centered ? "left-1/2 -translate-x-1/2" : leftPosition || ""
+          } cursor-pointer ${paddingX} ${paddingY} ${sizeText} whitespace-nowrap font-extrabold text-purple-800 bg-gradient-to-r from-[#FFB6C1] to-[#BAE6FD] text-center border border-black shadow-md transition hover:scale-105`}
         >
           {Text}
         </div>
       </Link>
-      <div className="flex-1">
+      <div className="flex-1 min-h-0">
         <Image
           src={image}
           alt={imageAlt}

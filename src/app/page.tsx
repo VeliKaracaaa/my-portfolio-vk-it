@@ -5,51 +5,62 @@ import ImageCard from "@/components/ImageCard";
 
 export default function Home() {
   return (
-    <main>
-      <section>
-        <div className="sm:grid sm:grid-cols-2 sm:gap-4 mx-auto p-6">
-          <div className="bg-white col-span-2">
-            <h1 className="sm:text-4xl px-6 py-4 text-center font-black text-black">
-              Développeur Full Satck <span className="text-black">vk-IT</span>
+    <main className="h-screen flex flex-col overflow-hidden">
+      <section className="flex-1 flex flex-col min-h-0">
+        <div className="container mx-auto p-4 flex-1 flex flex-col min-h-0">
+          {/* Header - hauteur fixe et compacte */}
+          <div className="bg-white mb-2 flex-shrink-0">
+            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl px-4 py-2 text-center font-black text-black">
+              Développeur Full Stack <span className="text-black">vk-IT</span>
             </h1>
           </div>
 
-          <ImageCard
-            href="/cv"
-            Text="CV & COMPÉTENCES"
-            image={CatImage}
-            imageAlt="Chat avec des écouteurs et des lunettes"
-            topPosition="sm:top-10 md:top-15 lg:top-20 2xl:top-30"
-            leftPosition="sm:left-3 md:left-3 lg:left-5 xl:left-8 2xl:left-3"
-            paddingX="sm:px-2 md:px-2 lg:px-7 2xl:px-10"
-            paddingY="sm:py-2 md:px-2 lg:px-7 2xl:px-10"
-            sizeText="sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-6xl"
-          />
+          {/* Grid principal - prend l'espace restant avec hauteur contrainte */}
+          <div className="flex-1 grid sm:grid-cols-2 gap-4 min-h-0 overflow-hidden">
+            {/* Première colonne - hauteur contrainte */}
+            <div className="flex flex-col min-h-0 h-full">
+              <ImageCard
+                href="/cv"
+                Text="CV & COMPÉTENCES"
+                image={CatImage}
+                imageAlt="Chat avec des écouteurs et des lunettes"
+                centered
+                topPosition="top-4 sm:top-6 md:top-8 lg:top-10"
+                paddingX="px-2 sm:px-3 md:px-4"
+                paddingY="py-1 sm:py-2"
+                sizeText="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl"
+              />
+            </div>
 
-          <div className="grid grid-rows-2 gap-4">
-            <ImageCard
-              href="/cv"
-              Text="Projets"
-              image={DesktopImage}
-              imageAlt="Chat avec des écouteurs et des lunettes"
-              topPosition="sm:top-60 md:top-75 lg:top-100 xl:top-130 2xl:top-160"
-              leftPosition="sm:left-2 md:left-3 "
-              paddingX="sm:px-2 md:px-4"
-              paddingY="sm:py-2 md:px-4"
-              sizeText="sm:text-2xl md:text-3xl xl:text-5xl 2xl:text-6xl"
-            />
-
-            <ImageCard
-              href="/cv"
-              Text="En savoir plus"
-              image={MegaphoneImage}
-              imageAlt="Chat avec des écouteurs et des lunettes"
-              topPosition="sm:top-60 md:top-75 lg:top-100 xl:top-130 2xl:top-160"
-              leftPosition="sm:left-2 md:left-3"
-              paddingX="sm:px-2 md:px-4"
-              paddingY="sm:py-2 md:px-4"
-              sizeText="sm:text-2xl md:text-3xl xl:text-5xl 2xl:text-6xl"
-            />
+            {/* Deuxième colonne - divisée en 2 rangées avec hauteur contrainte */}
+            <div className="grid grid-rows-2 gap-4 min-h-0 h-full">
+              <div className="min-h-0">
+                <ImageCard
+                  href="/cv"
+                  Text="Projets"
+                  image={DesktopImage}
+                  imageAlt="Chat avec des écouteurs et des lunettes"
+                  topPosition="top-4 sm:top-6 md:top-8"
+                  leftPosition="left-2 sm:left-3"
+                  paddingX="px-2 sm:px-3"
+                  paddingY="py-1 sm:py-2"
+                  sizeText="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl"
+                />
+              </div>
+              <div className="min-h-0">
+                <ImageCard
+                  href="/cv"
+                  Text="En savoir plus"
+                  image={MegaphoneImage}
+                  imageAlt="Chat avec des écouteurs et des lunettes"
+                  topPosition="top-4 sm:top-6 md:top-8"
+                  leftPosition="left-2 sm:left-3"
+                  paddingX="px-2 sm:px-3"
+                  paddingY="py-1 sm:py-2"
+                  sizeText="text-sm sm:text-base md:text-lg lg:text-xl"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
