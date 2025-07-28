@@ -9,6 +9,7 @@ interface ImageCardProps {
   centered?: boolean;
   topPosition?: string;
   leftPosition?: string;
+  bottomPosition?: string;
   paddingX?: string;
   paddingY?: string;
   sizeText?: string;
@@ -22,6 +23,7 @@ export default function ImageCard({
   centered,
   topPosition,
   leftPosition,
+  bottomPosition,
   paddingX,
   paddingY,
   sizeText,
@@ -30,11 +32,15 @@ export default function ImageCard({
     <div className="relative flex flex-col h-full min-h-0">
       <Link href={href}>
         <div
-          className={`absolute z-10 ${topPosition} ${leftPosition} ${
-            topPosition || ""
-          } ${
-            centered ? "left-1/2 -translate-x-1/2" : leftPosition || ""
-          } cursor-pointer ${paddingX} ${paddingY} ${sizeText} whitespace-nowrap font-extrabold text-purple-800 bg-gradient-to-r from-[#FFB6C1] to-[#BAE6FD] text-center border border-black shadow-md transition hover:scale-105`}
+          className={`absolute z-10
+            ${topPosition ?? ""}
+            ${centered ? "left-1/2 -translate-x-1/2" : leftPosition ?? ""}
+            ${bottomPosition ?? ""}
+            ${paddingX ?? ""}
+            ${paddingY ?? ""}
+            ${sizeText ?? ""}
+            whitespace-nowrap font-extrabold text-purple-800 bg-gradient-to-r from-[#FFB6C1] to-[#BAE6FD] text-center border border-black shadow-md transition hover:scale-105
+          `}
         >
           {Text}
         </div>
