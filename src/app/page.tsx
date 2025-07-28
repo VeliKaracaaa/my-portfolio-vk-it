@@ -41,7 +41,7 @@ export default function Home() {
                   image={DesktopImage}
                   imageAlt="Chat avec des écouteurs et des lunettes"
                   leftPosition="left-2 sm:left-3"
-                  bottomPosition="bottom-4 sm:bottom-0 sm:left-0 md:bottom-8 lg:bottom-10"
+                  bottomPosition="bottom-4 sm:bottom-4 md:bottom-8 lg:bottom-10"
                   paddingX="px-2 sm:px-3"
                   paddingY="py-1 sm:py-2"
                   sizeText="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl"
@@ -54,7 +54,7 @@ export default function Home() {
                   image={MegaphoneImage}
                   imageAlt="Chat avec des écouteurs et des lunettes"
                   leftPosition="left-2 sm:left-3"
-                  bottomPosition="bottom-4 sm:bottom-0 sm:left-0 md:bottom-8 lg:bottom-10"
+                  bottomPosition="bottom-4 sm:bottom-4 md:bottom-8 lg:bottom-10"
                   paddingX="px-2 sm:px-3"
                   paddingY="py-1 sm:py-2"
                   sizeText="text-sm sm:text-base md:text-lg lg:text-xl"
