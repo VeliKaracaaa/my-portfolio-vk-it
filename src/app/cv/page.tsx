@@ -164,12 +164,89 @@ export default function Cv() {
         </section>
       </section>
 
-      <aside className="cv-right">
-        <section>SoftSkill</section>
-        <section>technologies</section>
-        <section>languages</section>
-        <section>activities</section>
-      </aside>
+      {/* Section de droite */}
+      <section className="flex flex-col gap-10">
+        <section className="flex flex-col gap-4 p-4 rounded-lg shadow-md">
+          <h1 className="text-2xl font-bold text-gray-800">SoftSkill</h1>
+          <ul className="list-none">
+            <li>Autonome</li>
+            <li>Travail en équipe</li>
+            <li>Gestion de projet</li>
+            <li>Gestion du temps</li>
+          </ul>
+        </section>
+
+        <section className="flex flex-col gap-4 p-4 rounded-lg shadow-md">
+          <h1 className="text-2xl font-bold text-gray-800">Technologies</h1>
+          <div className="flex flex-col gap-2">
+            <h2>Langage de programmation</h2>
+            <ul className="list-disc pl-5">
+              <li>C/C++</li>
+              <li>JavaScript</li>
+              <li>TypeScript</li>
+              <li>HTML</li>
+              <li>CSS</li>
+              <li>SQL</li>
+            </ul>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <h2>Framework</h2>
+            <ul className="list-disc pl-5">
+              <li>React</li>
+              <li>Next.js</li>
+              <li>Astro.js</li>
+              <li>Tailwind CSS</li>
+              <li>GraphQL</li>
+              <li>Apollo Client</li>
+              <li>Hasura</li>
+            </ul>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <h2>Technologies diverses et outils</h2>
+            <ul className="list-disc pl-5">
+              <li>Git</li>
+              <li>Postman</li>
+              <li>Figma</li>
+              <li>Firebase</li>
+              <li>Trello</li>
+              <li>Zoho</li>
+              <li>Make</li>
+              <li>Shopify</li>
+            </ul>
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-4 p-4 rounded-lg shadow-md">
+          <h1 className="text-2xl font-bold text-gray-800">Languages</h1>
+          <div className="flex flex-col gap-1">
+            <p>Anglais</p>
+            <p className="text-gray-600">Anglais B1</p>
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-4 p-4 rounded-lg shadow-md">
+          <h1 className="text-2xl font-bold text-gray-800">
+            Activité et centre d&apos;intérêt
+          </h1>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <h2>Brevet Jeune Sapeur Pompier et volontaire en caserne</h2>
+              <p className="text-gray-600">
+                2016 - 2019 Sapeurs-Pompiers / JSP (jeune Sapeur Pompier)
+              </p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <h2>Brevet d&apos;initiation aéronautique</h2>
+              <p className="text-gray-600">2015 - BIA</p>
+            </div>
+            <div>
+              <p>Passionné par le Tech en général</p>
+            </div>
+          </div>
+        </section>
+      </section>
     </main>
   );
 }
