@@ -1,7 +1,12 @@
 import MeImage from "../../../public/me.png";
+import ImageCv from "@/components/ImageCv";
 import linkedinImage from "../../../public/icons8-linkedin.svg";
 import githubImage from "../../../public/icons8-github.svg";
-import ImageCv from "@/components/ImageCv";
+import email from "../../../public/cv/icons8-nouveau-message-24.png";
+import badge from "../../../public/cv/icons8-badge-24.png";
+import home from "../../../public/cv/icons8-accueil-24.png";
+import phone from "../../../public/cv/icons8-iphone-x-24.png";
+import car from "../../../public/cv/icons8-voiture-24.png";
 
 export default function Cv() {
   return (
@@ -42,12 +47,100 @@ export default function Cv() {
         </header>
 
         <section className="flex flex-col gap-4 p-4 rounded-lg shadow-md">
+          {/* Ligne 1 : Email et Logement */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Email */}
+            <div className="flex items-center gap-3 flex-1">
+              <div className="w-6 h-6 text-gray-600">
+                {/* Votre icône email ici */}
+                <ImageCv
+                  image={email}
+                  imageAlt="image de email"
+                  fullWidth={true}
+                />
+              </div>
+              <span className="text-gray-700">
+                {/* Votre email ici */}
+                veli.karaca01@gmail.com
+              </span>
+            </div>
+
+            {/* Logement */}
+            <div className="flex items-center gap-3 flex-1">
+              <div className="w-6 h-6 text-gray-600">
+                {/* Votre icône maison ici */}
+                <ImageCv
+                  image={home}
+                  imageAlt="image de email"
+                  fullWidth={true}
+                />
+              </div>
+              <span className="text-gray-700">
+                {/* Votre statut logement ici */}
+                Lyon
+              </span>
+            </div>
+          </div>
+
+          {/* Ligne 2 : Permis et Véhicule */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Permis */}
+            <div className="flex items-center gap-3 flex-1">
+              <div className="w-6 h-6 text-gray-600">
+                {/* Votre icône permis ici */}
+                <ImageCv
+                  image={badge}
+                  imageAlt="image de email"
+                  fullWidth={true}
+                />
+              </div>
+              <span className="text-gray-700">
+                {/* Votre type de permis ici */}
+                Permis B
+              </span>
+            </div>
+
+            {/* Véhicule */}
+            <div className="flex items-center gap-3 flex-1">
+              <div className="w-6 h-6 text-gray-600">
+                {/* Votre icône voiture ici */}
+                <ImageCv
+                  image={car}
+                  imageAlt="image de email"
+                  fullWidth={true}
+                />
+              </div>
+              <span className="text-gray-700">
+                {/* Votre statut véhicule ici */}
+                Véhicule personnel
+              </span>
+            </div>
+          </div>
+
+          {/* Ligne 3 : Téléphone (seul) */}
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 text-gray-600">
+              {/* Votre icône téléphone ici */}
+              <ImageCv
+                image={phone}
+                imageAlt="image de email"
+                fullWidth={true}
+              />
+            </div>
+            <span className="text-gray-700">
+              {/* Votre numéro de téléphone ici */}
+              06 40 07 37 29
+            </span>
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-4 p-4 rounded-lg shadow-md">
           <h1 className="text-2xl font-bold text-gray-800">Présentation</h1>
           <p className="text-gray-600 leading-relaxed text-base md:text-lg">
             Diplômé d&apos;une licence en tant que chef de projet web. Je
             souhaite me spécialiser dans le développement web full stack. Je
             recherche donc une alternance pour intégrer un Bachelor avec un
-            rythme alterné 2 semaines en entreprise et l semaine à l&apos;école
+            rythme alterné 2 semaines en entreprise et 1 semaine à l&apos;école
           </p>
         </section>
         <section className="flex flex-col gap-4 p-4 rounded-lg shadow-md">
@@ -68,7 +161,7 @@ export default function Cv() {
               {/* Contenu de l'expérience */}
               <div className="ml-12">
                 <h2 className="text-lg font-semibold text-gray-800 mb-2">
-                  2021 à 2022 - Nom de l&apos;entreprise
+                  2021 à 2022 - Y Brush Lyon
                 </h2>
                 <ul className="list-disc list-inside space-y-2 text-gray-700">
                   <li>
@@ -96,7 +189,7 @@ export default function Cv() {
               {/* Contenu de l'expérience */}
               <div className="ml-12">
                 <h2 className="text-lg font-semibold text-gray-800 mb-2">
-                  2020 à 2021 - Nom de l&apos;entreprise
+                  2020 à 2021 - Qualitri Oyonnax
                 </h2>
                 <ul className="list-disc list-inside space-y-2 text-gray-700">
                   <li>
@@ -132,7 +225,7 @@ export default function Cv() {
                 <h2 className="text-lg font-semibold text-gray-800 mb-2">
                   Licence développement web full stack
                 </h2>
-                <p>Depuis 2025 - Nom de l&apos;école</p>
+                <p>Depuis 2025 - Ynov Lyon</p>
               </div>
             </div>
 
@@ -144,7 +237,7 @@ export default function Cv() {
                 <h2 className="text-lg font-semibold text-gray-800 mb-2">
                   Licence - Responsable de projet Web et Mobile
                 </h2>
-                <p>De 2019 à 2022 - Nom de l&apos;école</p>
+                <p>De 2019 à 2022 - Epitech Lyon</p>
               </div>
             </div>
 
@@ -157,7 +250,7 @@ export default function Cv() {
                   Baccalauréat STI2D Option systèmes d&apos;informations et
                   numériques
                 </h2>
-                <p>20172 - Nom de l&apos;école</p>
+                <p>20172 - Lycée ARBEZ CARME Oyonnax</p>
               </div>
             </div>
           </div>
