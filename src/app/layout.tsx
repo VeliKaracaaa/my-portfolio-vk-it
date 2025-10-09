@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "vk-IT - Développeur Full Stack",
     description: "Portfolio et projets d'un développeur Full Stack passionné",
-    url: "https://mon-portfolio-sage-six.vercel.app/", // ⚠️ à remplacer par ton vrai domaine
+    url: "https://mon-portfolio-sage-six.vercel.app/",
     siteName: "vk-IT Portfolio",
     images: [
       {
