@@ -8,7 +8,7 @@ import home from "../../../public/cv/icons8-accueil-24.png";
 import phone from "../../../public/cv/icons8-iphone-x-24.png";
 import car from "../../../public/cv/icons8-voiture-24.png";
 
-export default function Cv() {
+export default function CvPage() {
   return (
     <main className="container mx-auto grid grid-cols-1 sm:grid-cols-[2fr_1fr] gap-5 p-4">
       <section className="flex flex-col gap-10">

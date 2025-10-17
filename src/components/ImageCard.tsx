@@ -31,7 +31,6 @@ export default function ImageCard({
       hover:-translate-y-1                              {/* ← Déplacement au hover */}"
     >
       <Link href={href} className="block h-full">
-        {/* Image */}
         <Image
           src={image}
           alt={imageAlt}

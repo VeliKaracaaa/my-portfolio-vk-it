@@ -12,7 +12,7 @@ const cards = [
     image: CatImage,
     imageAlt:
       "Illustration d'un chat créatif représentant les compétences techniques",
-    position: "top" as const, // Texte en haut
+    position: "top" as const,
   },
   {
     id: "projets",
@@ -20,7 +20,6 @@ const cards = [
     text: "Projets",
     image: DesktopImage,
     imageAlt: "Setup de développeur avec écrans multiples et code",
-    position: "bottom" as const,
   },
   {
     id: "blog",
@@ -28,7 +27,6 @@ const cards = [
     text: "En savoir plus",
     image: MegaphoneImage,
     imageAlt: "Mégaphone représentant la communication et le blog",
-    position: "bottom" as const,
   },
 ];
 
@@ -67,25 +65,18 @@ export default function Home() {
             className="h-full sm:hidden"
             aria-labelledby={`${card.id}-section-mobile`}
           >
-            <ImageCard {...card} />
+            <ImageCard {...card} position="top" />
           </section>
         ))}
 
         <aside className="hidden sm:grid grid-rows-2 gap-4 h-full">
           {cards.slice(1).map((card) => (
             <section key={card.id} className="h-full">
-              <ImageCard {...card} />
+              <ImageCard {...card} position="bottom" />
             </section>
           ))}
         </aside>
       </nav>
     </main>
   );
-}
-
-{
-  /* <div className="border-4 border-black shadow-[8px_8px_0_0_#000000] p-6 bg-white">
-  <p className="text-2xl font-bold">COMPANY</p>
-  <p className="text-xl">COMPANY</p>
-</div> */
 }
