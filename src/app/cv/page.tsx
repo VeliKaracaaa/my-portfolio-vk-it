@@ -137,10 +137,7 @@ export default function CvPage() {
         <section className="flex flex-col gap-4 p-4 rounded-lg shadow-md">
           <h1 className="text-2xl font-bold text-gray-800">Présentation</h1>
           <p className="text-gray-600 leading-relaxed text-base md:text-lg">
-            Diplômé d&apos;une licence en tant que chef de projet web. Je
-            souhaite me spécialiser dans le développement web full stack. Je
-            recherche donc une alternance pour intégrer un Bachelor avec un
-            rythme alterné 2 semaines en entreprise et 1 semaine à l&apos;école
+            Diplômé d&apos;une licence en tant que chef de projet web.
           </p>
         </section>
         <section className="flex flex-col gap-4 p-4 rounded-lg shadow-md">
