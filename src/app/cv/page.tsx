@@ -214,18 +214,6 @@ export default function CvPage() {
           <div className="relative">
             <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-black"></div>
 
-            {/* Première école */}
-            <div className="relative flex flex-col mb-8">
-              {/* Point noir */}
-              <div className="absolute left-2 w-4 h-4 bg-black rounded-full z-10"></div>
-              <div className="ml-12">
-                <h2 className="text-lg font-semibold text-gray-800 mb-2">
-                  Licence développement web full stack
-                </h2>
-                <p>Depuis 2025 - Ynov Lyon</p>
-              </div>
-            </div>
-
             {/* Deuxième école */}
             <div className="relative flex flex-col mb-8">
               {/* Point noir */}
