@@ -299,11 +299,9 @@ const cards = [
 export default function Home() {
   return (
     <main className="h-screen w-full bg-[#FBFBFE] text-[#1E293B] p-6 md:p-12 overflow-hidden flex flex-col font-sans relative">
-      {/* Texture de grain cosy - Overlay subtil */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] contrast-150 z-50 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
       <div className="max-w-7xl mx-auto w-full h-full flex flex-col relative z-10">
-        {/* Header : Slogan FR + Réseaux Sociaux visibles */}
         <motion.header
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -323,7 +321,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Boutons Réseaux Sociaux stylisés */}
           <div className="flex gap-3">
             <a
               href="https://github.com"
@@ -356,7 +353,6 @@ export default function Home() {
           </div>
         </motion.header>
 
-        {/* Bento Grid - Pas de scroll */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-6 min-h-0">
           {cards.map((card, index) => (
             <motion.div
@@ -369,7 +365,6 @@ export default function Home() {
             >
               <Link href={card.href} className="absolute inset-0 z-30" />
 
-              {/* Images Unsplash avec Overlay de couleur */}
               <div className="absolute inset-0 z-0 bg-slate-100">
                 <Image
                   src={card.image}
@@ -381,10 +376,10 @@ export default function Home() {
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${card.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent" />
+                {/* Dégradé renforcé pour la lisibilité sur l'image */}
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent" />
               </div>
 
-              {/* Contenu textuel et Badges */}
               <div className="absolute inset-0 p-10 flex flex-col justify-end z-10">
                 <div
                   className={`w-fit px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.15em] mb-4 shadow-sm border border-white/50 ${card.badgeColor}`}
@@ -396,12 +391,12 @@ export default function Home() {
                   {card.title}
                 </h2>
 
-                <p className="text-slate-500 text-sm max-w-[320px] leading-relaxed opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75">
+                {/* Texte mis en évidence (Slate-900 + font-medium) tout en gardant ton animation */}
+                <p className="text-slate-900 font-medium text-sm max-w-[320px] leading-relaxed opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75">
                   {card.description}
                 </p>
               </div>
 
-              {/* Icône de lien au survol */}
               <div className="absolute top-8 right-8 w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-slate-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-4 group-hover:translate-x-0">
                 <ArrowUpRight size={22} color="#0F172A" strokeWidth={2.5} />
               </div>
@@ -409,7 +404,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Footer avec status live */}
         <footer className="mt-8 flex justify-between items-center text-[#94A3B8] text-[9px] font-black tracking-[0.3em] uppercase">
           <p>© {new Date().getFullYear()} VK-IT Studio</p>
           <div className="flex gap-2 items-center">

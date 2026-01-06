@@ -630,6 +630,356 @@
 //   );
 // }
 
+// "use client";
+
+// import Image from "next/image";
+// import Link from "next/link";
+// import {
+//   Github,
+//   Linkedin,
+//   Mail,
+//   MapPin,
+//   BadgeCheck,
+//   Phone,
+//   Car,
+//   Home as HomeIcon,
+//   ChevronRight,
+//   Code2,
+// } from "lucide-react";
+// import React from "react";
+
+// // Interfaces pour le typage TypeScript
+// interface InfoCardProps {
+//   icon: React.ReactNode;
+//   label: string;
+//   value: string;
+//   className?: string;
+// }
+
+// interface TimelineItemProps {
+//   date: string;
+//   title: string;
+//   company: string;
+//   tasks: string[];
+// }
+
+// interface SkillGroupProps {
+//   title: string;
+//   items: string[];
+// }
+
+// export default function CvPage() {
+//   return (
+//     <main className="min-h-screen bg-[#FBFBFE] text-[#1E293B] font-sans p-4 md:p-12 relative">
+//       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10">
+//         {/* COLONNE GAUCHE - Expériences & Infos */}
+//         <div className="space-y-10">
+//           {/* HEADER PROFIL */}
+//           <header className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col md:flex-row gap-8 items-center">
+//             <div className="relative w-32 h-32 rounded-3xl overflow-hidden border-4 border-slate-50 shadow-md flex-shrink-0">
+//               <Image
+//                 src="/me.png"
+//                 alt="Veli Karaca"
+//                 fill
+//                 className="object-cover"
+//               />
+//             </div>
+
+//             <div className="flex-1 text-center md:text-left">
+//               <h1 className="text-4xl font-black text-[#0F172A] tracking-tighter">
+//                 Veli KARACA
+//               </h1>
+//               <p className="text-blue-600 font-bold tracking-widest text-sm uppercase mt-1">
+//                 Développeur Full Stack
+//               </p>
+
+//               <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-6">
+//                 <Link
+//                   href="https://github.com/VeliKaracaaa"
+//                   target="_blank"
+//                   className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-full text-xs font-bold hover:bg-blue-600 transition-colors"
+//                 >
+//                   <Github size={14} /> GitHub
+//                 </Link>
+//                 <Link
+//                   href="https://www.linkedin.com/in/veli-karaca/"
+//                   target="_blank"
+//                   className="flex items-center gap-2 px-4 py-2 bg-[#0077B5] text-white rounded-full text-xs font-bold hover:opacity-90 transition-opacity"
+//                 >
+//                   <Linkedin size={14} /> LinkedIn
+//                 </Link>
+//               </div>
+//             </div>
+//           </header>
+
+//           {/* CONTACT & INFOS RAPIDES */}
+//           <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//             <InfoCard
+//               icon={<Mail size={18} />}
+//               label="Email"
+//               value="veli.karaca01@gmail.com"
+//             />
+//             <InfoCard
+//               icon={<MapPin size={18} />}
+//               label="Localisation"
+//               value="Lyon, France"
+//             />
+//             <InfoCard
+//               icon={<BadgeCheck size={18} />}
+//               label="Permis"
+//               value="Permis B"
+//             />
+//             <InfoCard
+//               icon={<Car size={18} />}
+//               label="Véhicule"
+//               value="Personnel"
+//             />
+//             <InfoCard
+//               icon={<Phone size={18} />}
+//               label="Téléphone"
+//               value="06 40 07 37 29"
+//               className="md:col-span-2"
+//             />
+//           </section>
+
+//           {/* EXPÉRIENCES */}
+//           <section className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
+//             <h2 className="text-xl font-black mb-8 flex items-center gap-2 uppercase tracking-wider text-[#0F172A]">
+//               <span className="w-8 h-1 bg-blue-600 rounded-full" /> Expériences
+//               Professionnelles
+//             </h2>
+
+//             <div className="space-y-12 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
+//               {/* NOUVELLE EXPÉRIENCE FREELANCE */}
+//               <TimelineItem
+//                 date="2022 — Présent"
+//                 company="Freelance"
+//                 title="Développeur Full Stack Indépendant"
+//                 tasks={[
+//                   "Solutions e-commerce sur mesure (Node.js, PostgreSQL, React/Next.js, Tailwind).",
+//                   "IA & Collectivités : Développement d'une solution e-commerce intégrant des LLM en partenariat avec la Ville de Lyon.",
+//                   "Logiciels BTP : Conception et développement d'outils métiers spécifiques (Angular, Laravel).",
+//                   "Sites Vitrines : Création d'interfaces haute performance (Astro.js, Gsap, Three.js).",
+//                 ]}
+//               />
+
+//               <TimelineItem
+//                 date="2021 — 2022"
+//                 company="Y Brush Lyon"
+//                 title="Développeur Full Stack"
+//                 tasks={[
+//                   "Zoho (ERP) : Automatisation des flux logistiques via scripts Deluge.",
+//                   "Make : Développement de modules de connexion API (Shopify, Fnac, Darty).",
+//                   "Shopify : Développement de fonctionnalités sur mesure pour le store.",
+//                 ]}
+//               />
+
+//               <TimelineItem
+//                 date="2020 — 2021"
+//                 company="Qualitri Oyonnax"
+//                 title="Développeur Front-End"
+//                 tasks={[
+//                   "React : Refactorisation de l'interface admin de l'ERP pour l'expérience utilisateur.",
+//                   "Firebase : Développement d'une application de suivi de production en temps réel.",
+//                 ]}
+//               />
+//             </div>
+//           </section>
+//         </div>
+
+//         {/* COLONNE DROITE - Stack & Diplômes */}
+//         <div className="space-y-8">
+//           <Link
+//             href="/"
+//             className="flex items-center justify-center gap-2 p-4 bg-white rounded-3xl border border-slate-200 font-bold text-sm hover:bg-slate-50 transition-colors shadow-sm text-blue-600"
+//           >
+//             <HomeIcon size={18} /> Retour à l'accueil
+//           </Link>
+
+//           {/* NOUVELLE STACK TECHNIQUE MISE À JOUR */}
+//           <section className="bg-[#0F172A] text-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-900/10">
+//             <h2 className="text-lg font-black mb-6 uppercase tracking-widest text-blue-400 flex items-center gap-2">
+//               <Code2 size={20} /> Stack Technique
+//             </h2>
+
+//             <div className="space-y-8">
+//               <SkillGroup
+//                 title="Langages"
+//                 items={[
+//                   "C/C++",
+//                   "JavaScript",
+//                   "TypeScript",
+//                   "HTML",
+//                   "CSS",
+//                   "PHP",
+//                 ]}
+//               />
+//               <SkillGroup
+//                 title="Front-End / Librairies"
+//                 items={[
+//                   "React",
+//                   "Next.js",
+//                   "Vue.js",
+//                   "Angular",
+//                   "Astro.js",
+//                   "Gsap",
+//                   "Three.js",
+//                   "Tailwind",
+//                 ]}
+//               />
+//               <SkillGroup
+//                 title="Back-End"
+//                 items={["Node.js", "Express.js", "Laravel"]}
+//               />
+//               <SkillGroup
+//                 title="Bases de Données"
+//                 items={["PostgreSQL", "MySQL", "MongoDB", "Firebase"]}
+//               />
+//               <SkillGroup
+//                 title="Outils & Écosystème"
+//                 items={[
+//                   "Git",
+//                   "Insomnia",
+//                   "Postman",
+//                   "Figma",
+//                   "Docker",
+//                   "Shopify",
+//                   "Zoho",
+//                   "Make",
+//                   "SEO",
+//                   "Trello",
+//                   "Notion",
+//                   "Slack",
+//                   "Blender",
+//                 ]}
+//               />
+//             </div>
+//           </section>
+
+//           {/* DIPLÔMES */}
+//           <section className="bg-white p-8 rounded-[2.5rem] border border-slate-200">
+//             <h2 className="text-lg font-black mb-6 text-[#0F172A]">Diplômes</h2>
+//             <div className="space-y-6">
+//               <div className="relative pl-4 border-l-2 border-blue-100">
+//                 <h3 className="text-sm font-bold text-blue-600 leading-tight">
+//                   Licence - Responsable de projet Web et Mobile
+//                 </h3>
+//                 <p className="text-xs text-slate-500 mt-1">
+//                   2019-2022 • Epitech Lyon
+//                 </p>
+//               </div>
+//               <div className="relative pl-4 border-l-2 border-slate-100">
+//                 <h3 className="text-sm font-bold leading-tight">
+//                   Bac STI2D Option SIN
+//                 </h3>
+//                 <p className="text-xs text-slate-500 mt-1">
+//                   2017 • Lycée Arbez Carme
+//                 </p>
+//               </div>
+//             </div>
+//           </section>
+
+//           {/* CENTRES D'INTÉRÊT */}
+//           <section className="bg-blue-50/50 p-8 rounded-[2.5rem] border border-blue-100">
+//             <h2 className="text-lg font-black mb-4 text-blue-900">Hors-Code</h2>
+//             <ul className="space-y-3 text-sm text-blue-800/80 font-medium">
+//               <li className="flex gap-2 items-start">
+//                 <ChevronRight
+//                   size={14}
+//                   className="mt-1 shrink-0 text-blue-500"
+//                 />{" "}
+//                 Sapeur-Pompier Volontaire (JSP)
+//               </li>
+//               <li className="flex gap-2 items-start">
+//                 <ChevronRight
+//                   size={14}
+//                   className="mt-1 shrink-0 text-blue-500"
+//                 />{" "}
+//                 Brevet d'initiation aéronautique (BIA)
+//               </li>
+//               <li className="flex gap-2 items-start">
+//                 <ChevronRight
+//                   size={14}
+//                   className="mt-1 shrink-0 text-blue-500"
+//                 />{" "}
+//                 Modélisation 3D (Blender)
+//               </li>
+//             </ul>
+//           </section>
+//         </div>
+//       </div>
+//     </main>
+//   );
+// }
+
+// // Composants de structure réutilisables
+// function InfoCard({ icon, label, value, className = "" }: InfoCardProps) {
+//   return (
+//     <div
+//       className={`flex items-center gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm ${className}`}
+//     >
+//       <div className="text-blue-500 bg-blue-50 p-2 rounded-xl">{icon}</div>
+//       <div>
+//         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+//           {label}
+//         </p>
+//         <p className="text-sm font-bold text-slate-700">{value}</p>
+//       </div>
+//     </div>
+//   );
+// }
+
+// function TimelineItem({ date, title, company, tasks }: TimelineItemProps) {
+//   return (
+//     <div className="relative pl-10">
+//       <div className="absolute left-0 top-1 w-6 h-6 bg-white border-2 border-blue-600 rounded-full z-10 flex items-center justify-center shadow-sm">
+//         <div className="w-2 h-2 bg-blue-600 rounded-full" />
+//       </div>
+//       <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
+//         <span className="text-xs font-black text-blue-500 uppercase tracking-tighter">
+//           {date}
+//         </span>
+//         <span className="hidden md:block text-slate-300">•</span>
+//         <span className="text-sm font-black text-slate-400 uppercase tracking-widest">
+//           {company}
+//         </span>
+//       </div>
+//       <h3 className="text-xl font-bold text-slate-900 mt-1">{title}</h3>
+//       <ul className="mt-4 space-y-2">
+//         {tasks.map((t, i) => (
+//           <li
+//             key={i}
+//             className="text-sm text-slate-600 flex gap-2 leading-relaxed"
+//           >
+//             <span className="text-blue-400 mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />{" "}
+//             {t}
+//           </li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// }
+
+// function SkillGroup({ title, items }: SkillGroupProps) {
+//   return (
+//     <div>
+//       <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">
+//         {title}
+//       </h3>
+//       <div className="flex flex-wrap gap-2">
+//         {items.map((it) => (
+//           <span
+//             key={it}
+//             className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-xs font-medium hover:bg-blue-600/20 hover:border-blue-500/50 transition-all duration-300 cursor-default"
+//           >
+//             {it}
+//           </span>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
+
 "use client";
 
 import Image from "next/image";
@@ -646,9 +996,8 @@ import {
   ChevronRight,
   Code2,
 } from "lucide-react";
-import React from "react";
 
-// Interfaces pour le typage TypeScript
+// --- INTERFACES POUR TYPESCRIPT ---
 interface InfoCardProps {
   icon: React.ReactNode;
   label: string;
@@ -668,41 +1017,169 @@ interface SkillGroupProps {
   items: string[];
 }
 
+interface EducationItem {
+  title: string;
+  school: string;
+  date: string;
+  accent: boolean;
+}
+
+// --- LOGIQUE : DONNÉES DU CV ---
+const CV_DATA = {
+  profile: {
+    name: "Veli KARACA",
+    title: "Développeur Full Stack",
+    avatar: "/me.png",
+    links: {
+      github: "https://github.com/VeliKaracaaa",
+      linkedin: "https://www.linkedin.com/in/veli-karaca/",
+    },
+  },
+  contact: [
+    { icon: <Mail size={18} />, label: "Email", value: "v***.k***@gmail.com" },
+    {
+      icon: <MapPin size={18} />,
+      label: "Localisation",
+      value: "Lyon, France",
+    },
+    { icon: <BadgeCheck size={18} />, label: "Permis", value: "Permis B" },
+    { icon: <Car size={18} />, label: "Véhicule", value: "Personnel" },
+    {
+      icon: <Phone size={18} />,
+      label: "Téléphone",
+      value: "06 •• •• •• ••",
+      className: "md:col-span-2",
+    },
+  ],
+  experiences: [
+    {
+      date: "2022 — Présent",
+      company: "Freelance",
+      title: "Développeur Full Stack Indépendant",
+      tasks: [
+        "E-commerce complet avec un back-office robuste et un front-end entièrement sur mesure (Node.js, PostgreSQL, Next.js, Tailwind, shadcn/ui, framer motion, vercel).",
+        // "Solutions e-commerce sur mesure (Node.js, PostgreSQL, React/Next.js, Tailwind).",
+        // "E-commerce & IA : Développement d'un projet innovant intégrant des LLM à destination de la Ville de Lyon",
+        "Logiciels BTP : Outil de gestion de chantier et suivi de production en temps réel dédié aux artisans du bâtiment. Simplification des processus complexes (Next.js, Superbase, vercel).",
+        "Sites Vitrines : Création d'interfaces haute performance moderne.",
+      ],
+    },
+    {
+      date: "2021 — 2022",
+      company: "Y Brush Lyon",
+      title: "Développeur Full Stack",
+      tasks: [
+        "Zoho (ERP) : Automatisation des flux logistiques via scripts Deluge.",
+        "Make : Développement de modules de connexion API (Shopify, Fnac, Darty).",
+        "Shopify : Développement de fonctionnalités sur mesure pour le store.",
+      ],
+    },
+    {
+      date: "2020 — 2021",
+      company: "Qualitri Oyonnax",
+      title: "Développeur Front-End",
+      tasks: [
+        "React : Refactorisation de l'interface admin de l'ERP pour l'expérience utilisateur.",
+        "Firebase : Développement d'une application de suivi de production en temps réel.",
+      ],
+    },
+  ],
+  stack: [
+    {
+      title: "Langages",
+      items: ["C/C++", "JavaScript", "TypeScript", "HTML", "CSS", "PHP"],
+    },
+    {
+      title: "Front-End / Librairies",
+      items: [
+        "React",
+        "Next.js",
+        "Vue.js",
+        "Angular",
+        "Astro.js",
+        "Gsap",
+        "Three.js",
+        "Tailwind",
+      ],
+    },
+    { title: "Back-End", items: ["Node.js", "Express.js", "Laravel"] },
+    {
+      title: "Bases de Données",
+      items: ["PostgreSQL", "MySQL", "MongoDB", "Firebase"],
+    },
+    {
+      title: "Outils & Écosystème",
+      items: [
+        "Git",
+        "Insomnia",
+        "Postman",
+        "Figma",
+        "Docker",
+        "Shopify",
+        "Zoho",
+        "Make",
+        "SEO",
+        "Trello",
+        "Notion",
+        "Slack",
+        "Blender",
+      ],
+    },
+  ],
+  education: [
+    {
+      title: "Licence - Responsable de projet Web et Mobile",
+      school: "Epitech Lyon",
+      date: "2019-2022",
+      accent: true,
+    },
+    {
+      title: "Bac STI2D Option SIN",
+      school: "Lycée Arbez Carme",
+      date: "2017",
+      accent: false,
+    },
+  ],
+  hobbies: [
+    "Sapeur-Pompier Volontaire (JSP)",
+    "Brevet d'initiation aéronautique (BIA)",
+    "Modélisation 3D (Blender)",
+  ],
+};
+
+// --- COMPOSANT PRINCIPAL ---
 export default function CvPage() {
   return (
     <main className="min-h-screen bg-[#FBFBFE] text-[#1E293B] font-sans p-4 md:p-12 relative">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10">
-        {/* COLONNE GAUCHE - Expériences & Infos */}
+        {/* COLONNE GAUCHE */}
         <div className="space-y-10">
-          {/* HEADER PROFIL */}
           <header className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col md:flex-row gap-8 items-center">
             <div className="relative w-32 h-32 rounded-3xl overflow-hidden border-4 border-slate-50 shadow-md flex-shrink-0">
               <Image
-                src="/me.png"
-                alt="Veli Karaca"
+                src={CV_DATA.profile.avatar}
+                alt={CV_DATA.profile.name}
                 fill
                 className="object-cover"
               />
             </div>
-
             <div className="flex-1 text-center md:text-left">
               <h1 className="text-4xl font-black text-[#0F172A] tracking-tighter">
-                Veli KARACA
+                {CV_DATA.profile.name}
               </h1>
               <p className="text-blue-600 font-bold tracking-widest text-sm uppercase mt-1">
-                Développeur Full Stack
+                {CV_DATA.profile.title}
               </p>
-
               <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-6">
                 <Link
-                  href="https://github.com/VeliKaracaaa"
+                  href={CV_DATA.profile.links.github}
                   target="_blank"
                   className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-full text-xs font-bold hover:bg-blue-600 transition-colors"
                 >
                   <Github size={14} /> GitHub
                 </Link>
                 <Link
-                  href="https://www.linkedin.com/in/veli-karaca/"
+                  href={CV_DATA.profile.links.linkedin}
                   target="_blank"
                   className="flex items-center gap-2 px-4 py-2 bg-[#0077B5] text-white rounded-full text-xs font-bold hover:opacity-90 transition-opacity"
                 >
@@ -712,198 +1189,82 @@ export default function CvPage() {
             </div>
           </header>
 
-          {/* CONTACT & INFOS RAPIDES */}
           <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InfoCard
-              icon={<Mail size={18} />}
-              label="Email"
-              value="veli.karaca01@gmail.com"
-            />
-            <InfoCard
-              icon={<MapPin size={18} />}
-              label="Localisation"
-              value="Lyon, France"
-            />
-            <InfoCard
-              icon={<BadgeCheck size={18} />}
-              label="Permis"
-              value="Permis B"
-            />
-            <InfoCard
-              icon={<Car size={18} />}
-              label="Véhicule"
-              value="Personnel"
-            />
-            <InfoCard
-              icon={<Phone size={18} />}
-              label="Téléphone"
-              value="06 40 07 37 29"
-              className="md:col-span-2"
-            />
+            {CV_DATA.contact.map((info, idx) => (
+              <InfoCard key={idx} {...info} />
+            ))}
           </section>
 
-          {/* EXPÉRIENCES */}
           <section className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
             <h2 className="text-xl font-black mb-8 flex items-center gap-2 uppercase tracking-wider text-[#0F172A]">
               <span className="w-8 h-1 bg-blue-600 rounded-full" /> Expériences
               Professionnelles
             </h2>
-
             <div className="space-y-12 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
-              {/* NOUVELLE EXPÉRIENCE FREELANCE */}
-              <TimelineItem
-                date="2022 — Présent"
-                company="Freelance"
-                title="Développeur Full Stack Indépendant"
-                tasks={[
-                  "Solutions e-commerce sur mesure (Node.js, PostgreSQL, React/Next.js, Tailwind).",
-                  "IA & Collectivités : Développement d'une solution e-commerce intégrant des LLM en partenariat avec la Ville de Lyon.",
-                  "Logiciels BTP : Conception et développement d'outils métiers spécifiques (Angular, Laravel).",
-                  "Sites Vitrines : Création d'interfaces haute performance (Astro.js, Gsap, Three.js).",
-                ]}
-              />
-
-              <TimelineItem
-                date="2021 — 2022"
-                company="Y Brush Lyon"
-                title="Développeur Full Stack"
-                tasks={[
-                  "Zoho (ERP) : Automatisation des flux logistiques via scripts Deluge.",
-                  "Make : Développement de modules de connexion API (Shopify, Fnac, Darty).",
-                  "Shopify : Développement de fonctionnalités sur mesure pour le store.",
-                ]}
-              />
-
-              <TimelineItem
-                date="2020 — 2021"
-                company="Qualitri Oyonnax"
-                title="Développeur Front-End"
-                tasks={[
-                  "React : Refactorisation de l'interface admin de l'ERP pour l'expérience utilisateur.",
-                  "Firebase : Développement d'une application de suivi de production en temps réel.",
-                ]}
-              />
+              {CV_DATA.experiences.map((exp, idx) => (
+                <TimelineItem key={idx} {...exp} />
+              ))}
             </div>
           </section>
         </div>
 
-        {/* COLONNE DROITE - Stack & Diplômes */}
+        {/* COLONNE DROITE */}
         <div className="space-y-8">
           <Link
             href="/"
             className="flex items-center justify-center gap-2 p-4 bg-white rounded-3xl border border-slate-200 font-bold text-sm hover:bg-slate-50 transition-colors shadow-sm text-blue-600"
           >
-            <HomeIcon size={18} /> Retour à l'accueil
+            <HomeIcon size={18} /> Retour à l&apos;accueil
           </Link>
 
-          {/* NOUVELLE STACK TECHNIQUE MISE À JOUR */}
           <section className="bg-[#0F172A] text-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-900/10">
             <h2 className="text-lg font-black mb-6 uppercase tracking-widest text-blue-400 flex items-center gap-2">
               <Code2 size={20} /> Stack Technique
             </h2>
-
             <div className="space-y-8">
-              <SkillGroup
-                title="Langages"
-                items={[
-                  "C/C++",
-                  "JavaScript",
-                  "TypeScript",
-                  "HTML",
-                  "CSS",
-                  "PHP",
-                ]}
-              />
-              <SkillGroup
-                title="Front-End / Librairies"
-                items={[
-                  "React",
-                  "Next.js",
-                  "Vue.js",
-                  "Angular",
-                  "Astro.js",
-                  "Gsap",
-                  "Three.js",
-                  "Tailwind",
-                ]}
-              />
-              <SkillGroup
-                title="Back-End"
-                items={["Node.js", "Express.js", "Laravel"]}
-              />
-              <SkillGroup
-                title="Bases de Données"
-                items={["PostgreSQL", "MySQL", "MongoDB", "Firebase"]}
-              />
-              <SkillGroup
-                title="Outils & Écosystème"
-                items={[
-                  "Git",
-                  "Insomnia",
-                  "Postman",
-                  "Figma",
-                  "Docker",
-                  "Shopify",
-                  "Zoho",
-                  "Make",
-                  "SEO",
-                  "Trello",
-                  "Notion",
-                  "Slack",
-                  "Blender",
-                ]}
-              />
+              {CV_DATA.stack.map((group, idx) => (
+                <SkillGroup key={idx} title={group.title} items={group.items} />
+              ))}
             </div>
           </section>
 
-          {/* DIPLÔMES */}
           <section className="bg-white p-8 rounded-[2.5rem] border border-slate-200">
             <h2 className="text-lg font-black mb-6 text-[#0F172A]">Diplômes</h2>
             <div className="space-y-6">
-              <div className="relative pl-4 border-l-2 border-blue-100">
-                <h3 className="text-sm font-bold text-blue-600 leading-tight">
-                  Licence - Responsable de projet Web et Mobile
-                </h3>
-                <p className="text-xs text-slate-500 mt-1">
-                  2019-2022 • Epitech Lyon
-                </p>
-              </div>
-              <div className="relative pl-4 border-l-2 border-slate-100">
-                <h3 className="text-sm font-bold leading-tight">
-                  Bac STI2D Option SIN
-                </h3>
-                <p className="text-xs text-slate-500 mt-1">
-                  2017 • Lycée Arbez Carme
-                </p>
-              </div>
+              {CV_DATA.education.map((edu: EducationItem, idx: number) => (
+                <div
+                  key={idx}
+                  className={`relative pl-4 border-l-2 ${
+                    edu.accent ? "border-blue-100" : "border-slate-100"
+                  }`}
+                >
+                  <h3
+                    className={`text-sm font-bold leading-tight ${
+                      edu.accent ? "text-blue-600" : ""
+                    }`}
+                  >
+                    {edu.title}
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-1">
+                    {edu.date} • {edu.school}
+                  </p>
+                </div>
+              ))}
             </div>
           </section>
 
-          {/* CENTRES D'INTÉRÊT */}
           <section className="bg-blue-50/50 p-8 rounded-[2.5rem] border border-blue-100">
             <h2 className="text-lg font-black mb-4 text-blue-900">Hors-Code</h2>
             <ul className="space-y-3 text-sm text-blue-800/80 font-medium">
-              <li className="flex gap-2 items-start">
-                <ChevronRight
-                  size={14}
-                  className="mt-1 shrink-0 text-blue-500"
-                />{" "}
-                Sapeur-Pompier Volontaire (JSP)
-              </li>
-              <li className="flex gap-2 items-start">
-                <ChevronRight
-                  size={14}
-                  className="mt-1 shrink-0 text-blue-500"
-                />{" "}
-                Brevet d'initiation aéronautique (BIA)
-              </li>
-              <li className="flex gap-2 items-start">
-                <ChevronRight
-                  size={14}
-                  className="mt-1 shrink-0 text-blue-500"
-                />{" "}
-                Modélisation 3D (Blender)
-              </li>
+              {CV_DATA.hobbies.map((hobby, idx) => (
+                <li key={idx} className="flex gap-2 items-start">
+                  <ChevronRight
+                    size={14}
+                    className="mt-1 shrink-0 text-blue-500"
+                  />{" "}
+                  {hobby}
+                </li>
+              ))}
             </ul>
           </section>
         </div>
@@ -912,7 +1273,7 @@ export default function CvPage() {
   );
 }
 
-// Composants de structure réutilisables
+// --- SOUS-COMPOSANTS RÉUTILISABLES ---
 function InfoCard({ icon, label, value, className = "" }: InfoCardProps) {
   return (
     <div
