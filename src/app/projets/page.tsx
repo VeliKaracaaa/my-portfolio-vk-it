@@ -740,7 +740,14 @@ const projects = [
     category: "Headless Commerce",
     description:
       "Une solution de vente en ligne complète avec un back-office robuste et un front-end entièrement sur mesure. Architecture MedusaJS pour une liberté totale et tunnel d'achat optimisé.",
-    tags: ["Next.js", "MedusaJS", "PostgreSQL", "Tailwind", "Vercel/Netlify"],
+    tags: [
+      "Next.js",
+      "MedusaJS",
+      "PostgreSQL",
+      "Tailwind",
+      "Framer Motion",
+      "Vercel/Netlify",
+    ],
     image:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000",
     isNew: true,
