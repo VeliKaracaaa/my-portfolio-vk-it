@@ -20,7 +20,6 @@ import { Separator } from "@/components/ui/separator";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -109,42 +108,40 @@ function NavItems({
   return (
     <>
       {projects.map((p) => (
-        <TooltipProvider key={p.id} delayDuration={200}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => {
-                  setActiveProject(p);
-                  onSelect?.();
-                }}
-                className={`flex-1 xl:flex-none xl:h-1/4 min-h-[56px] border-[3px] flex flex-col items-center justify-center transition-all relative overflow-hidden ${
-                  activeProject.id === p.id
-                    ? "bg-[#1A2F38] text-[#F2EFE9] border-[#1A2F38]"
-                    : "bg-white text-[#1A2F38] border-[#1A2F38]/20 hover:border-[#1A2F38]"
-                }`}
-              >
-                <span className="text-2xl md:text-3xl xl:text-5xl font-black xl:-rotate-90 italic">
-                  {p.id}
-                </span>
-                <span className="hidden xl:block text-[9px] font-black mt-1 uppercase opacity-60">
-                  {p.title.split(" ")[0]}
-                </span>
-                {activeProject.id === p.id && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 border-4 border-white/20 pointer-events-none"
-                  />
-                )}
-              </button>
-            </TooltipTrigger>
-            <TooltipContent
-              side="right"
-              className="font-mono font-bold text-xs uppercase"
+        <Tooltip key={p.id}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => {
+                setActiveProject(p);
+                onSelect?.();
+              }}
+              className={`flex-1 xl:flex-none xl:h-1/4 min-h-[56px] border-[3px] flex flex-col items-center justify-center transition-all relative overflow-hidden ${
+                activeProject.id === p.id
+                  ? "bg-[#1A2F38] text-[#F2EFE9] border-[#1A2F38]"
+                  : "bg-white text-[#1A2F38] border-[#1A2F38]/20 hover:border-[#1A2F38]"
+              }`}
             >
-              {p.title}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+              <span className="text-2xl md:text-3xl xl:text-5xl font-black xl:-rotate-90 italic">
+                {p.id}
+              </span>
+              <span className="hidden xl:block text-[9px] font-black mt-1 uppercase opacity-60">
+                {p.title.split(" ")[0]}
+              </span>
+              {activeProject.id === p.id && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute inset-0 border-4 border-white/20 pointer-events-none"
+                />
+              )}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent
+            side="right"
+            className="font-mono font-bold text-xs uppercase"
+          >
+            {p.title}
+          </TooltipContent>
+        </Tooltip>
       ))}
     </>
   );
@@ -183,7 +180,6 @@ export default function ProjetPage() {
             </span>
           </div>
 
-          {/* Mobile : Sheet pour navigation projets */}
           <div className="xl:hidden">
             <Sheet>
               <SheetTrigger asChild>
@@ -259,9 +255,10 @@ export default function ProjetPage() {
 
         {/* ── CONTENU PRINCIPAL ── */}
         <div className="flex-1 flex flex-col gap-2 sm:gap-3 min-h-0 xl:overflow-hidden">
-          <div className="flex-1 flex flex-col md:flex-row gap-2 sm:gap-3 min-h-0 overflow-y-auto no-scrollbar xl:overflow-hidden">
+          {/* Zone scrollable sur mobile, fixe sur desktop */}
+          <div className="flex-1 flex flex-col gap-2 sm:gap-3 overflow-y-auto no-scrollbar xl:overflow-hidden xl:flex-row xl:min-h-0">
             {/* IMAGE */}
-            <div className="w-full aspect-video md:aspect-auto md:flex-[1.6] relative border-[3px] border-[#1A2F38] bg-white overflow-hidden group shadow-[inset_0_0_50px_rgba(0,0,0,0.1)] shrink-0">
+            <div className="w-full aspect-video xl:aspect-auto xl:flex-[1.6] relative border-[3px] border-[#1A2F38] bg-white overflow-hidden group shadow-[inset_0_0_50px_rgba(0,0,0,0.1)] shrink-0">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeProject.id}
@@ -282,7 +279,6 @@ export default function ProjetPage() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Badge catégorie */}
               <div className="absolute top-3 left-3 z-10">
                 <Badge
                   variant="secondary"
@@ -309,7 +305,7 @@ export default function ProjetPage() {
             </div>
 
             {/* DESCRIPTION */}
-            <div className="md:flex-1 bg-white border-[3px] border-[#1A2F38] flex flex-col relative overflow-hidden shadow-[4px_4px_0_0_#1A2F38]">
+            <div className="xl:flex-1 bg-white border-[3px] border-[#1A2F38] flex flex-col relative overflow-hidden shadow-[4px_4px_0_0_#1A2F38]">
               <ScrollArea className="flex-1 p-4 sm:p-5 lg:p-7">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -378,18 +374,36 @@ export default function ProjetPage() {
                 </Button>
               </div>
             </div>
+
+            {/* STACK BAR — dans le scroll sur mobile, fixe en bas sur desktop */}
+            <div className="xl:hidden h-14 sm:h-16 bg-white border-[3px] border-[#1A2F38] flex items-center px-3 sm:px-5 gap-3 sm:gap-5 overflow-x-auto no-scrollbar shadow-[4px_4px_0_0_#1A2F38] shrink-0">
+              <div className="flex items-center gap-2 shrink-0 border-r-2 border-[#1A2F38]/10 pr-3 sm:pr-5">
+                <Zap
+                  className="text-[#D98E32] w-4 h-4 sm:w-5 sm:h-5"
+                  strokeWidth={3}
+                />
+                <span className="text-sm sm:text-base font-black uppercase">
+                  Stack
+                </span>
+              </div>
+              <div className="flex gap-2 sm:gap-3">
+                {activeProject.tags.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="whitespace-nowrap border-2 border-[#1A2F38] px-3 sm:px-4 py-1 text-[10px] sm:text-xs font-black uppercase shrink-0 bg-white"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
 
-          {/* STACK BAR */}
-          <div className="h-14 sm:h-16 xl:h-20 bg-white border-[3px] border-[#1A2F38] flex items-center px-3 sm:px-5 gap-3 sm:gap-5 overflow-x-auto no-scrollbar shadow-[4px_4px_0_0_#1A2F38] shrink-0">
-            <div className="flex items-center gap-2 shrink-0 border-r-2 border-[#1A2F38]/10 pr-3 sm:pr-5">
-              <Zap
-                className="text-[#D98E32] w-4 h-4 sm:w-5 sm:h-5"
-                strokeWidth={3}
-              />
-              <span className="text-sm sm:text-base xl:text-xl font-black uppercase">
-                Stack
-              </span>
+          {/* STACK BAR desktop uniquement */}
+          <div className="hidden xl:flex h-20 bg-white border-[3px] border-[#1A2F38] items-center px-5 gap-5 overflow-x-auto no-scrollbar shadow-[4px_4px_0_0_#1A2F38] shrink-0">
+            <div className="flex items-center gap-2 shrink-0 border-r-2 border-[#1A2F38]/10 pr-5">
+              <Zap className="text-[#D98E32] w-5 h-5" strokeWidth={3} />
+              <span className="text-xl font-black uppercase">Stack</span>
             </div>
             <AnimatePresence mode="wait">
               <motion.div
@@ -397,7 +411,7 @@ export default function ProjetPage() {
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0 }}
-                className="flex gap-2 sm:gap-3"
+                className="flex gap-3"
               >
                 {activeProject.tags.map((tag, i) => (
                   <motion.span
@@ -407,7 +421,7 @@ export default function ProjetPage() {
                       backgroundColor: "#1A2F38",
                       color: "#F2EFE9",
                     }}
-                    className="whitespace-nowrap border-2 border-[#1A2F38] px-3 sm:px-4 py-1 text-[10px] sm:text-xs font-black uppercase transition-all shrink-0 cursor-default bg-white"
+                    className="whitespace-nowrap border-2 border-[#1A2F38] px-4 py-1 text-xs font-black uppercase transition-all shrink-0 cursor-default bg-white"
                   >
                     {tag}
                   </motion.span>
