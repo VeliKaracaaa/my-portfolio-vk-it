@@ -153,7 +153,7 @@ export default function ProjetPage() {
 
   return (
     <>
-      {/* ── MOBILE / TABLETTE (< xl) : hauteur fixe, pas de scroll global ── */}
+      {/* ── MOBILE / TABLETTE (< xl) ── */}
       <main className="xl:hidden h-[100dvh] w-full bg-[#F2EFE9] text-[#1A2F38] font-mono flex flex-col p-2 sm:p-3 selection:bg-[#1A2F38] selection:text-[#F2EFE9] overflow-hidden">
         {/* HEADER — fixe */}
         <header className="h-14 sm:h-16 w-full flex items-center justify-between px-3 sm:px-6 border-[3px] border-[#1A2F38] bg-white mb-2 sm:mb-3 shadow-[4px_4px_0_0_#1A2F38] shrink-0">
@@ -231,7 +231,7 @@ export default function ProjetPage() {
         </nav>
 
         {/* ZONE SCROLLABLE INTERNE */}
-        <div className="flex-1 flex flex-col gap-2 sm:gap-3 overflow-y-auto no-scrollbar min-h-0">
+        <div className="flex-1 overflow-y-auto no-scrollbar min-h-0 flex flex-col gap-2 sm:gap-3">
           {/* IMAGE */}
           <div className="w-full aspect-video relative border-[3px] border-[#1A2F38] bg-white overflow-hidden shrink-0">
             <Image
@@ -332,16 +332,16 @@ export default function ProjetPage() {
               ))}
             </div>
           </div>
-
-          {/* FOOTER */}
-          <footer className="h-7 flex items-center justify-between px-3 text-[9px] font-bold opacity-40 uppercase shrink-0">
-            <div className="flex gap-3 italic">
-              <span>Deployment: Secure</span>
-              <span className="hidden sm:inline">Index: VK_PROD</span>
-            </div>
-            <span>© by veli karaca {currentYear}</span>
-          </footer>
         </div>
+
+        {/* FOOTER — fixe en bas, hors du scroll */}
+        <footer className="h-7 flex items-center justify-between px-3 text-[9px] font-bold opacity-40 uppercase shrink-0 mt-1">
+          <div className="flex gap-3 italic">
+            <span>Deployment: Secure</span>
+            <span className="hidden sm:inline">Index: VK_PROD</span>
+          </div>
+          <span>© by veli karaca {currentYear}</span>
+        </footer>
       </main>
 
       {/* ── DESKTOP (xl+) : hauteur fixe, pas de scroll ── */}
@@ -534,7 +534,7 @@ export default function ProjetPage() {
         </div>
 
         {/* FOOTER */}
-        <footer className="h-7 flex items-center justify-between px-3 mt-1 text-[9px] font-bold opacity-40 uppercase">
+        <footer className="h-7 flex items-center justify-between px-3 mt-1 text-[9px] font-bold opacity-40 uppercase shrink-0">
           <div className="flex gap-3 italic">
             <span>Deployment: Secure</span>
             <span>Index: VK_PROD</span>
