@@ -1,47 +1,3 @@
-// export default function AdminPage() {
-//   // On définit les permissions demandées
-//   // openid profile : pour savoir qui tu es
-//   // w_member_social : pour publier (déjà actif chez toi)
-//   // r_member_social : C'EST CELLE-CI qu'on tente de forcer pour lire tes posts
-//   const scopes = ["openid", "profile", "w_member_social", "r_member_social"];
-
-//   const clientId = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID || "";
-//   const redirectUri = encodeURIComponent(
-//     process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI || "",
-//   );
-//   const scopeString = encodeURIComponent(scopes.join(" "));
-
-//   const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopeString}`;
-
-//   return (
-//     <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-slate-50">
-//       <div className="bg-white p-10 rounded-2xl shadow-xl border border-slate-200 max-w-md w-full text-center">
-//         <h1 className="text-3xl font-extrabold mb-4 text-slate-900">
-//           Admin Panel
-//         </h1>
-//         <p className="mb-8 text-slate-600">
-//           Clique sur le bouton pour forcer la synchronisation des droits de
-//           lecture de tes posts.
-//         </p>
-
-//         <a
-//           href={authUrl}
-//           className="inline-flex items-center justify-center w-full bg-[#0077b5] text-white px-8 py-4 rounded-xl font-bold hover:bg-[#005582] transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg"
-//         >
-//           <svg className="w-5 h-5 mr-2 fill-current" viewBox="0 0 24 24">
-//             <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-//           </svg>
-//           Forcer la synchronisation
-//         </a>
-
-//         <p className="mt-6 text-[10px] text-slate-400 uppercase tracking-widest font-semibold">
-//           LinkedIn API v2024
-//         </p>
-//       </div>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -52,6 +8,11 @@ interface Post {
   createdAt: string;
   publishedToLinkedIn: boolean;
   linkedInPostId?: string;
+  imageBase64?: string;
+  imageType?: string;
+  videoUrl?: string;
+  documentUrl?: string;
+  documentName?: string;
 }
 
 export default function AdminPage() {
@@ -63,6 +24,11 @@ export default function AdminPage() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [video, setVideo] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [document, setDocument] = useState<File | null>(null);
 
   useEffect(() => {
     fetchPosts();
@@ -81,16 +47,79 @@ export default function AdminPage() {
     setLinkedInConnected(data.connected);
   }
 
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] || null;
+    setImage(file);
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+      setVideo(null);
+      setVideoPreview(null);
+      setDocument(null);
+    } else {
+      setImagePreview(null);
+    }
+  }
+
+  function handleRemoveImage() {
+    setImage(null);
+    setImagePreview(null);
+  }
+
+  function handleVideoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] || null;
+    setVideo(file);
+    if (file) {
+      setVideoPreview(URL.createObjectURL(file));
+      setImage(null);
+      setImagePreview(null);
+      setDocument(null);
+    } else {
+      setVideoPreview(null);
+    }
+  }
+
+  function handleRemoveVideo() {
+    setVideo(null);
+    setVideoPreview(null);
+  }
+
+  function handleDocumentChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] || null;
+    setDocument(file);
+    if (file) {
+      setImage(null);
+      setImagePreview(null);
+      setVideo(null);
+      setVideoPreview(null);
+    }
+  }
+
+  function handleRemoveDocument() {
+    setDocument(null);
+  }
+
   async function handleSave() {
     if (!content.trim()) return;
     setLoading(true);
+
+    const formData = new FormData();
+    formData.append("content", content);
+    if (image) formData.append("image", image);
+    if (video) formData.append("video", video);
+    if (document) formData.append("document", document);
+
     const res = await fetch("/api/posts", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content }),
+      body: formData,
     });
+
     if (res.ok) {
       setContent("");
+      setImage(null);
+      setImagePreview(null);
+      setVideo(null);
+      setVideoPreview(null);
+      setDocument(null);
       setMessage({ type: "success", text: "Post sauvegardé !" });
       fetchPosts();
     }
@@ -141,7 +170,9 @@ export default function AdminPage() {
         }`}
       >
         <div
-          className={`w-2.5 h-2.5 rounded-full ${linkedInConnected ? "bg-green-500" : "bg-amber-400"}`}
+          className={`w-2.5 h-2.5 rounded-full ${
+            linkedInConnected ? "bg-green-500" : "bg-amber-400"
+          }`}
         />
         <span className="text-sm font-medium">
           {linkedInConnected ? "LinkedIn connecté ✓" : "LinkedIn non connecté"}
@@ -165,6 +196,135 @@ export default function AdminPage() {
           rows={6}
           className="w-full resize-none text-slate-800 placeholder-slate-400 text-base leading-relaxed focus:outline-none"
         />
+
+        {/* Upload image */}
+        <div className="mt-3">
+          <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-500 hover:text-slate-700 transition-colors w-fit">
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            Ajouter une image
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageChange}
+            />
+          </label>
+          {imagePreview && (
+            <div className="relative mt-2 inline-block">
+              <img
+                src={imagePreview}
+                alt="preview"
+                className="max-h-32 rounded-lg border border-slate-200"
+              />
+              <button
+                onClick={handleRemoveImage}
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center hover:bg-red-600"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Upload vidéo */}
+        <div className="mt-3">
+          <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-500 hover:text-slate-700 transition-colors w-fit">
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
+            </svg>
+            Ajouter une vidéo
+            <input
+              type="file"
+              accept="video/*"
+              className="hidden"
+              onChange={handleVideoChange}
+            />
+          </label>
+          {videoPreview && (
+            <div className="relative mt-2 inline-block">
+              <video
+                src={videoPreview}
+                className="max-h-32 rounded-lg border border-slate-200"
+                controls
+              />
+              <button
+                onClick={handleRemoveVideo}
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center hover:bg-red-600"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Upload document PDF */}
+        <div className="mt-3">
+          <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-500 hover:text-slate-700 transition-colors w-fit">
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+              />
+            </svg>
+            Ajouter un PDF
+            <input
+              type="file"
+              accept=".pdf"
+              className="hidden"
+              onChange={handleDocumentChange}
+            />
+          </label>
+          {document && (
+            <div className="flex items-center gap-2 mt-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
+              <svg
+                className="w-4 h-4 text-red-500 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 13h8v1H8v-1zm0 3h8v1H8v-1zm0-6h5v1H8v-1z" />
+              </svg>
+              <span className="text-xs text-slate-700 truncate max-w-xs">
+                {document.name}
+              </span>
+              <button
+                onClick={handleRemoveDocument}
+                className="ml-auto text-slate-400 hover:text-red-500 text-xs"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+        </div>
+
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
           <span className="text-xs text-slate-400">
             {content.length} / 3000 caractères
@@ -204,9 +364,62 @@ export default function AdminPage() {
             key={post.id}
             className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5"
           >
+            {/* Affichage image */}
+            {post.imageBase64 && (
+              <img
+                src={`data:${post.imageType};base64,${post.imageBase64}`}
+                alt="image du post"
+                className="w-full max-h-48 object-cover rounded-xl mb-3 border border-slate-100"
+              />
+            )}
+
+            {/* Affichage vidéo */}
+            {post.videoUrl && (
+              <video
+                src={post.videoUrl}
+                className="w-full max-h-48 rounded-xl mb-3 border border-slate-100"
+                controls
+              />
+            )}
+
+            {/* Affichage document PDF */}
+            {post.documentUrl && (
+              <a
+                href={post.documentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-3 hover:bg-red-100 transition-colors"
+              >
+                <svg
+                  className="w-5 h-5 text-red-500 flex-shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 13h8v1H8v-1zm0 3h8v1H8v-1zm0-6h5v1H8v-1z" />
+                </svg>
+                <span className="text-sm text-red-700 font-medium truncate">
+                  {post.documentName || "Document PDF"}
+                </span>
+                <svg
+                  className="w-4 h-4 text-red-400 ml-auto flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </a>
+            )}
+
             <p className="text-slate-800 text-sm leading-relaxed whitespace-pre-wrap mb-4">
               {post.content}
             </p>
+
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-xs text-slate-400">

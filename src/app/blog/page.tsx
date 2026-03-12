@@ -1,69 +1,3 @@
-// import { createClient } from "redis";
-// import { Card, CardContent } from "@/components/ui/card";
-
-// async function getLinkedInPosts() {
-//   const redis = createClient({ url: process.env.REDIS_URL });
-//   await redis.connect();
-//   const token = await redis.get("linkedin_token");
-//   let userUrn = await redis.get("linkedin_user_urn");
-//   await redis.disconnect();
-
-//   if (!token || !userUrn) return null;
-
-//   // Nettoyage de l'URN au cas où il y aurait des doublons de préfixe
-//   // On s'assure qu'il commence bien par urn:li:person: une seule fois
-//   const cleanUrn = userUrn.includes("urn:li:")
-//     ? userUrn
-//     : `urn:li:person:${userUrn}`;
-
-//   // Tentative avec l'API /posts (version la plus récente)
-//   const res = await fetch(
-//     `https://api.linkedin.com/v2/posts?author=${encodeURIComponent(cleanUrn)}&q=author&count=10`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//         "X-Restli-Protocol-Version": "2.0.0",
-//       },
-//       next: { revalidate: 3600 },
-//     },
-//   );
-
-//   const data = await res.json();
-//   console.log("URN UTILISÉ:", cleanUrn);
-//   console.log("RÉPONSE LINKEDIN:", data);
-
-//   return data;
-// }
-// export default async function BlogPage() {
-//   const data = await getLinkedInPosts();
-
-//   return (
-//     <div className="max-w-4xl mx-auto p-8 pt-20">
-//       <h1 className="text-3xl font-bold mb-8 text-center">
-//         Mes Posts LinkedIn
-//       </h1>
-
-//       {!data || data.serviceErrorCode ? (
-//         <div className="p-4 bg-red-50 text-red-600 rounded-lg">
-//           <p>Aucun post trouvé ou erreur API.</p>
-//           <p className="text-sm mt-2">
-//             Assure-toi d'être bien synchronisé via l'admin.
-//           </p>
-//         </div>
-//       ) : (
-//         <div className="grid gap-6">
-//           <p className="text-sm text-gray-500 mb-4 italic">
-//             Contenu brut récupéré de LinkedIn :
-//           </p>
-//           <pre className="bg-slate-900 text-green-400 p-6 rounded-xl text-xs overflow-auto shadow-lg border border-slate-700">
-//             {JSON.stringify(data, null, 2)}
-//           </pre>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
 import { createClient } from "redis";
 
 interface Post {
@@ -72,6 +6,11 @@ interface Post {
   createdAt: string;
   publishedToLinkedIn: boolean;
   linkedInPostId?: string;
+  imageBase64?: string;
+  imageType?: string;
+  videoUrl?: string;
+  documentUrl?: string;
+  documentName?: string;
 }
 
 async function getPosts(): Promise<Post[]> {
@@ -111,11 +50,64 @@ export default async function BlogPage() {
       ) : (
         <div className="space-y-8">
           {posts.map((post) => (
-            <article key={post.id} className="group">
+            <article key={post.id}>
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 hover:shadow-md transition-shadow">
+                {/* Image si présente */}
+                {post.imageBase64 && (
+                  <img
+                    src={`data:${post.imageType};base64,${post.imageBase64}`}
+                    alt="image du post"
+                    className="w-full max-h-64 object-cover rounded-xl mb-4 border border-slate-100"
+                  />
+                )}
+
+                {/* Vidéo si présente */}
+                {post.videoUrl && (
+                  <video
+                    src={post.videoUrl}
+                    className="w-full max-h-64 rounded-xl mb-4 border border-slate-100"
+                    controls
+                  />
+                )}
+
+                {/* Document PDF si présent */}
+                {post.documentUrl && (
+                  <a
+                    href={post.documentUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-4 hover:bg-red-100 transition-colors"
+                  >
+                    <svg
+                      className="w-5 h-5 text-red-500 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 13h8v1H8v-1zm0 3h8v1H8v-1zm0-6h5v1H8v-1z" />
+                    </svg>
+                    <span className="text-sm text-red-700 font-medium truncate">
+                      {post.documentName || "Document PDF"}
+                    </span>
+                    <svg
+                      className="w-4 h-4 text-red-400 ml-auto flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
+                    </svg>
+                  </a>
+                )}
+
                 <p className="text-slate-800 leading-relaxed whitespace-pre-wrap text-[15px]">
                   {post.content}
                 </p>
+
                 <div className="flex items-center justify-between mt-5 pt-4 border-t border-slate-50">
                   <time className="text-xs text-slate-400">
                     {new Date(post.createdAt).toLocaleDateString("fr-FR", {
