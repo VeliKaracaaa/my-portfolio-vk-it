@@ -153,17 +153,17 @@ export default function ProjetPage() {
 
   return (
     <>
-      {/* ── MOBILE / TABLETTE (< xl) ── */}
-      <main className="xl:hidden h-[100dvh] w-full bg-[#F2EFE9] text-[#1A2F38] font-mono flex flex-col p-2 sm:p-3 selection:bg-[#1A2F38] selection:text-[#F2EFE9] overflow-hidden">
-        {/* HEADER — fixe */}
-        <header className="h-14 sm:h-16 w-full flex items-center justify-between px-3 sm:px-6 border-[3px] border-[#1A2F38] bg-white mb-2 sm:mb-3 shadow-[4px_4px_0_0_#1A2F38] shrink-0">
+      {/* ── MOBILE / TABLETTE (< xl) — tout tient dans l'écran, 0 scroll ── */}
+      <main className="xl:hidden h-[100dvh] w-full bg-[#F2EFE9] text-[#1A2F38] font-mono flex flex-col p-2 sm:p-3 selection:bg-[#1A2F38] selection:text-[#F2EFE9] overflow-hidden gap-2 sm:gap-3">
+        {/* HEADER */}
+        <header className="h-12 sm:h-14 w-full flex items-center justify-between px-3 sm:px-6 border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38] shrink-0">
           <Button
             asChild
             variant="outline"
-            className="border-2 border-[#1A2F38] h-9 sm:h-10 px-3 font-black uppercase text-[10px] sm:text-xs rounded-none hover:bg-[#1A2F38] hover:text-white transition-colors focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="border-2 border-[#1A2F38] h-8 sm:h-9 px-3 font-black uppercase text-[10px] sm:text-xs rounded-none hover:bg-[#1A2F38] hover:text-white transition-colors focus-visible:ring-0 focus-visible:ring-offset-0"
           >
             <Link href="/" className="flex items-center gap-2">
-              <ArrowLeft size={16} strokeWidth={3} />
+              <ArrowLeft size={14} strokeWidth={3} />
               <span className="hidden sm:inline italic">Return_To_Base</span>
             </Link>
           </Button>
@@ -180,9 +180,9 @@ export default function ProjetPage() {
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
-                  className="border-2 border-[#1A2F38] rounded-none h-9 w-9 p-0 font-black hover:bg-[#1A2F38] hover:text-white focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="border-2 border-[#1A2F38] rounded-none h-8 w-8 p-0 font-black hover:bg-[#1A2F38] hover:text-white focus-visible:ring-0 focus-visible:ring-offset-0"
                 >
-                  <span className="text-sm font-black italic">
+                  <span className="text-xs font-black italic">
                     {activeProject.id}
                   </span>
                 </Button>
@@ -205,137 +205,130 @@ export default function ProjetPage() {
                 </div>
               </SheetContent>
             </Sheet>
-            <div className="w-9 h-9 bg-[#1A2F38] flex items-center justify-center text-[#F2EFE9] border-2 border-[#1A2F38]">
-              <Cpu size={18} className="animate-pulse" />
+            <div className="w-8 h-8 bg-[#1A2F38] flex items-center justify-center text-[#F2EFE9] border-2 border-[#1A2F38]">
+              <Cpu size={16} className="animate-pulse" />
             </div>
           </div>
         </header>
 
-        {/* TABS — fixe */}
-        <nav className="flex gap-1.5 sm:gap-2 mb-2 sm:mb-3 shrink-0">
+        {/* TABS */}
+        <nav className="flex gap-1.5 shrink-0">
           {projects.map((p) => (
             <button
               key={p.id}
               onClick={() => setActiveProject(p)}
-              className={`flex-1 h-10 border-[2px] flex items-center justify-center transition-colors ${
+              className={`flex-1 h-9 border-[2px] flex items-center justify-center transition-colors ${
                 activeProject.id === p.id
                   ? "bg-[#1A2F38] text-[#F2EFE9] border-[#1A2F38]"
                   : "bg-white text-[#1A2F38] border-[#1A2F38]/30 hover:border-[#1A2F38]"
               }`}
             >
-              <span className="text-xs sm:text-sm font-black italic">
-                {p.id}
-              </span>
+              <span className="text-xs font-black italic">{p.id}</span>
             </button>
           ))}
         </nav>
 
-        {/* ZONE SCROLLABLE INTERNE */}
-        <div className="flex-1 overflow-y-auto no-scrollbar min-h-0 flex flex-col gap-2 sm:gap-3">
-          {/* IMAGE */}
-          <div className="w-full aspect-video relative border-[3px] border-[#1A2F38] bg-white overflow-hidden shrink-0">
-            <Image
-              src={activeProject.image}
-              alt={activeProject.title}
-              fill
-              priority
-              sizes="(max-width: 1280px) 100vw, 60vw"
-              className="object-cover object-center opacity-80"
-            />
-            <div className="absolute top-3 left-3 z-10">
-              <Badge
-                variant="secondary"
-                className="bg-white/90 text-[#1A2F38] border border-[#1A2F38]/30 rounded-none font-black uppercase text-[9px] tracking-widest px-2 py-0.5"
-              >
-                {activeProject.category}
-              </Badge>
-            </div>
-            <div className="absolute bottom-3 left-3 z-10 w-[90%] pointer-events-none">
-              <h2 className="text-3xl sm:text-4xl font-black uppercase italic leading-[0.85] text-[#F2EFE9] drop-shadow-[3px_3px_0_#1A2F38]">
-                {activeProject.title}
-              </h2>
-            </div>
+        {/* IMAGE — flex-[3] */}
+        <div className="flex-[3] relative border-[3px] border-[#1A2F38] bg-white overflow-hidden shrink-1 min-h-0">
+          <Image
+            src={activeProject.image}
+            alt={activeProject.title}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center opacity-80"
+          />
+          <div className="absolute top-2 left-2 z-10">
+            <Badge
+              variant="secondary"
+              className="bg-white/90 text-[#1A2F38] border border-[#1A2F38]/30 rounded-none font-black uppercase text-[8px] tracking-widest px-2 py-0.5"
+            >
+              {activeProject.category}
+            </Badge>
           </div>
-
-          {/* DESCRIPTION */}
-          <div className="w-full bg-white border-[3px] border-[#1A2F38] flex flex-col shadow-[4px_4px_0_0_#1A2F38] shrink-0">
-            <div className="p-4 sm:p-5 space-y-3">
-              <div className="flex items-center justify-between gap-2 flex-wrap">
-                <div className="flex items-center gap-2">
-                  <Target size={14} />
-                  <span className="text-[9px] font-black uppercase tracking-widest opacity-40 italic">
-                    Technical_Description
-                  </span>
-                </div>
-                {activeProject.isNew && (
-                  <Badge className="bg-[#D98E32] text-white px-2 py-0.5 text-[8px] font-black uppercase italic border-0 rounded-none shrink-0">
-                    New_Release_v1.0
-                  </Badge>
-                )}
-              </div>
-              <Separator className="bg-[#1A2F38]/10" />
-              <p className="text-sm sm:text-base font-bold uppercase leading-snug italic">
-                {activeProject.description}
-              </p>
-            </div>
-            <div className="p-3 sm:p-4 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50 space-y-2">
-              <div className="flex gap-2">
-                <Button
-                  asChild
-                  variant="outline"
-                  className="flex-1 border-2 border-[#1A2F38] h-10 text-xs font-black uppercase hover:bg-[#1A2F38] hover:text-white rounded-none bg-transparent text-[#1A2F38] gap-1.5 focus-visible:ring-0 focus-visible:ring-offset-0"
-                >
-                  <Link href="#">
-                    <Github size={13} />
-                    Github
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="flex-1 border-2 border-[#1A2F38] h-10 text-xs font-black uppercase hover:bg-[#1A2F38] hover:text-white rounded-none bg-transparent text-[#1A2F38] gap-1.5 focus-visible:ring-0 focus-visible:ring-offset-0"
-                >
-                  <Link href="#">
-                    <ExternalLink size={13} />
-                    Live
-                  </Link>
-                </Button>
-              </div>
-              <Button
-                asChild
-                className="w-full h-10 bg-[#1A2F38] text-[#F2EFE9] font-black uppercase text-xs sm:text-sm gap-2 hover:bg-[#1A2F38]/90 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0"
-              >
-                <Link href="mailto:veli.karaca01@gmail.com">
-                  <Sparkles size={15} />
-                  Initialiser Contact
-                </Link>
-              </Button>
-            </div>
-          </div>
-
-          {/* STACK */}
-          <div className="w-full h-14 sm:h-16 bg-white border-[3px] border-[#1A2F38] flex items-center px-3 sm:px-5 gap-3 overflow-x-auto no-scrollbar shadow-[4px_4px_0_0_#1A2F38] shrink-0">
-            <div className="flex items-center gap-2 shrink-0 border-r-2 border-[#1A2F38]/10 pr-3">
-              <Zap className="text-[#D98E32] w-5 h-5" strokeWidth={3} />
-              <span className="text-sm sm:text-base font-black uppercase">
-                Stack
-              </span>
-            </div>
-            <div className="flex gap-2 sm:gap-3">
-              {activeProject.tags.map((tag, i) => (
-                <span
-                  key={i}
-                  className="whitespace-nowrap border-2 border-[#1A2F38] px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-black uppercase shrink-0 bg-white"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+          <div className="absolute bottom-2 left-3 z-10 w-[90%] pointer-events-none">
+            <h2 className="text-2xl sm:text-3xl font-black uppercase italic leading-[0.85] text-[#F2EFE9] drop-shadow-[3px_3px_0_#1A2F38]">
+              {activeProject.title}
+            </h2>
           </div>
         </div>
 
-        {/* FOOTER — fixe en bas, hors du scroll */}
-        <footer className="h-7 flex items-center justify-between px-3 text-[9px] font-bold opacity-40 uppercase shrink-0 mt-1">
+        {/* DESCRIPTION — flex-[4] */}
+        <div className="flex-[4] bg-white border-[3px] border-[#1A2F38] flex flex-col shadow-[4px_4px_0_0_#1A2F38] shrink-1 min-h-0 overflow-hidden">
+          <div className="flex-1 p-3 sm:p-4 space-y-2 overflow-hidden">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-1.5">
+                <Target size={12} />
+                <span className="text-[8px] font-black uppercase tracking-widest opacity-40 italic">
+                  Technical_Description
+                </span>
+              </div>
+              {activeProject.isNew && (
+                <Badge className="bg-[#D98E32] text-white px-2 py-0.5 text-[7px] font-black uppercase italic border-0 rounded-none shrink-0">
+                  New_Release_v1.0
+                </Badge>
+              )}
+            </div>
+            <Separator className="bg-[#1A2F38]/10" />
+            <p className="text-xs sm:text-sm font-bold uppercase leading-snug italic line-clamp-4 sm:line-clamp-5">
+              {activeProject.description}
+            </p>
+          </div>
+          <div className="p-2 sm:p-3 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50 shrink-0 space-y-1.5">
+            <div className="flex gap-2">
+              <Button
+                asChild
+                variant="outline"
+                className="flex-1 border-2 border-[#1A2F38] h-8 sm:h-9 text-[10px] font-black uppercase hover:bg-[#1A2F38] hover:text-white rounded-none bg-transparent text-[#1A2F38] gap-1 focus-visible:ring-0 focus-visible:ring-offset-0"
+              >
+                <Link href="#">
+                  <Github size={11} />
+                  Github
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="flex-1 border-2 border-[#1A2F38] h-8 sm:h-9 text-[10px] font-black uppercase hover:bg-[#1A2F38] hover:text-white rounded-none bg-transparent text-[#1A2F38] gap-1 focus-visible:ring-0 focus-visible:ring-offset-0"
+              >
+                <Link href="#">
+                  <ExternalLink size={11} />
+                  Live
+                </Link>
+              </Button>
+            </div>
+            <Button
+              asChild
+              className="w-full h-8 sm:h-9 bg-[#1A2F38] text-[#F2EFE9] font-black uppercase text-[10px] sm:text-xs gap-1.5 hover:bg-[#1A2F38]/90 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            >
+              <Link href="mailto:veli.karaca01@gmail.com">
+                <Sparkles size={12} />
+                Initialiser Contact
+              </Link>
+            </Button>
+          </div>
+        </div>
+
+        {/* STACK — hauteur fixe compacte */}
+        <div className="h-10 sm:h-11 bg-white border-[3px] border-[#1A2F38] flex items-center px-3 gap-3 overflow-x-auto no-scrollbar shadow-[4px_4px_0_0_#1A2F38] shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0 border-r-2 border-[#1A2F38]/10 pr-3">
+            <Zap className="text-[#D98E32] w-4 h-4" strokeWidth={3} />
+            <span className="text-xs font-black uppercase">Stack</span>
+          </div>
+          <div className="flex gap-2">
+            {activeProject.tags.map((tag, i) => (
+              <span
+                key={i}
+                className="whitespace-nowrap border-2 border-[#1A2F38] px-2 py-1 text-[10px] sm:text-xs font-black uppercase shrink-0 bg-white"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* FOOTER */}
+        <footer className="h-5 flex items-center justify-between px-1 text-[8px] font-bold opacity-40 uppercase shrink-0">
           <div className="flex gap-3 italic">
             <span>Deployment: Secure</span>
             <span className="hidden sm:inline">Index: VK_PROD</span>
@@ -344,7 +337,7 @@ export default function ProjetPage() {
         </footer>
       </main>
 
-      {/* ── DESKTOP (xl+) : hauteur fixe, pas de scroll ── */}
+      {/* ── DESKTOP (xl+) ── */}
       <main className="hidden xl:flex h-[100dvh] w-full bg-[#F2EFE9] text-[#1A2F38] font-mono flex-col p-4 selection:bg-[#1A2F38] selection:text-[#F2EFE9] overflow-hidden">
         {/* HEADER */}
         <header className="h-20 w-full flex items-center justify-between px-6 border-[3px] border-[#1A2F38] bg-white mb-3 shadow-[4px_4px_0_0_#1A2F38] shrink-0">
