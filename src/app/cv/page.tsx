@@ -27,7 +27,7 @@ interface TimelineItemProps {
   date: string;
   title: string;
   company: string;
-  tasks: string[];
+  tasks: (string | React.ReactNode)[];
 }
 
 interface SkillGroupProps {
@@ -71,22 +71,32 @@ const CV_DATA = {
   ],
   experiences: [
     {
+      date: "2022 — Présent",
+      company: "Freelance",
+      title: "Développeur Full Stack Indépendant",
+      tasks: [
+        <span key="1">
+          E-commerce complet avec un back-office robuste et un front-end
+          entièrement sur mesure (Node.js, PostgreSQL, Next.js, Tailwind,
+          shadcn/ui, framer motion, vercel). (New 2025 — 2026). Partenariat avec
+          la <strong>Métropole de Lyon</strong>
+        </span>,
+        <span key="2">
+          Outil de gestion de chantier et suivi de production en temps réel
+          dédié aux artisans du bâtiment. Simplification des processus complexes
+          (Next.js, Supabase, vercel). (New 2025 — 2026). Partenariat avec la{" "}
+          <strong>Métropole de Lyon</strong>
+        </span>,
+        "Sites Vitrines : Création d'interfaces haute performance moderne.",
+      ],
+    },
+    {
       date: "2025 — 2026",
       company: "DEVELOPPEUR GRANDS SYSTEMES",
       title: "Stage - AJC Formation",
       tasks: [
         "Environnement Mainframe z/OS.",
         "Environnement MVS, apprendre à développer des programmes Batch et transactionnels avec accès aux fichiers et bases de données relationnelles.",
-      ],
-    },
-    {
-      date: "2022 — Présent",
-      company: "Freelance",
-      title: "Développeur Full Stack Indépendant",
-      tasks: [
-        "E-commerce complet avec un back-office robuste et un front-end entièrement sur mesure (Node.js, PostgreSQL, Next.js, Tailwind, shadcn/ui, framer motion, vercel). (New 2025 — 2026). Partenariat avec la Métropole de Lyon",
-        "Outil de gestion de chantier et suivi de production en temps réel dédié aux artisans du bâtiment. Simplification des processus complexes (Next.js, Supabase, vercel). (New 2025 — 2026). Partenariat avec la Métropole de Lyon",
-        "Sites Vitrines : Création d'interfaces haute performance moderne.",
       ],
     },
     {
@@ -152,10 +162,16 @@ const CV_DATA = {
   ],
   education: [
     {
+      title: "Certificat d'aptitude professionnelle & Entrepreneuriat",
+      school: "emlyon business school - Lyon",
+      date: "Mars 2026 — Sept. 2026",
+      accent: true,
+    },
+    {
       title: "Certificat Grands Systèmes",
       school: "AJC Formation - Neuilly-sur-Seine",
       date: "2025 — 2026",
-      accent: true,
+      accent: false,
     },
     {
       title: "Licence - Responsable de projet Web et Mobile",
