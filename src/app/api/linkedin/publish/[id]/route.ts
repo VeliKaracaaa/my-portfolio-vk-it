@@ -55,7 +55,7 @@ export async function POST(
         },
       );
       const registerData = await registerRes.json();
-      console.log("Image register:", JSON.stringify(registerData));
+      // console.log("Image register:", JSON.stringify(registerData));
 
       const uploadUrl =
         registerData?.value?.uploadMechanism?.[
@@ -102,7 +102,7 @@ export async function POST(
         },
       );
       const initData = await initRes.json();
-      console.log("Video register:", JSON.stringify(initData));
+      // console.log("Video register:", JSON.stringify(initData));
 
       const videoUploadUrl =
         initData?.value?.uploadMechanism?.[
