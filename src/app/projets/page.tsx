@@ -149,11 +149,22 @@ export default function ProjetPage() {
   const currentYear = new Date().getFullYear();
 
   useEffect(() => setMounted(true), []);
+
+  // Bloque le scroll du body sur mobile — se remet à 0 quand on quitte la page
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    document.body.style.height = "100dvh";
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.height = "";
+    };
+  }, []);
+
   if (!mounted) return null;
 
   return (
     <>
-      {/* ── MOBILE / TABLETTE (< xl) — tout tient dans l'écran, 0 scroll ── */}
+      {/* ── MOBILE / TABLETTE (< xl) ── */}
       <main className="xl:hidden h-[100dvh] w-full bg-[#F2EFE9] text-[#1A2F38] font-mono flex flex-col p-2 sm:p-3 selection:bg-[#1A2F38] selection:text-[#F2EFE9] overflow-hidden gap-2 sm:gap-3">
         {/* HEADER */}
         <header className="h-12 sm:h-14 w-full flex items-center justify-between px-3 sm:px-6 border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38] shrink-0">
@@ -228,7 +239,7 @@ export default function ProjetPage() {
           ))}
         </nav>
 
-        {/* IMAGE — flex-[3] */}
+        {/* IMAGE */}
         <div className="flex-[3] relative border-[3px] border-[#1A2F38] bg-white overflow-hidden shrink-1 min-h-0">
           <Image
             src={activeProject.image}
@@ -253,7 +264,7 @@ export default function ProjetPage() {
           </div>
         </div>
 
-        {/* DESCRIPTION — flex-[4] */}
+        {/* DESCRIPTION */}
         <div className="flex-[4] bg-white border-[3px] border-[#1A2F38] flex flex-col shadow-[4px_4px_0_0_#1A2F38] shrink-1 min-h-0 overflow-hidden">
           <div className="flex-1 p-3 sm:p-4 space-y-2 overflow-hidden">
             <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -309,7 +320,7 @@ export default function ProjetPage() {
           </div>
         </div>
 
-        {/* STACK — hauteur fixe compacte */}
+        {/* STACK */}
         <div className="h-10 sm:h-11 bg-white border-[3px] border-[#1A2F38] flex items-center px-3 gap-3 overflow-x-auto no-scrollbar shadow-[4px_4px_0_0_#1A2F38] shrink-0">
           <div className="flex items-center gap-1.5 shrink-0 border-r-2 border-[#1A2F38]/10 pr-3">
             <Zap className="text-[#D98E32] w-4 h-4" strokeWidth={3} />
