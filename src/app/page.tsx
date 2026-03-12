@@ -95,7 +95,7 @@ function BentoCard({ card, index }: { card: CardData; index: number }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
       whileHover={{ y: -6 }}
-      className={`${card.grid} relative rounded-[2.5rem] overflow-hidden bg-white border border-slate-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.03)] group transition-all duration-500 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.08)]`}
+      className={`${card.grid} relative rounded-[2.5rem] overflow-hidden bg-white border border-slate-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.03)] group transition-all duration-500 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.08)] min-h-[320px] md:min-h-0`}
     >
       <Link href={card.href} className="absolute inset-0 z-30" />
 
@@ -113,14 +113,14 @@ function BentoCard({ card, index }: { card: CardData; index: number }) {
         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent" />
       </div>
 
-      <div className="absolute inset-0 p-10 flex flex-col justify-end z-10">
+      <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-end z-10">
         <div
           className={`w-fit px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.15em] mb-4 shadow-sm border border-white/50 ${card.badgeColor}`}
         >
           {card.tag}
         </div>
 
-        <h2 className="text-4xl font-black text-[#0F172A] mb-2 tracking-tight">
+        <h2 className="text-3xl md:text-4xl font-black text-[#0F172A] mb-2 tracking-tight">
           {card.title}
         </h2>
 
@@ -140,7 +140,7 @@ function BentoCard({ card, index }: { card: CardData; index: number }) {
 
 export default function Home() {
   return (
-    <main className="h-screen w-full bg-[#FBFBFE] text-[#1E293B] p-6 md:p-12 overflow-hidden flex flex-col font-sans relative">
+    <main className="min-h-screen md:h-screen w-full bg-[#FBFBFE] text-[#1E293B] p-6 md:p-12 overflow-x-hidden md:overflow-hidden flex flex-col font-sans relative">
       {/* Texture de fond */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] contrast-150 z-50 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
@@ -189,7 +189,7 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <footer className="mt-8 flex justify-between items-center text-[#94A3B8] text-[9px] font-black tracking-[0.3em] uppercase">
+        <footer className="mt-8 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0 text-[#94A3B8] text-[9px] font-black tracking-[0.3em] uppercase text-center md:text-left">
           <p>© {new Date().getFullYear()} VK-IT Studio</p>
           <div className="flex gap-2 items-center">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
