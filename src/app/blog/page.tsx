@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { createClient } from "redis";
 
 interface Post {
@@ -52,6 +54,7 @@ export default async function BlogPage() {
           {posts.map((post) => (
             <article key={post.id}>
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 hover:shadow-md transition-shadow">
+
                 {/* Image si présente */}
                 {post.imageBase64 && (
                   <img
