@@ -170,7 +170,7 @@ export default function ProjetPage() {
     };
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) return <div className="h-[100dvh] w-full bg-[#F2EFE9]" />;
 
   return (
     <>

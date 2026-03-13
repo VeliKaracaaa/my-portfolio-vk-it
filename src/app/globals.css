@@ -49,6 +49,7 @@
 body {
   /* background-color: white; */
   /* On supprime "white" pour laisser Tailwind gérer via @layer base */
+  background-color: #FBFBFE;
   min-height: 100vh;
 }
 
