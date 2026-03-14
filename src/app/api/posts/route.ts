@@ -42,30 +42,45 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     content = formData.get("content") as string;
 
+    // Image → stockée en Base64 dans Redis (taille raisonnable)
     const image = formData.get("image") as File | null;
-    const video = formData.get("video") as File | null;
-    const document = formData.get("document") as File | null;
-
     if (image && image.size > 0) {
       const buffer = await image.arrayBuffer();
       imageBase64 = Buffer.from(buffer).toString("base64");
       imageType = image.type;
     }
 
-    if (video && video.size > 0) {
+    // Vidéo → uploadée côté client via /api/blob/upload
+    // On reçoit ici uniquement l'URL (quelques octets, pas de limite 413)
+    const videoUrlFromForm = formData.get("videoUrl") as string | null;
+    if (videoUrlFromForm) {
+      videoUrl = videoUrlFromForm;
+    }
+
+    // PDF → uploadé côté client via /api/blob/upload
+    // On reçoit ici uniquement l'URL et le nom
+    const documentUrlFromForm = formData.get("documentUrl") as string | null;
+    const documentNameFromForm = formData.get("documentName") as string | null;
+    if (documentUrlFromForm) {
+      documentUrl = documentUrlFromForm;
+      documentName = documentNameFromForm;
+    }
+
+    // Fallback : si la vidéo/PDF est envoyée directement (ex: en local sans client upload)
+    const video = formData.get("video") as File | null;
+    if (video && video.size > 0 && !videoUrl) {
       const blob = await put(`videos/${Date.now()}-${video.name}`, video, {
         access: "public",
       });
       videoUrl = blob.url;
     }
 
-    if (document && document.size > 0) {
+    const document = formData.get("document") as File | null;
+    if (document && document.size > 0 && !documentUrl) {
       const blob = await put(
         `documents/${Date.now()}-${document.name}`,
         document,
-        {
-          access: "public",
-        },
+        { access: "public" },
       );
       documentUrl = blob.url;
       documentName = document.name;

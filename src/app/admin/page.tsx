@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { upload } from "@vercel/blob/client";
 
 interface Post {
   id: string;
@@ -102,27 +103,66 @@ export default function AdminPage() {
     if (!content.trim()) return;
     setLoading(true);
 
-    const formData = new FormData();
-    formData.append("content", content);
-    if (image) formData.append("image", image);
-    if (video) formData.append("video", video);
-    if (document) formData.append("document", document);
+    try {
+      let videoUrl: string | null = null;
+      let documentUrl: string | null = null;
+      let documentName: string | null = null;
 
-    const res = await fetch("/api/posts", {
-      method: "POST",
-      body: formData,
-    });
+      // Upload vidéo directement vers Vercel Blob depuis le navigateur
+      // → contourne la limite 4,5 Mo de Vercel serverless
+      if (video) {
+        const blob = await upload(`videos/${Date.now()}-${video.name}`, video, {
+          access: "public",
+          handleUploadUrl: "/api/blob/upload",
+        });
+        videoUrl = blob.url;
+      }
 
-    if (res.ok) {
-      setContent("");
-      setImage(null);
-      setImagePreview(null);
-      setVideo(null);
-      setVideoPreview(null);
-      setDocument(null);
-      setMessage({ type: "success", text: "Post sauvegardé !" });
-      fetchPosts();
+      // Upload PDF directement vers Vercel Blob depuis le navigateur
+      if (document) {
+        const blob = await upload(
+          `documents/${Date.now()}-${document.name}`,
+          document,
+          {
+            access: "public",
+            handleUploadUrl: "/api/blob/upload",
+          },
+        );
+        documentUrl = blob.url;
+        documentName = document.name;
+      }
+
+      // On envoie au serveur : texte + image (base64) + URLs blob
+      // Les URLs sont légères (quelques octets) → pas de limite 413
+      const formData = new FormData();
+      formData.append("content", content);
+      if (image) formData.append("image", image);
+      if (videoUrl) formData.append("videoUrl", videoUrl);
+      if (documentUrl) formData.append("documentUrl", documentUrl);
+      if (documentName) formData.append("documentName", documentName);
+
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        setContent("");
+        setImage(null);
+        setImagePreview(null);
+        setVideo(null);
+        setVideoPreview(null);
+        setDocument(null);
+        setMessage({ type: "success", text: "Post sauvegardé !" });
+        fetchPosts();
+      } else {
+        setMessage({ type: "error", text: "Erreur lors de la sauvegarde" });
+      }
+    } catch (err) {
+      console.error("Erreur upload:", err);
+      setMessage({ type: "error", text: "Erreur lors de l'upload du fichier" });
     }
+
     setLoading(false);
     setTimeout(() => setMessage(null), 3000);
   }
@@ -364,7 +404,6 @@ export default function AdminPage() {
             key={post.id}
             className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5"
           >
-            {/* Affichage image */}
             {post.imageBase64 && (
               <img
                 src={`data:${post.imageType};base64,${post.imageBase64}`}
@@ -372,8 +411,6 @@ export default function AdminPage() {
                 className="w-full max-h-48 object-cover rounded-xl mb-3 border border-slate-100"
               />
             )}
-
-            {/* Affichage vidéo */}
             {post.videoUrl && (
               <video
                 src={post.videoUrl}
@@ -381,8 +418,6 @@ export default function AdminPage() {
                 controls
               />
             )}
-
-            {/* Affichage document PDF */}
             {post.documentUrl && (
               <a
                 href={post.documentUrl}
@@ -415,11 +450,9 @@ export default function AdminPage() {
                 </svg>
               </a>
             )}
-
             <p className="text-slate-800 text-sm leading-relaxed whitespace-pre-wrap mb-4">
               {post.content}
             </p>
-
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-xs text-slate-400">
