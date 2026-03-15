@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://mon-portfolio-sage-six.vercel.app"),
   title: "vk-IT | Développeur Full Stack - Portfolio",
   description:
     "Portfolio de vk-IT, développeur Full Stack spécialisé en React, Next.js et Node.js. Découvrez mes projets, mon CV et mes compétences.",
