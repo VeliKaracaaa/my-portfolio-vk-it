@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Github, Linkedin, ArrowUpRight } from "lucide-react";
+import { Github, Linkedin, ArrowUpRight, Settings } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface CardData {
@@ -207,11 +207,21 @@ export default function Home() {
         </div>
 
         {/* Footer */}
+        {/* Footer */}
         <footer className="mt-8 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0 text-[#94A3B8] text-[9px] font-black tracking-[0.3em] uppercase text-center md:text-left">
           <p>© {new Date().getFullYear()} VK-IT Studio</p>
-          <div className="flex gap-2 items-center">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Disponible pour de nouveaux projets</span>
+          <div className="flex gap-4 items-center">
+            <div className="flex gap-2 items-center">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Disponible pour de nouveaux projets</span>
+            </div>
+            <Link
+              href="/admin"
+              className="opacity-30 hover:opacity-100 transition-opacity text-[8px] font-black tracking-widest uppercase flex items-center gap-1"
+            >
+              <Settings size={16} />
+              <span>Admin</span>
+            </Link>
           </div>
         </footer>
       </div>
