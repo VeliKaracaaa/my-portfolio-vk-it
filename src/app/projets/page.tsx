@@ -15,7 +15,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const projects = [
@@ -24,11 +23,10 @@ const projects = [
     title: "E-Commerce Custom",
     category: "Headless Commerce",
     description:
-      "Une solution de vente en ligne complète avec un back-office robuste et un front-end entièrement sur mesure. Architecture MedusaJS pour une liberté totale.",
+      "Une solution de vente en ligne complète avec un back-office robuste et un font-end entièrement sur mesure. Architecture MedusaJS pour une liberté totale.",
     tags: ["Next.js", "MedusaJS", "Tailwind", "Framer Motion"],
     image:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000",
-    isNew: true,
   },
   {
     id: "02",
@@ -39,7 +37,6 @@ const projects = [
     tags: ["Next.js", "Supabase", "Vercel"],
     image:
       "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1000",
-    isNew: true,
   },
   {
     id: "03",
@@ -50,7 +47,6 @@ const projects = [
     tags: ["Next.js", "GSAP", "Tailwind"],
     image:
       "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=1000",
-    isNew: false,
   },
   {
     id: "04",
@@ -61,7 +57,6 @@ const projects = [
     tags: ["RSC", "SEO", "UI/UX"],
     image:
       "https://images.unsplash.com/photo-1556742044-3c52d6e88c62?q=80&w=1000",
-    isNew: false,
   },
 ];
 
@@ -71,10 +66,12 @@ export default function ProjetPage() {
   const [activeProject, setActiveProject] = useState<Project>(projects[0]);
   const [mounted, setMounted] = useState(false);
   const currentYear = new Date().getFullYear();
+  // Date de mise à jour formatée
+  const lastUpdate = "16.03.2026";
 
   useEffect(() => {
     setMounted(true);
-    // Bloquer le rebond Safari au niveau du body
+    // Verrouillage du scroll global pour éviter le rebond blanc sur mobile
     document.body.style.overflow = "hidden";
     document.body.style.overscrollBehavior = "none";
     return () => {
@@ -87,9 +84,9 @@ export default function ProjetPage() {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-[#F2EFE9] select-none touch-none">
-      {/* ── MOBILE VIEW (< xl) ── */}
+      {/* ── MOBILE / TABLETTE VIEW (< xl) ── */}
       <main className="xl:hidden flex flex-col h-dvh w-full p-2 sm:p-4 gap-2 font-mono text-[#1A2F38]">
-        {/* HEADER - Bloqué en haut */}
+        {/* HEADER MOBILE */}
         <header className="h-14 shrink-0 flex items-center justify-between px-3 border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38]">
           <Button
             asChild
@@ -121,7 +118,9 @@ export default function ProjetPage() {
                   {projects.map((p) => (
                     <button
                       key={p.id}
-                      onClick={() => setActiveProject(p)}
+                      onClick={() => {
+                        setActiveProject(p);
+                      }}
                       className={`p-4 text-left border-b-[1px] border-[#1A2F38]/10 font-black uppercase transition-colors ${
                         activeProject.id === p.id
                           ? "bg-[#1A2F38] text-white"
@@ -140,7 +139,7 @@ export default function ProjetPage() {
           </div>
         </header>
 
-        {/* TABS RAPIDES */}
+        {/* NAVIGATION RAPIDE */}
         <nav className="flex gap-1 shrink-0">
           {projects.map((p) => (
             <button
@@ -157,7 +156,7 @@ export default function ProjetPage() {
           ))}
         </nav>
 
-        {/* IMAGE - Zone flexible */}
+        {/* IMAGE */}
         <div className="flex-[1.2] min-h-0 relative border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38] overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
@@ -176,7 +175,7 @@ export default function ProjetPage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1A2F38] via-transparent to-transparent opacity-60" />
               <div className="absolute bottom-3 left-3 right-3">
-                <Badge className="bg-[#D98E32] text-white rounded-none border-0 mb-1 text-[8px] font-black uppercase italic">
+                <Badge className="bg-[#1A2F38] text-white rounded-none border-0 mb-1 text-[8px] font-black uppercase italic">
                   {activeProject.category}
                 </Badge>
                 <h2 className="text-2xl font-black text-white uppercase italic leading-none drop-shadow-[2px_2px_0_#1A2F38]">
@@ -187,7 +186,7 @@ export default function ProjetPage() {
           </AnimatePresence>
         </div>
 
-        {/* CONTENU & BOUTONS - Zone scrollable interne si texte trop long */}
+        {/* DESCRIPTION ET ACTIONS */}
         <div className="flex-[1] min-h-0 bg-white border-[3px] border-[#1A2F38] shadow-[4px_4px_0_0_#1A2F38] flex flex-col overflow-hidden">
           <div className="flex-1 p-3 overflow-y-auto touch-auto scrollbar-hide">
             <div className="flex items-center gap-2 mb-2 opacity-40">
@@ -211,7 +210,6 @@ export default function ProjetPage() {
             </div>
           </div>
 
-          {/* ACTIONS - Toujours bloquées en bas de la carte */}
           <div className="p-2 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50 flex flex-col gap-2 shrink-0">
             <div className="flex gap-2">
               <Button
@@ -233,7 +231,6 @@ export default function ProjetPage() {
           </div>
         </div>
 
-        {/* FOOTER MINI */}
         <footer className="h-4 flex items-center justify-between px-1 text-[8px] font-black uppercase opacity-30 shrink-0">
           <span>Status: Online</span>
           <span>© {currentYear} VK_SYSTEMS</span>
@@ -242,6 +239,7 @@ export default function ProjetPage() {
 
       {/* ── DESKTOP VIEW (xl+) ── */}
       <main className="hidden xl:flex flex-col h-dvh w-full p-6 gap-4 font-mono text-[#1A2F38]">
+        {/* HEADER DESKTOP AVEC TA DATE */}
         <header className="h-20 shrink-0 flex items-center justify-between px-8 border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38]">
           <Button
             asChild
@@ -258,7 +256,7 @@ export default function ProjetPage() {
                 System_Clock
               </p>
               <p className="text-sm font-black uppercase italic">
-                March_2026 // Active
+                Dernière mise à jour // {lastUpdate}
               </p>
             </div>
             <div className="w-14 h-14 bg-[#1A2F38] flex items-center justify-center text-white border-4 border-[#1A2F38]">
@@ -268,6 +266,7 @@ export default function ProjetPage() {
         </header>
 
         <div className="flex-1 flex gap-4 min-h-0">
+          {/* NAVIGATION LATERALE */}
           <nav className="w-24 shrink-0 flex flex-col gap-2">
             {projects.map((p) => (
               <button
@@ -288,6 +287,7 @@ export default function ProjetPage() {
 
           <div className="flex-1 flex flex-col gap-4 min-h-0">
             <div className="flex-1 flex gap-4 min-h-0">
+              {/* VISUEL PRINCIPAL */}
               <div className="flex-[1.8] relative border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38] overflow-hidden group">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -305,6 +305,13 @@ export default function ProjetPage() {
                       className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                     />
                     <div className="absolute inset-0 bg-[#1A2F38]/10" />
+
+                    <div className="absolute top-6 left-6">
+                      <Badge className="bg-[#1A2F38] text-white rounded-none border-0 px-3 py-1 font-black uppercase italic text-xs">
+                        {activeProject.category}
+                      </Badge>
+                    </div>
+
                     <h2 className="absolute bottom-10 left-10 text-8xl font-black text-white italic uppercase drop-shadow-[6px_6px_0_#1A2F38] leading-none">
                       {activeProject.title}
                     </h2>
@@ -312,12 +319,13 @@ export default function ProjetPage() {
                 </AnimatePresence>
               </div>
 
+              {/* PANNEAU INFOS */}
               <div className="flex-1 bg-white border-[4px] border-[#1A2F38] shadow-[8px_8px_0_0_#1A2F38] flex flex-col overflow-hidden">
                 <div className="flex-1 p-10 overflow-y-auto">
                   <div className="flex items-center gap-3 mb-8 opacity-30">
                     <Target size={24} />
                     <span className="text-xs font-black uppercase italic tracking-[0.2em]">
-                      Project_Specifications_v3.4
+                      Technical_Payload
                     </span>
                   </div>
                   <AnimatePresence mode="wait">
@@ -342,6 +350,7 @@ export default function ProjetPage() {
                     ))}
                   </div>
                 </div>
+
                 <div className="p-8 border-t-[4px] border-[#1A2F38] bg-[#F2EFE9]/50 flex flex-col gap-4 shrink-0">
                   <div className="grid grid-cols-2 gap-4">
                     <Button
@@ -357,19 +366,16 @@ export default function ProjetPage() {
                       Launch Live
                     </Button>
                   </div>
-                  <Button className="h-16 bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-xl shadow-[6px_6px_0_0_#D98E32] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform">
+                  <Button className="h-16 bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-xl shadow-[6px_6px_0_0_#1A2F38]/10 hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform">
                     Initialiser Contact // Connect
                   </Button>
                 </div>
               </div>
             </div>
 
+            {/* FOOTER DESKTOP CLEAN */}
             <footer className="h-10 flex items-center justify-between px-2 font-black uppercase text-[10px] opacity-40">
-              <div className="flex gap-6 italic">
-                <span>Core: NextJS_14_Stable</span>
-                <span>Port: 3000</span>
-                <span>User: VK_ADMIN</span>
-              </div>
+              <span className="italic">Deployment_Status: Stable_v1.0</span>
               <span>© {currentYear} Veli Karaca Portfolio</span>
             </footer>
           </div>
