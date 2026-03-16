@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   Sparkles,
-  Zap,
   Target,
   Cpu,
   ExternalLink,
@@ -15,7 +14,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const projects = [
   {
@@ -66,12 +64,10 @@ export default function ProjetPage() {
   const [activeProject, setActiveProject] = useState<Project>(projects[0]);
   const [mounted, setMounted] = useState(false);
   const currentYear = new Date().getFullYear();
-  // Date de mise à jour formatée
   const lastUpdate = "16.03.2026";
 
   useEffect(() => {
     setMounted(true);
-    // Verrouillage du scroll global pour éviter le rebond blanc sur mobile
     document.body.style.overflow = "hidden";
     document.body.style.overscrollBehavior = "none";
     return () => {
@@ -86,7 +82,7 @@ export default function ProjetPage() {
     <div className="fixed inset-0 overflow-hidden bg-[#F2EFE9] select-none touch-none">
       {/* ── MOBILE / TABLETTE VIEW (< xl) ── */}
       <main className="xl:hidden flex flex-col h-dvh w-full p-2 sm:p-4 gap-2 font-mono text-[#1A2F38]">
-        {/* HEADER MOBILE */}
+        {/* HEADER MOBILE - REMPLACEMENT PROJ_ PAR DATE */}
         <header className="h-14 shrink-0 flex items-center justify-between px-3 border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38]">
           <Button
             asChild
@@ -97,49 +93,23 @@ export default function ProjetPage() {
               <ArrowLeft size={18} strokeWidth={3} />
             </Link>
           </Button>
-          <div className="flex items-center gap-2">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="border-2 border-[#1A2F38] rounded-none h-9 px-3 font-black text-xs italic uppercase"
-                >
-                  Proj_{activeProject.id}
-                </Button>
-              </SheetTrigger>
-              <SheetContent
-                side="left"
-                className="w-[280px] bg-[#F2EFE9] border-r-[3px] border-[#1A2F38] p-0 font-mono"
-              >
-                <div className="p-4 border-b-[3px] border-[#1A2F38] font-black uppercase text-sm">
-                  Base_De_Données
-                </div>
-                <div className="flex flex-col">
-                  {projects.map((p) => (
-                    <button
-                      key={p.id}
-                      onClick={() => {
-                        setActiveProject(p);
-                      }}
-                      className={`p-4 text-left border-b-[1px] border-[#1A2F38]/10 font-black uppercase transition-colors ${
-                        activeProject.id === p.id
-                          ? "bg-[#1A2F38] text-white"
-                          : "bg-white/50"
-                      }`}
-                    >
-                      {p.id} // {p.title}
-                    </button>
-                  ))}
-                </div>
-              </SheetContent>
-            </Sheet>
+
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="text-[7px] font-black opacity-40 uppercase leading-none">
+                Mise à jour
+              </p>
+              <p className="text-[10px] font-black uppercase italic leading-none">
+                {lastUpdate}
+              </p>
+            </div>
             <div className="w-9 h-9 bg-[#1A2F38] flex items-center justify-center text-white border-2 border-[#1A2F38]">
               <Cpu size={18} className="animate-pulse" />
             </div>
           </div>
         </header>
 
-        {/* NAVIGATION RAPIDE */}
+        {/* NAVIGATION TABS */}
         <nav className="flex gap-1 shrink-0">
           {projects.map((p) => (
             <button
@@ -156,7 +126,7 @@ export default function ProjetPage() {
           ))}
         </nav>
 
-        {/* IMAGE */}
+        {/* IMAGE ZONE */}
         <div className="flex-[1.2] min-h-0 relative border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38] overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
@@ -186,7 +156,7 @@ export default function ProjetPage() {
           </AnimatePresence>
         </div>
 
-        {/* DESCRIPTION ET ACTIONS */}
+        {/* DETAILS ZONE */}
         <div className="flex-[1] min-h-0 bg-white border-[3px] border-[#1A2F38] shadow-[4px_4px_0_0_#1A2F38] flex flex-col overflow-hidden">
           <div className="flex-1 p-3 overflow-y-auto touch-auto scrollbar-hide">
             <div className="flex items-center gap-2 mb-2 opacity-40">
@@ -239,7 +209,7 @@ export default function ProjetPage() {
 
       {/* ── DESKTOP VIEW (xl+) ── */}
       <main className="hidden xl:flex flex-col h-dvh w-full p-6 gap-4 font-mono text-[#1A2F38]">
-        {/* HEADER DESKTOP AVEC TA DATE */}
+        {/* HEADER DESKTOP */}
         <header className="h-20 shrink-0 flex items-center justify-between px-8 border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38]">
           <Button
             asChild
@@ -266,7 +236,7 @@ export default function ProjetPage() {
         </header>
 
         <div className="flex-1 flex gap-4 min-h-0">
-          {/* NAVIGATION LATERALE */}
+          {/* SIDEBAR NAVIGATION */}
           <nav className="w-24 shrink-0 flex flex-col gap-2">
             {projects.map((p) => (
               <button
@@ -287,7 +257,7 @@ export default function ProjetPage() {
 
           <div className="flex-1 flex flex-col gap-4 min-h-0">
             <div className="flex-1 flex gap-4 min-h-0">
-              {/* VISUEL PRINCIPAL */}
+              {/* MAIN VISUAL */}
               <div className="flex-[1.8] relative border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38] overflow-hidden group">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -319,7 +289,7 @@ export default function ProjetPage() {
                 </AnimatePresence>
               </div>
 
-              {/* PANNEAU INFOS */}
+              {/* PANEL INFO */}
               <div className="flex-1 bg-white border-[4px] border-[#1A2F38] shadow-[8px_8px_0_0_#1A2F38] flex flex-col overflow-hidden">
                 <div className="flex-1 p-10 overflow-y-auto">
                   <div className="flex items-center gap-3 mb-8 opacity-30">
@@ -373,7 +343,6 @@ export default function ProjetPage() {
               </div>
             </div>
 
-            {/* FOOTER DESKTOP CLEAN */}
             <footer className="h-10 flex items-center justify-between px-2 font-black uppercase text-[10px] opacity-40">
               <span className="italic">Deployment_Status: Stable_v1.0</span>
               <span>© {currentYear} Veli Karaca Portfolio</span>
