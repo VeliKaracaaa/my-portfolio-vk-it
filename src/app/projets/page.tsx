@@ -16,11 +16,6 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const projects = [
@@ -29,8 +24,8 @@ const projects = [
     title: "E-Commerce Custom",
     category: "Headless Commerce",
     description:
-      "Une solution de vente en ligne complète avec un back-office robuste et un front-end entièrement sur mesure. Architecture MedusaJS pour une liberté totale et tunnel d'achat optimisé.",
-    tags: ["Next.js", "MedusaJS", "PostgreSQL", "Tailwind", "Framer Motion"],
+      "Une solution de vente en ligne complète avec un back-office robuste et un front-end entièrement sur mesure. Architecture MedusaJS pour une liberté totale.",
+    tags: ["Next.js", "MedusaJS", "Tailwind", "Framer Motion"],
     image:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000",
     isNew: true,
@@ -52,7 +47,7 @@ const projects = [
     category: "Creative Dev",
     description:
       "Exploration interactive mêlant profondeur visuelle et fluidité. Une démonstration de performance utilisant les meilleurs stacks actuels.",
-    tags: ["Next.js", "GSAP", "Framer Motion", "Tailwind"],
+    tags: ["Next.js", "GSAP", "Tailwind"],
     image:
       "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=1000",
     isNew: false,
@@ -63,7 +58,7 @@ const projects = [
     category: "Fullstack Expert",
     description:
       "Développement d'écosystèmes digitaux scalables. Focus sur le SEO (Lighthouse 100%) et l'accessibilité pour une portée maximale.",
-    tags: ["SEO", "UI/UX", "RSC", "Performance"],
+    tags: ["RSC", "SEO", "UI/UX"],
     image:
       "https://images.unsplash.com/photo-1556742044-3c52d6e88c62?q=80&w=1000",
     isNew: false,
@@ -72,44 +67,6 @@ const projects = [
 
 type Project = (typeof projects)[number];
 
-interface NavItemsProps {
-  activeProject: Project;
-  setActiveProject: (p: Project) => void;
-  onSelect?: () => void;
-}
-
-function NavItems({
-  activeProject,
-  setActiveProject,
-  onSelect,
-}: NavItemsProps) {
-  return (
-    <>
-      {projects.map((p) => (
-        <button
-          key={p.id}
-          onClick={() => {
-            setActiveProject(p);
-            onSelect?.();
-          }}
-          className={`flex-1 xl:flex-none xl:h-1/4 min-h-[56px] border-[3px] flex flex-col items-center justify-center transition-colors relative overflow-hidden ${
-            activeProject.id === p.id
-              ? "bg-[#1A2F38] text-[#F2EFE9] border-[#1A2F38]"
-              : "bg-white text-[#1A2F38] border-[#1A2F38]/20 hover:border-[#1A2F38]"
-          }`}
-        >
-          <span className="text-2xl md:text-3xl xl:text-5xl font-black xl:-rotate-90 italic">
-            {p.id}
-          </span>
-          {activeProject.id === p.id && (
-            <div className="absolute inset-0 border-4 border-white/20 pointer-events-none" />
-          )}
-        </button>
-      ))}
-    </>
-  );
-}
-
 export default function ProjetPage() {
   const [activeProject, setActiveProject] = useState<Project>(projects[0]);
   const [mounted, setMounted] = useState(false);
@@ -117,68 +74,81 @@ export default function ProjetPage() {
 
   useEffect(() => {
     setMounted(true);
-    // On laisse le CSS gérer le scroll, on ne force plus le overflow:hidden ici
-    // pour éviter les conflits avec le comportement natif du navigateur
+    // Bloquer le rebond Safari au niveau du body
+    document.body.style.overflow = "hidden";
+    document.body.style.overscrollBehavior = "none";
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.overscrollBehavior = "";
+    };
   }, []);
 
   if (!mounted) return <div className="h-dvh w-full bg-[#F2EFE9]" />;
 
   return (
-    <>
-      {/* ── VERSION MOBILE / TABLETTE ── */}
-      <main className="xl:hidden h-dvh w-full bg-[#F2EFE9] text-[#1A2F38] font-mono flex flex-col p-2 sm:p-3 overflow-hidden gap-2">
-        {/* HEADER */}
-        <header className="h-14 w-full flex items-center justify-between px-3 border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38] shrink-0">
+    <div className="fixed inset-0 overflow-hidden bg-[#F2EFE9] select-none touch-none">
+      {/* ── MOBILE VIEW (< xl) ── */}
+      <main className="xl:hidden flex flex-col h-dvh w-full p-2 sm:p-4 gap-2 font-mono text-[#1A2F38]">
+        {/* HEADER - Bloqué en haut */}
+        <header className="h-14 shrink-0 flex items-center justify-between px-3 border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38]">
           <Button
             asChild
             variant="outline"
-            className="border-2 border-[#1A2F38] h-9 px-2 rounded-none hover:bg-[#1A2F38] hover:text-white"
+            className="border-2 border-[#1A2F38] h-9 w-9 p-0 rounded-none"
           >
-            <Link href="/" className="flex items-center gap-2">
-              <ArrowLeft size={16} strokeWidth={3} />
+            <Link href="/">
+              <ArrowLeft size={18} strokeWidth={3} />
             </Link>
           </Button>
-
           <div className="flex items-center gap-2">
             <Sheet>
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
-                  className="border-2 border-[#1A2F38] rounded-none h-9 w-9 p-0 font-black"
+                  className="border-2 border-[#1A2F38] rounded-none h-9 px-3 font-black text-xs italic uppercase"
                 >
-                  <span className="text-xs italic">{activeProject.id}</span>
+                  Proj_{activeProject.id}
                 </Button>
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="w-64 bg-[#F2EFE9] border-r-[3px] border-[#1A2F38] p-0 font-mono"
+                className="w-[280px] bg-[#F2EFE9] border-r-[3px] border-[#1A2F38] p-0 font-mono"
               >
-                <div className="p-4 border-b-[3px] border-[#1A2F38] font-black uppercase text-xs">
-                  Menu Projets
+                <div className="p-4 border-b-[3px] border-[#1A2F38] font-black uppercase text-sm">
+                  Base_De_Données
                 </div>
-                <div className="flex flex-col h-full">
-                  <NavItems
-                    activeProject={activeProject}
-                    setActiveProject={setActiveProject}
-                  />
+                <div className="flex flex-col">
+                  {projects.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => setActiveProject(p)}
+                      className={`p-4 text-left border-b-[1px] border-[#1A2F38]/10 font-black uppercase transition-colors ${
+                        activeProject.id === p.id
+                          ? "bg-[#1A2F38] text-white"
+                          : "bg-white/50"
+                      }`}
+                    >
+                      {p.id} // {p.title}
+                    </button>
+                  ))}
                 </div>
               </SheetContent>
             </Sheet>
-            <div className="w-9 h-9 bg-[#1A2F38] flex items-center justify-center text-[#F2EFE9] border-2 border-[#1A2F38]">
+            <div className="w-9 h-9 bg-[#1A2F38] flex items-center justify-center text-white border-2 border-[#1A2F38]">
               <Cpu size={18} className="animate-pulse" />
             </div>
           </div>
         </header>
 
-        {/* NAVIGATION RAPIDE */}
+        {/* TABS RAPIDES */}
         <nav className="flex gap-1 shrink-0">
           {projects.map((p) => (
             <button
               key={p.id}
               onClick={() => setActiveProject(p)}
-              className={`flex-1 h-10 border-[2px] text-xs font-black italic transition-all ${
+              className={`flex-1 h-9 border-2 font-black italic text-xs transition-all ${
                 activeProject.id === p.id
-                  ? "bg-[#1A2F38] text-[#F2EFE9] border-[#1A2F38]"
+                  ? "bg-[#1A2F38] text-white border-[#1A2F38]"
                   : "bg-white border-[#1A2F38]/20"
               }`}
             >
@@ -187,170 +157,224 @@ export default function ProjetPage() {
           ))}
         </nav>
 
-        {/* IMAGE : Utilise flex-1 pour prendre l'espace restant sans dépasser */}
-        <div className="flex-1 relative border-[3px] border-[#1A2F38] bg-white overflow-hidden min-h-0">
-          <Image
-            src={activeProject.image}
-            alt={activeProject.title}
-            fill
-            priority
-            className="object-cover opacity-90"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1A2F38]/80 to-transparent" />
-          <div className="absolute bottom-3 left-3 right-3">
-            <h2 className="text-2xl font-black uppercase italic text-white leading-tight drop-shadow-md">
-              {activeProject.title}
-            </h2>
-          </div>
+        {/* IMAGE - Zone flexible */}
+        <div className="flex-[1.2] min-h-0 relative border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38] overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeProject.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={activeProject.image}
+                alt={activeProject.title}
+                fill
+                className="object-cover opacity-90"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1A2F38] via-transparent to-transparent opacity-60" />
+              <div className="absolute bottom-3 left-3 right-3">
+                <Badge className="bg-[#D98E32] text-white rounded-none border-0 mb-1 text-[8px] font-black uppercase italic">
+                  {activeProject.category}
+                </Badge>
+                <h2 className="text-2xl font-black text-white uppercase italic leading-none drop-shadow-[2px_2px_0_#1A2F38]">
+                  {activeProject.title}
+                </h2>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {/* DESCRIPTION : Utilise min-h-0 et flex-col pour s'ajuster */}
-        <div className="flex-[0.8] bg-white border-[3px] border-[#1A2F38] flex flex-col shadow-[4px_4px_0_0_#1A2F38] min-h-0">
-          <div className="flex-1 p-3 overflow-y-auto">
-            <div className="flex items-center gap-2 mb-2">
+        {/* CONTENU & BOUTONS - Zone scrollable interne si texte trop long */}
+        <div className="flex-[1] min-h-0 bg-white border-[3px] border-[#1A2F38] shadow-[4px_4px_0_0_#1A2F38] flex flex-col overflow-hidden">
+          <div className="flex-1 p-3 overflow-y-auto touch-auto scrollbar-hide">
+            <div className="flex items-center gap-2 mb-2 opacity-40">
               <Target size={14} />
-              <span className="text-[10px] font-black uppercase opacity-50 italic">
-                Technical_Specs
+              <span className="text-[10px] font-black uppercase italic tracking-tighter">
+                Technical_Payload
               </span>
             </div>
-            <p className="text-xs font-bold leading-tight uppercase italic">
+            <p className="text-xs font-bold uppercase italic leading-relaxed mb-4">
               {activeProject.description}
             </p>
+            <div className="flex flex-wrap gap-1">
+              {activeProject.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-[9px] border border-[#1A2F38]/30 px-1.5 py-0.5 font-black opacity-60 bg-[#F2EFE9]"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
           </div>
 
-          <div className="p-2 border-t-[2px] border-[#1A2F38] bg-[#F2EFE9]/50 flex flex-col gap-2 shrink-0">
+          {/* ACTIONS - Toujours bloquées en bas de la carte */}
+          <div className="p-2 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50 flex flex-col gap-2 shrink-0">
             <div className="flex gap-2">
-              <Button className="flex-1 h-9 rounded-none bg-[#1A2F38] text-white text-[10px] font-black uppercase">
-                <ExternalLink size={12} className="mr-1" /> Live
+              <Button
+                variant="outline"
+                className="flex-1 h-10 border-2 border-[#1A2F38] rounded-none bg-transparent font-black uppercase text-[10px]"
+              >
+                <Github size={14} className="mr-1" /> Code
               </Button>
               <Button
                 variant="outline"
-                className="flex-1 h-9 rounded-none border-2 border-[#1A2F38] text-[10px] font-black uppercase"
+                className="flex-1 h-10 border-2 border-[#1A2F38] rounded-none bg-transparent font-black uppercase text-[10px]"
               >
-                <Github size={12} className="mr-1" /> Code
+                <ExternalLink size={14} className="mr-1" /> Live
               </Button>
             </div>
+            <Button className="w-full h-11 bg-[#1A2F38] hover:bg-[#1A2F38]/90 text-white rounded-none font-black uppercase italic text-xs gap-2">
+              <Sparkles size={14} /> Initialiser Contact
+            </Button>
           </div>
         </div>
 
-        {/* FOOTER MOBILE */}
-        <footer className="h-6 flex items-center justify-between px-1 text-[8px] font-black uppercase opacity-40 shrink-0">
-          <span>System: Active</span>
-          <span>© {currentYear} Veli Karaca</span>
+        {/* FOOTER MINI */}
+        <footer className="h-4 flex items-center justify-between px-1 text-[8px] font-black uppercase opacity-30 shrink-0">
+          <span>Status: Online</span>
+          <span>© {currentYear} VK_SYSTEMS</span>
         </footer>
       </main>
 
-      {/* ── VERSION DESKTOP ── */}
-      <main className="hidden xl:flex h-dvh w-full bg-[#F2EFE9] text-[#1A2F38] font-mono flex-col p-4 overflow-hidden">
-        <header className="h-20 w-full flex items-center justify-between px-6 border-[3px] border-[#1A2F38] bg-white mb-4 shadow-[6px_6px_0_0_#1A2F38] shrink-0">
+      {/* ── DESKTOP VIEW (xl+) ── */}
+      <main className="hidden xl:flex flex-col h-dvh w-full p-6 gap-4 font-mono text-[#1A2F38]">
+        <header className="h-20 shrink-0 flex items-center justify-between px-8 border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38]">
           <Button
             asChild
             variant="outline"
-            className="border-[3px] border-[#1A2F38] h-12 px-6 font-black uppercase rounded-none hover:bg-[#1A2F38] hover:text-white"
+            className="border-[3px] border-[#1A2F38] h-12 px-6 rounded-none font-black uppercase italic hover:bg-[#1A2F38] hover:text-white transition-all"
           >
             <Link href="/" className="flex items-center gap-3">
-              <ArrowLeft size={20} strokeWidth={3} />
-              <span className="italic">Return_To_Base</span>
+              <ArrowLeft size={20} strokeWidth={3} /> Return_To_Base
             </Link>
           </Button>
-          <div className="flex items-center gap-6 font-black uppercase text-sm italic">
-            <span>Portfolio_{currentYear}</span>
-            <div className="w-12 h-12 bg-[#1A2F38] flex items-center justify-center text-white border-2 border-[#1A2F38]">
-              <Cpu size={24} className="animate-pulse" />
+          <div className="flex items-center gap-8">
+            <div className="text-right">
+              <p className="text-[10px] font-black opacity-40 uppercase">
+                System_Clock
+              </p>
+              <p className="text-sm font-black uppercase italic">
+                March_2026 // Active
+              </p>
+            </div>
+            <div className="w-14 h-14 bg-[#1A2F38] flex items-center justify-center text-white border-4 border-[#1A2F38]">
+              <Cpu size={28} className="animate-pulse" />
             </div>
           </div>
         </header>
 
-        <div className="flex-1 flex gap-4 min-h-0 overflow-hidden">
-          <nav className="w-24 flex flex-col gap-2 shrink-0">
-            <NavItems
-              activeProject={activeProject}
-              setActiveProject={setActiveProject}
-            />
+        <div className="flex-1 flex gap-4 min-h-0">
+          <nav className="w-24 shrink-0 flex flex-col gap-2">
+            {projects.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => setActiveProject(p)}
+                className={`flex-1 border-[3px] flex items-center justify-center transition-all ${
+                  activeProject.id === p.id
+                    ? "bg-[#1A2F38] text-white border-[#1A2F38]"
+                    : "bg-white border-[#1A2F38]/20 hover:border-[#1A2F38]"
+                }`}
+              >
+                <span className="text-4xl font-black italic -rotate-90">
+                  {p.id}
+                </span>
+              </button>
+            ))}
           </nav>
 
           <div className="flex-1 flex flex-col gap-4 min-h-0">
             <div className="flex-1 flex gap-4 min-h-0">
-              <div className="flex-[1.5] relative border-[3px] border-[#1A2F38] bg-white overflow-hidden shadow-[6px_6px_0_0_#1A2F38]">
+              <div className="flex-[1.8] relative border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38] overflow-hidden group">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeProject.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.4 }}
                     className="absolute inset-0"
                   >
                     <Image
                       src={activeProject.image}
                       alt={activeProject.title}
                       fill
-                      className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                     />
                     <div className="absolute inset-0 bg-[#1A2F38]/10" />
-                    <h2 className="absolute bottom-8 left-8 text-7xl font-black text-white italic uppercase drop-shadow-[4px_4px_0_#1A2F38]">
+                    <h2 className="absolute bottom-10 left-10 text-8xl font-black text-white italic uppercase drop-shadow-[6px_6px_0_#1A2F38] leading-none">
                       {activeProject.title}
                     </h2>
                   </motion.div>
                 </AnimatePresence>
               </div>
 
-              <div className="flex-1 bg-white border-[3px] border-[#1A2F38] flex flex-col shadow-[6px_6px_0_0_#1A2F38] overflow-hidden">
-                <div className="flex-1 p-8 overflow-y-auto">
-                  <div className="flex items-center gap-3 mb-6">
-                    <Target size={20} />
-                    <span className="text-xs font-black uppercase opacity-40">
-                      Documentation_Project
+              <div className="flex-1 bg-white border-[4px] border-[#1A2F38] shadow-[8px_8px_0_0_#1A2F38] flex flex-col overflow-hidden">
+                <div className="flex-1 p-10 overflow-y-auto">
+                  <div className="flex items-center gap-3 mb-8 opacity-30">
+                    <Target size={24} />
+                    <span className="text-xs font-black uppercase italic tracking-[0.2em]">
+                      Project_Specifications_v3.4
                     </span>
                   </div>
                   <AnimatePresence mode="wait">
                     <motion.p
                       key={activeProject.id}
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      className="text-2xl font-black uppercase italic leading-tight"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-3xl font-black uppercase italic leading-tight"
                     >
                       {activeProject.description}
                     </motion.p>
                   </AnimatePresence>
+                  <div className="mt-10 flex flex-wrap gap-2">
+                    {activeProject.tags.map((tag) => (
+                      <Badge
+                        key={tag}
+                        variant="outline"
+                        className="border-2 border-[#1A2F38] rounded-none font-black px-3 py-1 text-xs uppercase italic"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-                <div className="p-6 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50 flex flex-col gap-3">
-                  <div className="flex gap-3">
-                    <Button className="flex-1 h-12 bg-[#1A2F38] text-white rounded-none font-black uppercase">
-                      Live Demo
+                <div className="p-8 border-t-[4px] border-[#1A2F38] bg-[#F2EFE9]/50 flex flex-col gap-4 shrink-0">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button
+                      variant="outline"
+                      className="h-14 border-[3px] border-[#1A2F38] rounded-none font-black uppercase text-sm hover:bg-[#1A2F38] hover:text-white"
+                    >
+                      Github Source
                     </Button>
                     <Button
                       variant="outline"
-                      className="flex-1 h-12 border-[3px] border-[#1A2F38] rounded-none font-black uppercase"
+                      className="h-14 border-[3px] border-[#1A2F38] rounded-none font-black uppercase text-sm hover:bg-[#1A2F38] hover:text-white"
                     >
-                      Github
+                      Launch Live
                     </Button>
                   </div>
-                  <Button className="h-14 bg-[#D98E32] hover:bg-[#D98E32]/90 text-white rounded-none font-black uppercase italic text-lg shadow-[4px_4px_0_0_#1A2F38]">
-                    Initialiser Contact
+                  <Button className="h-16 bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-xl shadow-[6px_6px_0_0_#D98E32] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform">
+                    Initialiser Contact // Connect
                   </Button>
                 </div>
               </div>
             </div>
 
-            <div className="h-24 bg-white border-[3px] border-[#1A2F38] flex items-center px-6 gap-4 overflow-x-auto shadow-[6px_6px_0_0_#1A2F38] shrink-0">
-              <Zap className="text-[#D98E32] shrink-0" size={24} />
-              {activeProject.tags.map((tag, i) => (
-                <span
-                  key={i}
-                  className="whitespace-nowrap border-2 border-[#1A2F38] px-4 py-2 text-xs font-black uppercase"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+            <footer className="h-10 flex items-center justify-between px-2 font-black uppercase text-[10px] opacity-40">
+              <div className="flex gap-6 italic">
+                <span>Core: NextJS_14_Stable</span>
+                <span>Port: 3000</span>
+                <span>User: VK_ADMIN</span>
+              </div>
+              <span>© {currentYear} Veli Karaca Portfolio</span>
+            </footer>
           </div>
         </div>
-
-        <footer className="h-10 flex items-center justify-between px-2 mt-2 text-[10px] font-black uppercase opacity-50">
-          <span>Deployment_Status: Verified</span>
-          <span>© {currentYear} Design by VK</span>
-        </footer>
       </main>
-    </>
+    </div>
   );
 }
