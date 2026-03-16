@@ -30,14 +30,7 @@ const projects = [
     category: "Headless Commerce",
     description:
       "Une solution de vente en ligne complète avec un back-office robuste et un front-end entièrement sur mesure. Architecture MedusaJS pour une liberté totale et tunnel d'achat optimisé.",
-    tags: [
-      "Next.js",
-      "MedusaJS",
-      "PostgreSQL",
-      "Tailwind",
-      "Framer Motion",
-      "Vercel/Netlify",
-    ],
+    tags: ["Next.js", "MedusaJS", "PostgreSQL", "Tailwind", "Framer Motion"],
     image:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000",
     isNew: true,
@@ -59,15 +52,7 @@ const projects = [
     category: "Creative Dev",
     description:
       "Exploration interactive mêlant profondeur visuelle et fluidité. Une démonstration de performance utilisant les meilleurs stacks actuels.",
-    tags: [
-      "Next.js",
-      "Vue.js",
-      "Astro.js",
-      "Tailwind",
-      "GSAP",
-      "Framer Motion",
-      "Netlify",
-    ],
+    tags: ["Next.js", "GSAP", "Framer Motion", "Tailwind"],
     image:
       "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=1000",
     isNew: false,
@@ -78,13 +63,7 @@ const projects = [
     category: "Fullstack Expert",
     description:
       "Développement d'écosystèmes digitaux scalables. Focus sur le SEO (Lighthouse 100%) et l'accessibilité pour une portée maximale.",
-    tags: [
-      "RSC Architecture",
-      "SEO Avancé",
-      "Lighthouse 100%",
-      "UI/UX Haute Fidélité",
-      "Accompagnement Premium",
-    ],
+    tags: ["SEO", "UI/UX", "RSC", "Performance"],
     image:
       "https://images.unsplash.com/photo-1556742044-3c52d6e88c62?q=80&w=1000",
     isNew: false,
@@ -107,37 +86,25 @@ function NavItems({
   return (
     <>
       {projects.map((p) => (
-        <Tooltip key={p.id}>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => {
-                setActiveProject(p);
-                onSelect?.();
-              }}
-              className={`flex-1 xl:flex-none xl:h-1/4 min-h-[56px] border-[3px] flex flex-col items-center justify-center transition-colors relative overflow-hidden ${
-                activeProject.id === p.id
-                  ? "bg-[#1A2F38] text-[#F2EFE9] border-[#1A2F38]"
-                  : "bg-white text-[#1A2F38] border-[#1A2F38]/20 hover:border-[#1A2F38]"
-              }`}
-            >
-              <span className="text-2xl md:text-3xl xl:text-5xl font-black xl:-rotate-90 italic">
-                {p.id}
-              </span>
-              <span className="hidden xl:block text-[9px] font-black mt-1 uppercase opacity-60">
-                {p.title.split(" ")[0]}
-              </span>
-              {activeProject.id === p.id && (
-                <div className="absolute inset-0 border-4 border-white/20 pointer-events-none" />
-              )}
-            </button>
-          </TooltipTrigger>
-          <TooltipContent
-            side="right"
-            className="font-mono font-bold text-xs uppercase"
-          >
-            {p.title}
-          </TooltipContent>
-        </Tooltip>
+        <button
+          key={p.id}
+          onClick={() => {
+            setActiveProject(p);
+            onSelect?.();
+          }}
+          className={`flex-1 xl:flex-none xl:h-1/4 min-h-[56px] border-[3px] flex flex-col items-center justify-center transition-colors relative overflow-hidden ${
+            activeProject.id === p.id
+              ? "bg-[#1A2F38] text-[#F2EFE9] border-[#1A2F38]"
+              : "bg-white text-[#1A2F38] border-[#1A2F38]/20 hover:border-[#1A2F38]"
+          }`}
+        >
+          <span className="text-2xl md:text-3xl xl:text-5xl font-black xl:-rotate-90 italic">
+            {p.id}
+          </span>
+          {activeProject.id === p.id && (
+            <div className="absolute inset-0 border-4 border-white/20 pointer-events-none" />
+          )}
+        </button>
       ))}
     </>
   );
@@ -146,429 +113,242 @@ function NavItems({
 export default function ProjetPage() {
   const [activeProject, setActiveProject] = useState<Project>(projects[0]);
   const [mounted, setMounted] = useState(false);
-  const [vh, setVh] = useState("100dvh");
   const currentYear = new Date().getFullYear();
 
-  useEffect(() => setMounted(true), []);
-
-  // Fix hauteur Safari — visualViewport corrige la barre d'adresse dynamique
   useEffect(() => {
-    const updateVh = () => {
-      const height = window.visualViewport?.height ?? window.innerHeight;
-      setVh(`${height}px`);
-    };
-    updateVh();
-    window.visualViewport?.addEventListener("resize", updateVh);
-    window.addEventListener("resize", updateVh);
-    return () => {
-      window.visualViewport?.removeEventListener("resize", updateVh);
-      window.removeEventListener("resize", updateVh);
-    };
+    setMounted(true);
+    // On laisse le CSS gérer le scroll, on ne force plus le overflow:hidden ici
+    // pour éviter les conflits avec le comportement natif du navigateur
   }, []);
 
-  // Bloque le scroll sur iOS Safari ET Android
-  useEffect(() => {
-    document.documentElement.style.overflow = "hidden";
-    document.documentElement.style.overscrollBehavior = "none";
-    document.body.style.overflow = "hidden";
-    document.body.style.overscrollBehavior = "none";
-    document.body.style.touchAction = "none";
-    return () => {
-      document.documentElement.style.overflow = "";
-      document.documentElement.style.overscrollBehavior = "";
-      document.body.style.overflow = "";
-      document.body.style.overscrollBehavior = "";
-      document.body.style.touchAction = "";
-    };
-  }, []);
-
-  if (!mounted) return <div className="h-[100dvh] w-full bg-[#F2EFE9]" />;
+  if (!mounted) return <div className="h-dvh w-full bg-[#F2EFE9]" />;
 
   return (
     <>
-      {/* ── MOBILE / TABLETTE (< xl) ── */}
-      <main
-        className="xl:hidden w-full bg-[#F2EFE9] text-[#1A2F38] font-mono flex flex-col p-2 sm:p-3 selection:bg-[#1A2F38] selection:text-[#F2EFE9] overflow-hidden gap-2 sm:gap-3"
-        style={{ height: vh }}
-      >
+      {/* ── VERSION MOBILE / TABLETTE ── */}
+      <main className="xl:hidden h-dvh w-full bg-[#F2EFE9] text-[#1A2F38] font-mono flex flex-col p-2 sm:p-3 overflow-hidden gap-2">
         {/* HEADER */}
-        <header className="h-12 sm:h-14 w-full flex items-center justify-between px-3 sm:px-6 border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38] shrink-0">
+        <header className="h-14 w-full flex items-center justify-between px-3 border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38] shrink-0">
           <Button
             asChild
             variant="outline"
-            className="border-2 border-[#1A2F38] h-8 sm:h-9 px-3 font-black uppercase text-[10px] sm:text-xs rounded-none hover:bg-[#1A2F38] hover:text-white transition-colors focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="border-2 border-[#1A2F38] h-9 px-2 rounded-none hover:bg-[#1A2F38] hover:text-white"
           >
             <Link href="/" className="flex items-center gap-2">
-              <ArrowLeft size={14} strokeWidth={3} />
-              <span className="hidden sm:inline italic">Return_To_Base</span>
+              <ArrowLeft size={16} strokeWidth={3} />
             </Link>
           </Button>
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex flex-col items-end font-bold text-[10px] uppercase">
-              <span className="opacity-50 tracking-widest">
-                System_Status: Optimal
-              </span>
-              <span className="text-xs tracking-tighter">
-                top_news_projects//_{currentYear}
-              </span>
-            </div>
+
+          <div className="flex items-center gap-2">
             <Sheet>
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
-                  className="border-2 border-[#1A2F38] rounded-none h-8 w-8 p-0 font-black hover:bg-[#1A2F38] hover:text-white focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="border-2 border-[#1A2F38] rounded-none h-9 w-9 p-0 font-black"
                 >
-                  <span className="text-xs font-black italic">
-                    {activeProject.id}
-                  </span>
+                  <span className="text-xs italic">{activeProject.id}</span>
                 </Button>
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="w-56 bg-[#F2EFE9] border-r-[3px] border-[#1A2F38] p-0 font-mono"
+                className="w-64 bg-[#F2EFE9] border-r-[3px] border-[#1A2F38] p-0 font-mono"
               >
-                <div className="p-4 border-b-[3px] border-[#1A2F38]">
-                  <p className="text-[10px] font-black uppercase tracking-widest opacity-50">
-                    Sélectionner projet
-                  </p>
+                <div className="p-4 border-b-[3px] border-[#1A2F38] font-black uppercase text-xs">
+                  Menu Projets
                 </div>
-                <div className="flex flex-col h-[calc(100%-60px)]">
+                <div className="flex flex-col h-full">
                   <NavItems
                     activeProject={activeProject}
                     setActiveProject={setActiveProject}
-                    onSelect={() => {}}
                   />
                 </div>
               </SheetContent>
             </Sheet>
-            <div className="w-8 h-8 bg-[#1A2F38] flex items-center justify-center text-[#F2EFE9] border-2 border-[#1A2F38]">
-              <Cpu size={16} className="animate-pulse" />
+            <div className="w-9 h-9 bg-[#1A2F38] flex items-center justify-center text-[#F2EFE9] border-2 border-[#1A2F38]">
+              <Cpu size={18} className="animate-pulse" />
             </div>
           </div>
         </header>
 
-        {/* TABS */}
-        <nav className="flex gap-1.5 shrink-0">
+        {/* NAVIGATION RAPIDE */}
+        <nav className="flex gap-1 shrink-0">
           {projects.map((p) => (
             <button
               key={p.id}
               onClick={() => setActiveProject(p)}
-              className={`flex-1 h-9 border-[2px] flex items-center justify-center transition-colors ${
+              className={`flex-1 h-10 border-[2px] text-xs font-black italic transition-all ${
                 activeProject.id === p.id
                   ? "bg-[#1A2F38] text-[#F2EFE9] border-[#1A2F38]"
-                  : "bg-white text-[#1A2F38] border-[#1A2F38]/30 hover:border-[#1A2F38]"
+                  : "bg-white border-[#1A2F38]/20"
               }`}
             >
-              <span className="text-xs font-black italic">{p.id}</span>
+              {p.id}
             </button>
           ))}
         </nav>
 
-        {/* IMAGE */}
-        <div className="flex-[3] relative border-[3px] border-[#1A2F38] bg-white overflow-hidden shrink-1 min-h-0">
+        {/* IMAGE : Utilise flex-1 pour prendre l'espace restant sans dépasser */}
+        <div className="flex-1 relative border-[3px] border-[#1A2F38] bg-white overflow-hidden min-h-0">
           <Image
             src={activeProject.image}
             alt={activeProject.title}
             fill
             priority
-            sizes="100vw"
-            className="object-cover object-center opacity-80"
+            className="object-cover opacity-90"
           />
-          <div className="absolute top-2 left-2 z-10">
-            <Badge
-              variant="secondary"
-              className="bg-white/90 text-[#1A2F38] border border-[#1A2F38]/30 rounded-none font-black uppercase text-[8px] tracking-widest px-2 py-0.5"
-            >
-              {activeProject.category}
-            </Badge>
-          </div>
-          <div className="absolute bottom-2 left-3 z-10 w-[90%] pointer-events-none">
-            <h2 className="text-2xl sm:text-3xl font-black uppercase italic leading-[0.85] text-[#F2EFE9] drop-shadow-[3px_3px_0_#1A2F38]">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1A2F38]/80 to-transparent" />
+          <div className="absolute bottom-3 left-3 right-3">
+            <h2 className="text-2xl font-black uppercase italic text-white leading-tight drop-shadow-md">
               {activeProject.title}
             </h2>
           </div>
         </div>
 
-        {/* DESCRIPTION */}
-        <div className="flex-[4] bg-white border-[3px] border-[#1A2F38] flex flex-col shadow-[4px_4px_0_0_#1A2F38] shrink-1 min-h-0 overflow-hidden">
-          <div className="flex-1 p-3 sm:p-4 space-y-2 overflow-hidden">
-            <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="flex items-center gap-1.5">
-                <Target size={12} />
-                <span className="text-[8px] font-black uppercase tracking-widest opacity-40 italic">
-                  Technical_Description
-                </span>
-              </div>
-              {activeProject.isNew && (
-                <Badge className="bg-[#D98E32] text-white px-2 py-0.5 text-[7px] font-black uppercase italic border-0 rounded-none shrink-0">
-                  New_Release_v1.0
-                </Badge>
-              )}
+        {/* DESCRIPTION : Utilise min-h-0 et flex-col pour s'ajuster */}
+        <div className="flex-[0.8] bg-white border-[3px] border-[#1A2F38] flex flex-col shadow-[4px_4px_0_0_#1A2F38] min-h-0">
+          <div className="flex-1 p-3 overflow-y-auto">
+            <div className="flex items-center gap-2 mb-2">
+              <Target size={14} />
+              <span className="text-[10px] font-black uppercase opacity-50 italic">
+                Technical_Specs
+              </span>
             </div>
-            <Separator className="bg-[#1A2F38]/10" />
-            <p className="text-xs sm:text-sm font-bold uppercase leading-snug italic line-clamp-4 sm:line-clamp-5">
+            <p className="text-xs font-bold leading-tight uppercase italic">
               {activeProject.description}
             </p>
           </div>
-          <div className="p-2 sm:p-3 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50 shrink-0 space-y-1.5">
+
+          <div className="p-2 border-t-[2px] border-[#1A2F38] bg-[#F2EFE9]/50 flex flex-col gap-2 shrink-0">
             <div className="flex gap-2">
-              <Button
-                asChild
-                variant="outline"
-                className="flex-1 border-2 border-[#1A2F38] h-8 sm:h-9 text-[10px] font-black uppercase hover:bg-[#1A2F38] hover:text-white rounded-none bg-transparent text-[#1A2F38] gap-1 focus-visible:ring-0 focus-visible:ring-offset-0"
-              >
-                <Link href="#">
-                  <Github size={11} />
-                  Github
-                </Link>
+              <Button className="flex-1 h-9 rounded-none bg-[#1A2F38] text-white text-[10px] font-black uppercase">
+                <ExternalLink size={12} className="mr-1" /> Live
               </Button>
               <Button
-                asChild
                 variant="outline"
-                className="flex-1 border-2 border-[#1A2F38] h-8 sm:h-9 text-[10px] font-black uppercase hover:bg-[#1A2F38] hover:text-white rounded-none bg-transparent text-[#1A2F38] gap-1 focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="flex-1 h-9 rounded-none border-2 border-[#1A2F38] text-[10px] font-black uppercase"
               >
-                <Link href="#">
-                  <ExternalLink size={11} />
-                  Live
-                </Link>
+                <Github size={12} className="mr-1" /> Code
               </Button>
             </div>
-            <Button
-              asChild
-              className="w-full h-8 sm:h-9 bg-[#1A2F38] text-[#F2EFE9] font-black uppercase text-[10px] sm:text-xs gap-1.5 hover:bg-[#1A2F38]/90 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0"
-            >
-              <Link href="mailto:veli.karaca01@gmail.com">
-                <Sparkles size={12} />
-                Initialiser Contact
-              </Link>
-            </Button>
           </div>
         </div>
 
-        {/* STACK */}
-        <div className="h-10 sm:h-11 bg-white border-[3px] border-[#1A2F38] flex items-center px-3 gap-3 overflow-x-auto no-scrollbar shadow-[4px_4px_0_0_#1A2F38] shrink-0">
-          <div className="flex items-center gap-1.5 shrink-0 border-r-2 border-[#1A2F38]/10 pr-3">
-            <Zap className="text-[#D98E32] w-4 h-4" strokeWidth={3} />
-            <span className="text-xs font-black uppercase">Stack</span>
-          </div>
-          <div className="flex gap-2">
-            {activeProject.tags.map((tag, i) => (
-              <span
-                key={i}
-                className="whitespace-nowrap border-2 border-[#1A2F38] px-2 py-1 text-[10px] sm:text-xs font-black uppercase shrink-0 bg-white"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* FOOTER */}
-        <footer className="h-5 flex items-center justify-between px-1 text-[8px] font-bold opacity-40 uppercase shrink-0">
-          <div className="flex gap-3 italic">
-            <span>Deployment: Secure</span>
-            <span className="hidden sm:inline">Index: VK_PROD</span>
-          </div>
-          <span>© by veli karaca {currentYear}</span>
+        {/* FOOTER MOBILE */}
+        <footer className="h-6 flex items-center justify-between px-1 text-[8px] font-black uppercase opacity-40 shrink-0">
+          <span>System: Active</span>
+          <span>© {currentYear} Veli Karaca</span>
         </footer>
       </main>
 
-      {/* ── DESKTOP (xl+) ── */}
-      <main className="hidden xl:flex h-[100dvh] w-full bg-[#F2EFE9] text-[#1A2F38] font-mono flex-col p-4 selection:bg-[#1A2F38] selection:text-[#F2EFE9] overflow-hidden">
-        {/* HEADER */}
-        <header className="h-20 w-full flex items-center justify-between px-6 border-[3px] border-[#1A2F38] bg-white mb-3 shadow-[4px_4px_0_0_#1A2F38] shrink-0">
+      {/* ── VERSION DESKTOP ── */}
+      <main className="hidden xl:flex h-dvh w-full bg-[#F2EFE9] text-[#1A2F38] font-mono flex-col p-4 overflow-hidden">
+        <header className="h-20 w-full flex items-center justify-between px-6 border-[3px] border-[#1A2F38] bg-white mb-4 shadow-[6px_6px_0_0_#1A2F38] shrink-0">
           <Button
             asChild
             variant="outline"
-            className="border-2 border-[#1A2F38] h-10 px-3 font-black uppercase text-xs rounded-none hover:bg-[#1A2F38] hover:text-white transition-colors focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="border-[3px] border-[#1A2F38] h-12 px-6 font-black uppercase rounded-none hover:bg-[#1A2F38] hover:text-white"
           >
-            <Link href="/" className="flex items-center gap-2">
-              <ArrowLeft size={16} strokeWidth={3} />
+            <Link href="/" className="flex items-center gap-3">
+              <ArrowLeft size={20} strokeWidth={3} />
               <span className="italic">Return_To_Base</span>
             </Link>
           </Button>
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col items-end font-bold text-[10px] uppercase">
-              <span className="opacity-50 tracking-widest">
-                System_Status: Optimal
-              </span>
-              <span className="text-xs tracking-tighter">
-                top_news_projects//_{currentYear}
-              </span>
-            </div>
-            <div className="w-10 h-10 bg-[#1A2F38] flex items-center justify-center text-[#F2EFE9] border-2 border-[#1A2F38]">
-              <Cpu size={20} className="animate-pulse" />
+          <div className="flex items-center gap-6 font-black uppercase text-sm italic">
+            <span>Portfolio_{currentYear}</span>
+            <div className="w-12 h-12 bg-[#1A2F38] flex items-center justify-center text-white border-2 border-[#1A2F38]">
+              <Cpu size={24} className="animate-pulse" />
             </div>
           </div>
         </header>
 
-        {/* BODY */}
-        <div className="flex-1 flex flex-row gap-3 min-h-0 overflow-hidden">
-          {/* SIDEBAR */}
-          <nav className="flex flex-col w-28 gap-2 z-30 shrink-0">
+        <div className="flex-1 flex gap-4 min-h-0 overflow-hidden">
+          <nav className="w-24 flex flex-col gap-2 shrink-0">
             <NavItems
               activeProject={activeProject}
               setActiveProject={setActiveProject}
             />
           </nav>
 
-          {/* CONTENU */}
-          <div className="flex-1 flex flex-col gap-3 min-h-0 overflow-hidden">
-            <div className="flex-1 flex flex-row gap-3 min-h-0 overflow-hidden">
-              {/* IMAGE */}
-              <div className="flex-[1.6] relative border-[3px] border-[#1A2F38] bg-white overflow-hidden group shadow-[inset_0_0_50px_rgba(0,0,0,0.1)]">
+          <div className="flex-1 flex flex-col gap-4 min-h-0">
+            <div className="flex-1 flex gap-4 min-h-0">
+              <div className="flex-[1.5] relative border-[3px] border-[#1A2F38] bg-white overflow-hidden shadow-[6px_6px_0_0_#1A2F38]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeProject.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
                     className="absolute inset-0"
                   >
                     <Image
                       src={activeProject.image}
                       alt={activeProject.title}
                       fill
-                      priority
-                      sizes="60vw"
-                      className="object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-700 opacity-80 group-hover:opacity-100 scale-100 group-hover:scale-105"
+                      className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
                     />
-                    <div className="absolute inset-0 bg-[#1A2F38]/5 mix-blend-multiply" />
+                    <div className="absolute inset-0 bg-[#1A2F38]/10" />
+                    <h2 className="absolute bottom-8 left-8 text-7xl font-black text-white italic uppercase drop-shadow-[4px_4px_0_#1A2F38]">
+                      {activeProject.title}
+                    </h2>
                   </motion.div>
                 </AnimatePresence>
-                <div className="absolute top-4 left-4 z-10">
-                  <Badge
-                    variant="secondary"
-                    className="bg-white/90 text-[#1A2F38] border border-[#1A2F38]/30 rounded-none font-black uppercase text-[9px] tracking-widest px-2 py-0.5"
-                  >
-                    {activeProject.category}
-                  </Badge>
-                </div>
-                <div className="absolute bottom-6 left-6 z-10 w-[90%] pointer-events-none">
-                  <AnimatePresence mode="wait">
-                    <motion.h2
-                      key={activeProject.id + "-title"}
-                      initial={{ y: 12, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -8, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="text-7xl font-black uppercase italic leading-[0.85] text-[#F2EFE9] drop-shadow-[3px_3px_0_#1A2F38]"
-                    >
-                      {activeProject.title}
-                    </motion.h2>
-                  </AnimatePresence>
-                </div>
               </div>
 
-              {/* DESCRIPTION */}
-              <div className="flex-1 bg-white border-[3px] border-[#1A2F38] flex flex-col overflow-hidden shadow-[4px_4px_0_0_#1A2F38]">
-                <div className="flex-1 overflow-y-auto p-7">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <div className="flex items-center gap-2">
-                        <Target size={14} />
-                        <span className="text-[9px] font-black uppercase tracking-widest opacity-40 italic">
-                          Technical_Description
-                        </span>
-                      </div>
-                      {activeProject.isNew && (
-                        <Badge className="bg-[#D98E32] text-white px-2 py-0.5 text-[8px] font-black uppercase italic border-0 rounded-none shrink-0">
-                          New_Release_v1.0
-                        </Badge>
-                      )}
-                    </div>
-                    <Separator className="bg-[#1A2F38]/10" />
-                    <AnimatePresence mode="wait">
-                      <motion.p
-                        key={activeProject.id + "-desc"}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.25 }}
-                        className="text-xl font-bold uppercase leading-snug italic"
-                      >
-                        {activeProject.description}
-                      </motion.p>
-                    </AnimatePresence>
+              <div className="flex-1 bg-white border-[3px] border-[#1A2F38] flex flex-col shadow-[6px_6px_0_0_#1A2F38] overflow-hidden">
+                <div className="flex-1 p-8 overflow-y-auto">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Target size={20} />
+                    <span className="text-xs font-black uppercase opacity-40">
+                      Documentation_Project
+                    </span>
                   </div>
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={activeProject.id}
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      className="text-2xl font-black uppercase italic leading-tight"
+                    >
+                      {activeProject.description}
+                    </motion.p>
+                  </AnimatePresence>
                 </div>
-                <div className="p-5 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50 shrink-0 space-y-2">
-                  <div className="flex gap-2">
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="flex-1 border-2 border-[#1A2F38] h-10 text-xs font-black uppercase hover:bg-[#1A2F38] hover:text-white rounded-none bg-transparent text-[#1A2F38] gap-1.5 focus-visible:ring-0 focus-visible:ring-offset-0"
-                    >
-                      <Link href="#">
-                        <Github size={13} />
-                        Github
-                      </Link>
+                <div className="p-6 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50 flex flex-col gap-3">
+                  <div className="flex gap-3">
+                    <Button className="flex-1 h-12 bg-[#1A2F38] text-white rounded-none font-black uppercase">
+                      Live Demo
                     </Button>
                     <Button
-                      asChild
                       variant="outline"
-                      className="flex-1 border-2 border-[#1A2F38] h-10 text-xs font-black uppercase hover:bg-[#1A2F38] hover:text-white rounded-none bg-transparent text-[#1A2F38] gap-1.5 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      className="flex-1 h-12 border-[3px] border-[#1A2F38] rounded-none font-black uppercase"
                     >
-                      <Link href="#">
-                        <ExternalLink size={13} />
-                        Live
-                      </Link>
+                      Github
                     </Button>
                   </div>
-                  <Button
-                    asChild
-                    className="w-full h-11 bg-[#1A2F38] text-[#F2EFE9] font-black uppercase text-sm gap-2 hover:bg-[#1A2F38]/90 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                  >
-                    <Link href="mailto:veli.karaca01@gmail.com">
-                      <Sparkles size={15} />
-                      Initialiser Contact
-                    </Link>
+                  <Button className="h-14 bg-[#D98E32] hover:bg-[#D98E32]/90 text-white rounded-none font-black uppercase italic text-lg shadow-[4px_4px_0_0_#1A2F38]">
+                    Initialiser Contact
                   </Button>
                 </div>
               </div>
             </div>
 
-            {/* STACK BAR */}
-            <div className="h-20 bg-white border-[3px] border-[#1A2F38] flex items-center px-5 gap-5 overflow-x-auto no-scrollbar shadow-[4px_4px_0_0_#1A2F38] shrink-0">
-              <div className="flex items-center gap-2 shrink-0 border-r-2 border-[#1A2F38]/10 pr-5">
-                <Zap className="text-[#D98E32] w-5 h-5" strokeWidth={3} />
-                <span className="text-xl font-black uppercase">Stack</span>
-              </div>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeProject.id + "-tags"}
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="flex gap-3"
+            <div className="h-24 bg-white border-[3px] border-[#1A2F38] flex items-center px-6 gap-4 overflow-x-auto shadow-[6px_6px_0_0_#1A2F38] shrink-0">
+              <Zap className="text-[#D98E32] shrink-0" size={24} />
+              {activeProject.tags.map((tag, i) => (
+                <span
+                  key={i}
+                  className="whitespace-nowrap border-2 border-[#1A2F38] px-4 py-2 text-xs font-black uppercase"
                 >
-                  {activeProject.tags.map((tag, i) => (
-                    <motion.span
-                      key={i}
-                      whileHover={{
-                        y: -4,
-                        backgroundColor: "#1A2F38",
-                        color: "#F2EFE9",
-                      }}
-                      className="whitespace-nowrap border-2 border-[#1A2F38] px-4 py-1.5 text-sm font-black uppercase transition-all shrink-0 cursor-default bg-white"
-                    >
-                      {tag}
-                    </motion.span>
-                  ))}
-                </motion.div>
-              </AnimatePresence>
+                  {tag}
+                </span>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* FOOTER */}
-        <footer className="h-7 flex items-center justify-between px-3 mt-1 text-[9px] font-bold opacity-40 uppercase shrink-0">
-          <div className="flex gap-3 italic">
-            <span>Deployment: Secure</span>
-            <span>Index: VK_PROD</span>
-          </div>
-          <span>© by veli karaca {currentYear}</span>
+        <footer className="h-10 flex items-center justify-between px-2 mt-2 text-[10px] font-black uppercase opacity-50">
+          <span>Deployment_Status: Verified</span>
+          <span>© {currentYear} Design by VK</span>
         </footer>
       </main>
     </>
