@@ -155,7 +155,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen md:h-screen w-full bg-[#FBFBFE] text-[#1E293B] p-6 md:p-12 overflow-x-hidden md:overflow-hidden flex flex-col font-sans relative">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.03] contrast-150 z-50 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
       <div className="max-w-7xl mx-auto w-full h-full flex flex-col relative z-10">
         {/* Header */}
