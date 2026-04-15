@@ -13,6 +13,12 @@ export type Brief = {
   id: string;
   createdAt: string;
   isRead: boolean;
+  // --- Nouveaux champs de contact ---
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  // ----------------------------------
   description: string;
   clients: string[];
   channels: string[];
@@ -41,10 +47,16 @@ export type BriefFormData = Omit<Brief, "id" | "createdAt" | "isRead">;
 /**
  * Schéma de validation pour le formulaire brief.
  *
- * Champs obligatoires : description (min 10 car.), goal (min 5 car.), budget.
- * Tous les autres champs sont optionnels avec des valeurs par défaut vides.
+ * Ajout des champs de contact obligatoires.
  */
 const BriefFormSchema = z.object({
+  // Champs de contact (Ajouté pour permettre le recontact client)
+  firstName: z.string().min(1, "Le prénom est requis."),
+  lastName: z.string().min(1, "Le nom est requis."),
+  email: z.string().email("L'adresse e-mail est invalide."),
+  phone: z.string().min(1, "Le numéro de téléphone est requis."),
+
+  // Champs projet
   description: z
     .string()
     .min(10, "La description doit faire au moins 10 caractères."),

@@ -237,7 +237,8 @@ function BriefCard({
               <CheckCircle2 className="w-5 h-5" />
             ) : (
               <div className="font-serif text-lg">
-                {brief.description?.charAt(0)?.toUpperCase()}
+                {/* Affiche l'initiale du prénom ou de la description */}
+                {(brief.firstName || brief.description)?.charAt(0)?.toUpperCase()}
               </div>
             )}
           </div>
@@ -249,7 +250,10 @@ function BriefCard({
                   !brief.isRead ? "font-bold" : ""
                 }`}
               >
-                {brief.description || "Brief sans titre"}
+                {/* On affiche le nom du client s'il existe, sinon le début de la description */}
+                {brief.firstName && brief.lastName 
+                  ? `${brief.firstName} ${brief.lastName}`
+                  : brief.description || "Brief sans titre"}
               </h3>
               {/* Badge "Nouveau" pour les briefs non lus */}
               {!brief.isRead && (
@@ -312,6 +316,16 @@ function BriefCard({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {/* Colonne gauche */}
             <div className="space-y-10">
+              {/* Nouvelle section Coordonnées pour l'admin */}
+              <DetailSection title="Coordonnées Client">
+                <div className="grid grid-cols-2 gap-4">
+                  <DetailItem label="Prénom" value={brief.firstName} />
+                  <DetailItem label="Nom" value={brief.lastName} />
+                </div>
+                <DetailItem label="Email" value={brief.email} />
+                <DetailItem label="Téléphone" value={brief.phone} />
+              </DetailSection>
+
               <DetailSection title="Informations Clés">
                 <DetailItem label="Description" value={brief.description} />
                 <DetailItem

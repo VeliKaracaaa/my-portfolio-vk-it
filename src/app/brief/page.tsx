@@ -40,7 +40,12 @@ import {
  */
 export default function BriefPage() {
   // État du formulaire initialisé avec des valeurs vides
+  // Ajout des nouveaux champs de contact demandés pour le recontact client
   const [formData, setFormData] = useState<BriefFormData>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
     description: "",
     clients: [],
     channels: [],
@@ -391,6 +396,69 @@ export default function BriefPage() {
                 className="min-h-[80px] bg-slate-50/50 border-slate-200 focus:bg-white rounded-2xl transition-all p-6 text-base font-medium"
               />
             </Question>
+          </FormSection>
+
+          {/* ─── Section 05 : Vos Coordonnées ─── */}
+          {/* Cette section est cruciale pour permettre à l'admin de recontacter le prospect */}
+          <FormSection
+            number="05"
+            title="Vos Coordonnées"
+            icon={<Info className="w-5 h-5" />}
+            description="Dernière étape ! Comment puis-je vous recontacter ?"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Question label="Prénom">
+                <input
+                  type="text"
+                  value={formData.firstName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, firstName: e.target.value })
+                  }
+                  placeholder="Jean"
+                  className="w-full h-14 px-6 bg-slate-50/50 border border-slate-200 focus:bg-white rounded-2xl transition-all focus:ring-4 focus:ring-blue-100/50 focus:border-blue-500/50 font-medium"
+                  required
+                />
+              </Question>
+              <Question label="Nom">
+                <input
+                  type="text"
+                  value={formData.lastName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, lastName: e.target.value })
+                  }
+                  placeholder="Dupont"
+                  className="w-full h-14 px-6 bg-slate-50/50 border border-slate-200 focus:bg-white rounded-2xl transition-all focus:ring-4 focus:ring-blue-100/50 focus:border-blue-500/50 font-medium"
+                  required
+                />
+              </Question>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Question label="Adresse Email">
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  placeholder="jean.dupont@exemple.com"
+                  className="w-full h-14 px-6 bg-slate-50/50 border border-slate-200 focus:bg-white rounded-2xl transition-all focus:ring-4 focus:ring-blue-100/50 focus:border-blue-500/50 font-medium"
+                  required
+                />
+              </Question>
+              <Question label="Numéro de Téléphone">
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
+                  placeholder="06 12 34 56 78"
+                  className="w-full h-14 px-6 bg-slate-50/50 border border-slate-200 focus:bg-white rounded-2xl transition-all focus:ring-4 focus:ring-blue-100/50 focus:border-blue-500/50 font-medium"
+                  required
+                />
+              </Question>
+            </div>
           </FormSection>
 
           {/* Bouton de soumission */}
