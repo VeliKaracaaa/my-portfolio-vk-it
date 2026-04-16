@@ -69,7 +69,7 @@ export default function AdminBriefsPage() {
     const result = await getBriefs();
 
     if (result.success) {
-      setBriefs(result.briefs);
+      setBriefs(result.data.briefs);
     } else {
       toast.error(result.error);
     }
@@ -103,6 +103,8 @@ export default function AdminBriefsPage() {
       setBriefs((prev) =>
         prev.map((b) => (b.id === id ? { ...b, isRead: true } : b)),
       );
+    } else {
+      toast.error(result.error);
     }
   }
 

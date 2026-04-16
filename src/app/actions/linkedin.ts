@@ -1,36 +1,66 @@
-import { NextResponse } from "next/server";
-import { createClient } from "redis";
+"use server";
 
-export async function POST(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  const { id } = await params;
-  const redis = createClient({ url: process.env.REDIS_URL });
-  try {
-    await redis.connect();
+import { revalidatePath } from "next/cache";
+import * as linkedinData from "@/data/linkedin";
+import * as postData from "@/data/posts";
+import { withSafeAction } from "@/lib/safe-action";
 
-    const raw = await redis.get(`post:${id}`);
-    if (!raw) {
-      return NextResponse.json({ error: "Post introuvable" }, { status: 404 });
+/**
+ * ============================================================
+ * SERVER ACTIONS — LINKEDIN
+ * ============================================================
+ */
+
+/**
+ * Vérifie si le compte LinkedIn est connecté.
+ */
+export async function checkLinkedInStatusAction() {
+  return withSafeAction("checkLinkedInStatus", async () => {
+    const token = await linkedinData.getLinkedinToken();
+    return { connected: !!token };
+  }, { rateLimit: "standard" });
+}
+
+/**
+ * Déconnecte le compte LinkedIn.
+ */
+export async function logoutLinkedInAction() {
+  return withSafeAction("logoutLinkedIn", async () => {
+    await linkedinData.deleteLinkedinTokens();
+    revalidatePath("/admin");
+    return { success: true };
+  }, { rateLimit: "standard" });
+}
+
+/**
+ * Publie un post existant sur LinkedIn.
+ */
+export async function publishToLinkedInAction(postId: string) {
+  return withSafeAction("publishToLinkedIn", async () => {
+    // 1. Récupérer le post depuis Postgres (DAL)
+    const allPosts = await postData.getAllPosts();
+    const post = allPosts.find(p => p.id === postId);
+
+    if (!post) {
+      throw new Error("Post introuvable.");
     }
-    const post = JSON.parse(raw);
 
-    const token = await redis.get("linkedin_token");
-    const userUrn = await redis.get("linkedin_user_urn");
-
-    if (!token || !userUrn) {
-      return NextResponse.json(
-        { error: "LinkedIn non connecté." },
-        { status: 401 },
-      );
+    // 2. Récupérer les tokens (DAL)
+    const tokenData = await linkedinData.getLinkedinToken();
+    if (!tokenData) {
+      throw new Error("LinkedIn non connecté.");
     }
+
+    const { accessToken: token, userUrn } = tokenData;
 
     let imageUrn: string | null = null;
     let videoUrn: string | null = null;
 
-    // ── Upload image ──────────────────────────────────────────────
-    if (post.imageBase64 && post.imageType) {
+    // 3. Upload image vers LinkedIn si présente
+    if (post.imageUrl && post.imageType) {
+      const imageRes = await fetch(post.imageUrl);
+      const imageBuffer = await imageRes.arrayBuffer();
+
       const registerRes = await fetch(
         "https://api.linkedin.com/v2/assets?action=registerUpload",
         {
@@ -52,31 +82,26 @@ export async function POST(
               ],
             },
           }),
-        },
+        }
       );
+      
       const registerData = await registerRes.json();
-      // console.log("Image register:", JSON.stringify(registerData));
-
-      const uploadUrl =
-        registerData?.value?.uploadMechanism?.[
-          "com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"
-        ]?.uploadUrl;
+      const uploadUrl = registerData?.value?.uploadMechanism?.["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]?.uploadUrl;
       imageUrn = registerData?.value?.asset;
 
       if (uploadUrl && imageUrn) {
-        const imageBuffer = Buffer.from(post.imageBase64, "base64");
         await fetch(uploadUrl, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": post.imageType,
           },
-          body: imageBuffer,
+          body: Buffer.from(imageBuffer),
         });
       }
     }
 
-    // ── Upload vidéo ──────────────────────────────────────────────
+    // 4. Upload vidéo vers LinkedIn si présente
     if (post.videoUrl) {
       const initRes = await fetch(
         "https://api.linkedin.com/v2/assets?action=registerUpload",
@@ -99,43 +124,35 @@ export async function POST(
               ],
             },
           }),
-        },
+        }
       );
       const initData = await initRes.json();
-      // console.log("Video register:", JSON.stringify(initData));
-
-      const videoUploadUrl =
-        initData?.value?.uploadMechanism?.[
-          "com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"
-        ]?.uploadUrl;
+      const videoUploadUrl = initData?.value?.uploadMechanism?.["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]?.uploadUrl;
       videoUrn = initData?.value?.asset;
 
       if (videoUploadUrl && videoUrn) {
-        const videoRes = await fetch(post.videoUrl);
-        const videoBuffer = await videoRes.arrayBuffer();
+        const videoFileRes = await fetch(post.videoUrl);
+        const videoBuffer = await videoFileRes.arrayBuffer();
         await fetch(videoUploadUrl, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "video/mp4",
           },
-          body: videoBuffer,
+          body: Buffer.from(videoBuffer),
         });
       }
     }
 
-    // ── Document PDF : ajouté comme lien dans le texte ────────────
-    // LinkedIn ne permet pas feedshare-document aux devs indépendants
-    // On ajoute l'URL directement dans le contenu du post
+    // 5. Préparation du texte (avec lien PDF si présent)
     const postText = post.documentUrl
       ? `${post.content}\n\n📄 ${post.documentName || "Document"} : ${post.documentUrl}`
       : post.content;
 
-    // ── Détermine le type de média ────────────────────────────────
     const mediaUrn = imageUrn || videoUrn;
     const mediaCategory = imageUrn ? "IMAGE" : videoUrn ? "VIDEO" : "NONE";
 
-    // ── Publie le post ────────────────────────────────────────────
+    // 6. Publication finale
     const body = {
       author: userUrn,
       lifecycleState: "PUBLISHED",
@@ -173,29 +190,16 @@ export async function POST(
     const linkedInData = await linkedInRes.json();
 
     if (!linkedInRes.ok) {
-      console.error("Erreur LinkedIn:", linkedInData);
-      return NextResponse.json(
-        { error: "Erreur LinkedIn", details: linkedInData },
-        { status: 500 },
-      );
+      console.error("Erreur LinkedIn API:", linkedInData);
+      throw new Error("Erreur lors de la publication sur LinkedIn.");
     }
 
-    const updatedPost = {
-      ...post,
-      publishedToLinkedIn: true,
-      linkedInPostId: linkedInData.id,
-      publishedAt: new Date().toISOString(),
-    };
-    await redis.set(`post:${id}`, JSON.stringify(updatedPost));
+    // 7. Mettre à jour le post dans Postgres (DAL)
+    await linkedinData.markPostAsPublished(postId, linkedInData.id);
 
-    return NextResponse.json({
-      success: true,
-      linkedInPostId: linkedInData.id,
-    });
-  } catch (error) {
-    console.error("Erreur publication:", error);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
-  } finally {
-    if (redis.isOpen) await redis.disconnect();
-  }
+    revalidatePath("/admin");
+    revalidatePath("/blog");
+
+    return { success: true, linkedInPostId: linkedInData.id };
+  }, { rateLimit: "strict" });
 }

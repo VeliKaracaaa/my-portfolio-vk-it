@@ -1,44 +1,21 @@
 export const dynamic = "force-dynamic";
 
-import { createClient } from "redis";
+import { getAllPosts } from "@/data/posts";
+import type { SelectPost as Post } from "@/lib/schema";
 
-interface Post {
-  id: string;
-  content: string;
-  createdAt: string;
-  publishedToLinkedIn: boolean;
-  linkedInPostId?: string;
-  imageBase64?: string;
-  imageType?: string;
-  videoUrl?: string;
-  documentUrl?: string;
-  documentName?: string;
-}
-
-async function getPosts(): Promise<Post[]> {
-  const redis = createClient({ url: process.env.REDIS_URL });
-  try {
-    await redis.connect();
-    const keys = await redis.keys("post:*");
-    const posts = await Promise.all(
-      keys.map(async (key) => {
-        const raw = await redis.get(key);
-        return raw ? JSON.parse(raw) : null;
-      }),
-    );
-    return posts
-      .filter(Boolean)
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      );
-  } finally {
-    await redis.disconnect();
-  }
-}
+/**
+ * ============================================================
+ * PAGE BLOG — AFFICHAGE DES ARTICLES
+ * ============================================================
+ * 
+ * Cette page est maintenant connectée au Data Access Layer (DAL).
+ * Elle ne sait pas si les données viennent de Redis, Postgres ou d'une API.
+ * Elle se contente d'afficher les objets retournés par getAllPosts().
+ */
 
 export default async function BlogPage() {
-  const posts = await getPosts();
+  // Récupération sécurisée via le DAL (Postgres + Drizzle)
+  const posts = await getAllPosts();
 
   return (
     <div className="max-w-2xl mx-auto p-8 pt-20">
@@ -55,10 +32,10 @@ export default async function BlogPage() {
             <article key={post.id}>
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 hover:shadow-md transition-shadow">
 
-                {/* Image si présente */}
-                {post.imageBase64 && (
+                {/* Image — Utilise maintenant l'URL directe de Vercel Blob */}
+                {post.imageUrl && (
                   <img
-                    src={`data:${post.imageType};base64,${post.imageBase64}`}
+                    src={post.imageUrl}
                     alt="image du post"
                     className="w-full max-h-64 object-cover rounded-xl mb-4 border border-slate-100"
                   />

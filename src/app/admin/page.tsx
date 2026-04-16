@@ -1,21 +1,20 @@
 "use client";
 
+import { 
+  getPostsAction, 
+  createPostAction, 
+  updatePostAction, 
+  deletePostAction 
+} from "@/app/actions/posts";
+import { 
+  checkLinkedInStatusAction, 
+  publishToLinkedInAction, 
+  logoutLinkedInAction 
+} from "@/app/actions/linkedin";
+import type { SelectPost as Post } from "@/lib/schema";
+import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { upload } from "@vercel/blob/client";
-
-interface Post {
-  id: string;
-  content: string;
-  createdAt: string;
-  updatedAt?: string;
-  publishedToLinkedIn: boolean;
-  linkedInPostId?: string;
-  imageBase64?: string;
-  imageType?: string;
-  videoUrl?: string;
-  documentUrl?: string;
-  documentName?: string;
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // INFORMATIONS ADMIN
@@ -112,15 +111,28 @@ export default function AdminPage() {
   }, []);
 
   async function fetchPosts() {
-    const res = await fetch("/api/posts");
-    const data = await res.json();
-    setPosts(data.posts || []);
+    const data = await getPostsAction();
+    setPosts(data);
   }
 
   async function checkLinkedInStatus() {
-    const res = await fetch("/api/linkedin/status");
-    const data = await res.json();
-    setLinkedInConnected(data.connected);
+    const result = await checkLinkedInStatusAction();
+    if (result.success) {
+      setLinkedInConnected(result.data.connected);
+    } else {
+      setLinkedInConnected(false);
+    }
+  }
+
+  async function handleLogoutLinkedIn() {
+    if (!confirm("Se déconnecter de LinkedIn ?")) return;
+    const result = await logoutLinkedInAction();
+    if (result.success) {
+      setLinkedInConnected(false);
+      toast.success("Déconnecté de LinkedIn");
+    } else {
+      toast.error(result.error);
+    }
   }
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -187,19 +199,18 @@ export default function AdminPage() {
   async function handleSaveEdit(postId: string) {
     if (!editingContent.trim()) return;
     setLoading(true);
-    const res = await fetch(`/api/posts/${postId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: editingContent }),
-    });
-    if (res.ok) {
+    
+    const result = await updatePostAction(postId, editingContent);
+    
+    if (result.success) {
       setMessage({ type: "success", text: "Post modifié !" });
       setEditingPostId(null);
       setEditingContent("");
       fetchPosts();
     } else {
-      setMessage({ type: "error", text: "Erreur lors de la modification" });
+      setMessage({ type: "error", text: result.error });
     }
+    
     setLoading(false);
     setTimeout(() => setMessage(null), 3000);
   }
@@ -212,6 +223,7 @@ export default function AdminPage() {
       let documentUrl: string | null = null;
       let documentName: string | null = null;
 
+      // Upload des fichiers volumineux via le client (Vercel Blob)
       if (video) {
         const blob = await upload(`videos/${Date.now()}-${video.name}`, video, {
           access: "public",
@@ -230,6 +242,7 @@ export default function AdminPage() {
         documentName = document.name;
       }
 
+      // Préparation du FormData pour l'Action
       const formData = new FormData();
       formData.append("content", content);
       if (image) formData.append("image", image);
@@ -237,9 +250,9 @@ export default function AdminPage() {
       if (documentUrl) formData.append("documentUrl", documentUrl);
       if (documentName) formData.append("documentName", documentName);
 
-      const res = await fetch("/api/posts", { method: "POST", body: formData });
+      const result = await createPostAction(formData);
 
-      if (res.ok) {
+      if (result.success) {
         setContent("");
         setImage(null);
         setImagePreview(null);
@@ -249,7 +262,7 @@ export default function AdminPage() {
         setMessage({ type: "success", text: "Post sauvegardé !" });
         fetchPosts();
       } else {
-        setMessage({ type: "error", text: "Erreur lors de la sauvegarde" });
+        setMessage({ type: "error", text: result.error });
       }
     } catch (err) {
       console.error("Erreur upload:", err);
@@ -261,26 +274,27 @@ export default function AdminPage() {
 
   async function handlePublishToLinkedIn(postId: string) {
     setLoading(true);
-    const res = await fetch(`/api/linkedin/publish/${postId}`, {
-      method: "POST",
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setMessage({ type: "success", text: "Publié sur LinkedIn !" });
+    const result = await publishToLinkedInAction(postId);
+    
+    if (result.success) {
+      toast.success("Publié sur LinkedIn !");
       fetchPosts();
     } else {
-      setMessage({
-        type: "error",
-        text: data.error || "Erreur lors de la publication",
-      });
+      toast.error(result.error);
     }
     setLoading(false);
-    setTimeout(() => setMessage(null), 4000);
   }
 
   async function handleDelete(postId: string) {
-    await fetch(`/api/posts/${postId}`, { method: "DELETE" });
-    fetchPosts();
+    if (!confirm("Es-tu sûr de vouloir supprimer ce post ?")) return;
+    
+    const result = await deletePostAction(postId);
+    if (result.success) {
+      toast.success("Post supprimé");
+      fetchPosts();
+    } else {
+      toast.error(result.error);
+    }
   }
 
   return (
@@ -307,7 +321,14 @@ export default function AdminPage() {
         <span className="text-sm font-medium">
           {linkedInConnected ? "LinkedIn connecté ✓" : "LinkedIn non connecté"}
         </span>
-        {!linkedInConnected && (
+        {linkedInConnected ? (
+          <button
+            onClick={handleLogoutLinkedIn}
+            className="ml-auto text-xs text-red-600 hover:text-red-800 font-medium transition-colors"
+          >
+            Déconnecter
+          </button>
+        ) : (
           <a
             href="/api/linkedin/auth"
             className="ml-auto text-xs bg-[#0077b5] text-white px-4 py-1.5 rounded-lg hover:bg-[#005f8e] transition-colors"
@@ -541,9 +562,9 @@ export default function AdminPage() {
             key={post.id}
             className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5"
           >
-            {post.imageBase64 && (
+            {post.imageUrl && (
               <img
-                src={`data:${post.imageType};base64,${post.imageBase64}`}
+                src={post.imageUrl}
                 alt="image du post"
                 className="w-full max-h-48 object-cover rounded-xl mb-3 border border-slate-100"
               />
