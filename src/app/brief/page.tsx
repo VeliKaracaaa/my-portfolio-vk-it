@@ -22,7 +22,9 @@ import {
   Scale,
   ChevronRight,
   Info,
+  ArrowLeft,
 } from "lucide-react";
+import Link from "next/link";
 
 // ============================================================
 // PAGE BRIEF — Formulaire public pour les clients
@@ -158,6 +160,22 @@ export default function BriefPage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-6 py-12 lg:py-24 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-8"
+        >
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-slate-100 text-slate-600 text-sm font-bold shadow-[0_4px_12px_rgba(0,0,0,0.02)] hover:shadow-lg hover:shadow-slate-100 hover:border-slate-200 hover:text-[#0F172A] transition-all duration-300 group"
+          >
+            <ArrowLeft
+              size={16}
+              className="transition-transform group-hover:-translate-x-1"
+            />
+            Retour
+          </Link>
+        </motion.div>
         {/* En-tête de page */}
         <motion.header
           initial={{ opacity: 0, y: 20 }}
