@@ -6,7 +6,7 @@ import {
   deleteBrief,
   markBriefAsRead,
 } from "@/app/actions/brief";
-import type { Brief } from "@/app/actions/brief";
+import type { Brief } from "@/data/briefs";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

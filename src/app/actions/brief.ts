@@ -7,9 +7,8 @@ import {
   findAllBriefs, 
   removeBrief, 
   updateBrief,
-  type Brief
 } from "@/data/briefs";
-export type { Brief };
+import type { Brief } from "@/data/briefs";
 import { withSafeAction } from "@/lib/safe-action";
 
 /**
@@ -41,6 +40,8 @@ const BriefFormSchema = z.object({
   budget: z.string().min(1, "Le budget est requis."),
   deadline: z.string().optional().default(""),
 });
+
+export type BriefFormData = z.infer<typeof BriefFormSchema>;
 
 /** Soumet un nouveau brief */
 export async function submitBrief(rawData: unknown) {
