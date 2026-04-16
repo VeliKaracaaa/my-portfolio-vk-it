@@ -6,9 +6,10 @@ import {
   saveBrief, 
   findAllBriefs, 
   removeBrief, 
-  updateBrief, 
-  type Brief 
+  updateBrief,
+  type Brief
 } from "@/data/briefs";
+export type { Brief };
 import { withSafeAction } from "@/lib/safe-action";
 
 /**

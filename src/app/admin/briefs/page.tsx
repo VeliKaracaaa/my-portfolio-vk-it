@@ -5,17 +5,9 @@ import {
   getBriefs,
   deleteBrief,
   markBriefAsRead,
-  type Brief,
 } from "@/app/actions/brief";
+import type { Brief } from "@/app/actions/brief";
 import { toast } from "sonner";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
