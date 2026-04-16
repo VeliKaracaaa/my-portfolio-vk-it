@@ -195,8 +195,8 @@ export default function ProjetPage() {
                 <ExternalLink size={14} className="mr-1" /> Live
               </Button>
             </div>
-            <Button className="w-full h-11 bg-[#1A2F38] hover:bg-[#1A2F38]/90 text-white rounded-none font-black uppercase italic text-xs gap-2">
-              <Sparkles size={14} /> Initialiser Contact
+            <Button className="w-full min-h-[44px] h-auto py-2 whitespace-normal leading-tight bg-[#1A2F38] hover:bg-[#1A2F38]/90 text-white rounded-none font-black uppercase italic text-xs gap-2">
+              <Sparkles className="shrink-0" size={14} /> Initialiser Contact
             </Button>
           </div>
         </div>
@@ -336,7 +336,7 @@ export default function ProjetPage() {
                       Launch Live
                     </Button>
                   </div>
-                  <Button className="h-16 bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-xl shadow-[6px_6px_0_0_#1A2F38]/10 hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform">
+                  <Button className="min-h-[64px] h-auto whitespace-normal leading-tight bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-sm sm:text-base lg:text-lg xl:text-xl shadow-[6px_6px_0_0_#1A2F38]/10 hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform">
                     Initialiser Contact // Connect
                   </Button>
                 </div>
