@@ -39,6 +39,17 @@ export default function AdminLayout({
             >
               Briefs Clients
             </Link>
+
+            <Link
+              href="/admin/ressources"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                pathname?.startsWith("/admin/ressources")
+                  ? "bg-slate-100 text-slate-900"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+              }`}
+            >
+              Ressources Clients
+            </Link>
           </div>
 
           {/* Bouton de retour au site public (Ajouté à la demande de l'utilisateur) */}

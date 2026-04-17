@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Github, Linkedin, ArrowUpRight, Settings } from "lucide-react";
+import { Github, Linkedin, ArrowUpRight, Settings, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 
@@ -254,6 +254,12 @@ export default function Home() {
             </p>
           </div>
           <div className="flex gap-3 shrink-0">
+            <SocialLink
+              href="/ressources"
+              icon={Sparkles}
+              label="Ressources"
+              hoverClass="hover:border-violet-500 hover:bg-violet-500 hover:text-white"
+            />
             <SocialLink
               href="https://github.com/VeliKaracaaa"
               icon={Github}

@@ -58,3 +58,22 @@ export type SelectPost = typeof posts.$inferSelect;
 
 export type InsertLinkedinToken = typeof linkedinTokens.$inferInsert;
 export type SelectLinkedinToken = typeof linkedinTokens.$inferSelect;
+
+/**
+ * Schéma pour stocker les demandes d'inspiration / ressources clients
+ */
+export const clientInspirations = pgTable("client_inspirations", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  colorPersonality: text("color_personality").notNull(),
+  websitePersonality: text("website_personality").notNull(),
+  likedElements: text("liked_elements").notNull(),
+  status: text("status").default("pending").notNull(), // 'pending', 'reviewed', 'archived'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type InsertClientInspiration = typeof clientInspirations.$inferInsert;
+export type SelectClientInspiration = typeof clientInspirations.$inferSelect;
