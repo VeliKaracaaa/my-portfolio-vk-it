@@ -96,7 +96,7 @@ const CV_DATA = {
       title: "Stage - AJC Formation",
       tasks: [
         "Environnement Mainframe z/OS.",
-        "Environnement MVS, apprendre à développer des programmes Batch et transactionnels avec accès aux fichiers et bases de données relationnelles.",
+        "Environnement MVS, développement de programmes Batch et transactionnels avec accès aux fichiers et bases de données relationnelles.",
       ],
     },
     {
