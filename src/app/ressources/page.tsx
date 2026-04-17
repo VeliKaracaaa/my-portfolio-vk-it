@@ -21,7 +21,7 @@ const COLORS = [
   { id: "Bleu", label: "Bleu", desc: "Paix, fiabilité et professionnalisme", hex: "#3b82f6" },
   { id: "Violet", label: "Violet", desc: "Richesse, sagesse et magie", hex: "#a855f7" },
   { id: "Rose", label: "Rose", desc: "Romance, soins et affection", hex: "#ec4899" },
-  { id: "Marron", label: "Marron", desc: "Nature, durabilité et confort", hex: "#8b5cf6" }, 
+  { id: "Marron", label: "Marron", desc: "Nature, durabilité et confort", hex: "#8B4513" }, 
   { id: "Noir", label: "Noir", desc: "Pouvoir, élégance et minimalisme", hex: "#0f172a", textWhite: true },
 ];
 
@@ -85,6 +85,8 @@ export default function RessourcesPage() {
     websitePersonality: "",
     likedElements: "",
   });
+
+  const [searchTheme, setSearchTheme] = useState("");
 
   const [isAuthPending, startAuthTransition] = useTransition();
   const [isSubmitPending, startSubmitTransition] = useTransition();
@@ -346,24 +348,52 @@ export default function RessourcesPage() {
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {INSPIRATION_LINKS.map((section, idx) => (
-                  <div key={idx} className="bg-slate-50 p-5 rounded-xl border border-slate-100">
-                    <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                  <div key={idx} className="bg-slate-50 p-5 rounded-xl border border-slate-100 flex flex-col h-full">
+                    <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2 shrink-0">
                       <LinkIcon size={16} className="text-slate-400" />
                       {section.category}
                     </h3>
-                    <div className="flex flex-col gap-2">
-                      {section.links.map((link, lIdx) => (
-                        <a
-                          key={lIdx}
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center text-sm font-medium px-4 py-2 rounded-lg bg-white text-slate-700 hover:bg-slate-200 hover:text-slate-900 transition-colors shadow-sm"
-                        >
-                          {link.name}
-                          <ArrowRight size={14} className="ml-auto opacity-50" />
-                        </a>
-                      ))}
+                    
+                    {section.category === "Design & UI" && (
+                      <div className="mb-4 shrink-0">
+                        <Input 
+                          placeholder="Ex: Mode sombre, portfolio..." 
+                          value={searchTheme}
+                          onChange={(e) => setSearchTheme(e.target.value)}
+                          className="bg-white"
+                        />
+                        <p className="text-[11px] text-slate-400 mt-1">Optionnel: Tapez un thème pour filtrer directement les liens externes ci-dessous.</p>
+                      </div>
+                    )}
+                    
+                    <div className="flex flex-col gap-2 flex-grow">
+                      {section.links.map((link, lIdx) => {
+                        let finalUrl = link.url;
+                        if (section.category === "Design & UI" && searchTheme.trim() !== "") {
+                          const q = encodeURIComponent(searchTheme.trim().toLowerCase());
+                          switch(link.name) {
+                            case "Lapa Ninja": finalUrl = `https://www.lapa.ninja/?search=${q}`; break;
+                            case "Land-Book": finalUrl = `https://land-book.com/search?q=${q}`; break;
+                            case "Dribbble": finalUrl = `https://dribbble.com/search/${q}`; break;
+                            case "Awwwards": finalUrl = `https://www.awwwards.com/websites/search/?text=${q}`; break;
+                            case "OnePageLove": finalUrl = `https://onepagelove.com/search/${q}`; break;
+                            case "Screenlane": finalUrl = `https://screenlane.com/search/?q=${q}`; break;
+                          }
+                        }
+
+                        return (
+                          <a
+                            key={lIdx}
+                            href={finalUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-sm font-medium px-4 py-2 rounded-lg bg-white text-slate-700 hover:bg-slate-200 hover:text-slate-900 transition-colors shadow-sm"
+                          >
+                            {link.name}
+                            <ArrowRight size={14} className="ml-auto opacity-50" />
+                          </a>
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
