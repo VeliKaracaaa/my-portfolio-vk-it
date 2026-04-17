@@ -50,10 +50,10 @@ export default function AdminRessourcesPage() {
     setLoading(true);
     const result = await getInspirationsForAdmin();
 
-    if (result.success && result.data?.inspirations) {
-      setInspirations(result.data.inspirations as Inspiration[]);
-    } else {
+    if (!result.success) {
       toast.error(result.error || "Erreur lors du chargement des ressources");
+    } else if (result.data?.inspirations) {
+      setInspirations(result.data.inspirations as Inspiration[]);
     }
     setLoading(false);
   }
@@ -63,11 +63,11 @@ export default function AdminRessourcesPage() {
 
     startTransition(async () => {
       const result = await deleteInspiration(id);
-      if (result.success) {
+      if (!result.success) {
+        toast.error(result.error || "Erreur de suppression");
+      } else {
         toast.success("Ressource supprimée");
         setInspirations((prev) => prev.filter((i) => i.id !== id));
-      } else {
-        toast.error(result.error || "Erreur de suppression");
       }
     });
   }
@@ -75,12 +75,12 @@ export default function AdminRessourcesPage() {
   async function handleMarkAsReviewed(id: string) {
     const result = await markInspirationAsReviewed(id);
 
-    if (result.success) {
+    if (!result.success) {
+      toast.error(result.error || "Impossible de marquer comme révisée");
+    } else {
       setInspirations((prev) =>
         prev.map((i) => (i.id === id ? { ...i, status: "reviewed" } : i))
       );
-    } else {
-      toast.error(result.error || "Impossible de marquer comme révisée");
     }
   }
 
