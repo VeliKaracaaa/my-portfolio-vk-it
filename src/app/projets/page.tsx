@@ -2,15 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowLeft,
-  Sparkles,
-  Target,
-  Cpu,
-  X,
-  Play,
-  Maximize2,
-} from "lucide-react";
+import { ArrowLeft, Sparkles, Target, Cpu, X, Play } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
@@ -65,23 +57,18 @@ const projects = [
 type Project = (typeof projects)[number];
 
 export default function ProjetPage() {
-  // --- ÉTATS (STATES) ---
   const [activeProject, setActiveProject] = useState<Project>(projects[0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null); // Référence pour contrôler la vidéo (ex: plein écran)
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const currentYear = new Date().getFullYear();
   const lastUpdate = "16.03.2026";
 
-  // --- EFFETS (SIDE EFFECTS) ---
-
-  // Réinitialise la lecture si on change de projet
   useEffect(() => {
     setIsPlaying(false);
   }, [activeProject]);
 
-  // Gestion du montage et blocage du scroll de la page parente
   useEffect(() => {
     setMounted(true);
     document.body.style.overflow = "hidden";
@@ -90,20 +77,8 @@ export default function ProjetPage() {
     };
   }, []);
 
-  // Fonction pour activer le mode plein écran natif
-  const handleFullscreen = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Évite de fermer la vidéo en cliquant sur le bouton
-    if (videoRef.current) {
-      if (videoRef.current.requestFullscreen) {
-        videoRef.current.requestFullscreen();
-      }
-    }
-  };
-
-  // Empêche les erreurs d'hydratation côté serveur
   if (!mounted) return <div className="h-dvh w-full bg-[#F2EFE9]" />;
 
-  // Composant réutilisable pour le bouton "Play" sur l'image
   const PlayButtonOverlay = () => (
     <div className="bg-white border-[3px] xl:border-4 border-[#1A2F38] px-3 py-1.5 xl:px-6 xl:py-3 shadow-[4px_4px_0_0_#1A2F38] xl:shadow-[6px_6px_0_0_#1A2F38] font-black uppercase italic flex items-center gap-2 text-[10px] xl:text-sm">
       <Play size={14} fill="#1A2F38" className="xl:w-5 xl:h-5" />
@@ -113,9 +88,8 @@ export default function ProjetPage() {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-[#F2EFE9] select-none touch-none font-mono text-[#1A2F38]">
-      {/* ─── VUE MOBILE (Hidden sur Desktop) ─── */}
+      {/* ─── VUE MOBILE ─── */}
       <main className="xl:hidden flex flex-col h-dvh w-full p-2 sm:p-4 gap-2">
-        {/* Header Mobile */}
         <header className="h-14 shrink-0 flex items-center justify-between px-3 border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38]">
           <Button
             asChild
@@ -131,7 +105,6 @@ export default function ProjetPage() {
           </div>
         </header>
 
-        {/* Sélecteur de projet Mobile */}
         <nav className="flex gap-1 shrink-0">
           {projects.map((p) => (
             <button
@@ -148,7 +121,6 @@ export default function ProjetPage() {
           ))}
         </nav>
 
-        {/* Zone Visuelle Mobile */}
         <div
           className="flex-[1.2] min-h-0 relative border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38] overflow-hidden"
           onClick={() => activeProject.video && setIsPlaying(true)}
@@ -162,28 +134,21 @@ export default function ProjetPage() {
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 bg-black"
               >
-                {/* VIDEO OPTIMISÉE MOBILE */}
                 <video
                   ref={videoRef}
-                  key={activeProject.video} // Force le rechargement du flux si changement de projet
+                  key={activeProject.video}
                   autoPlay
                   muted
                   loop
                   playsInline
-                  controls // Permet aux amis sur vieux PC de gérer le flux
-                  preload="metadata" // Optimisation : charge uniquement les infos de base au début
+                  controls
+                  preload="metadata"
                   className="w-full h-full object-cover"
                 >
                   <source src={activeProject.video} type="video/mp4" />
                 </video>
-                {/* Contrôles manuels */}
-                <div className="absolute top-2 right-2 flex gap-2 z-50">
-                  <button
-                    onClick={handleFullscreen}
-                    className="bg-white border-2 border-[#1A2F38] p-1 shadow-[2px_2px_0_0_#1A2F38]"
-                  >
-                    <Maximize2 size={16} />
-                  </button>
+                {/* Uniquement le bouton fermer, le plein écran est géré par la vidéo elle-même */}
+                <div className="absolute top-2 right-2 z-50">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -220,7 +185,6 @@ export default function ProjetPage() {
           </AnimatePresence>
         </div>
 
-        {/* Zone Détails Mobile */}
         <div className="flex-[1] min-h-0 bg-white border-[3px] border-[#1A2F38] shadow-[4px_4px_0_0_#1A2F38] flex flex-col overflow-hidden">
           <div className="flex-1 p-3 overflow-y-auto font-bold uppercase italic text-xs">
             <p className="mb-4">{activeProject.description}</p>
@@ -246,9 +210,8 @@ export default function ProjetPage() {
         </div>
       </main>
 
-      {/* ─── VUE DESKTOP (Hidden sur Mobile) ─── */}
+      {/* ─── VUE DESKTOP ─── */}
       <main className="hidden xl:flex flex-col h-dvh w-full p-6 gap-4">
-        {/* Header Desktop */}
         <header className="h-20 shrink-0 flex items-center justify-between px-8 border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38]">
           <Button
             asChild
@@ -265,7 +228,6 @@ export default function ProjetPage() {
         </header>
 
         <div className="flex-1 flex gap-4 min-h-0">
-          {/* Navigation Latérale (Chiffres 01, 02...) */}
           <nav className="w-24 shrink-0 flex flex-col gap-2">
             {projects.map((p) => (
               <button
@@ -282,7 +244,6 @@ export default function ProjetPage() {
 
           <div className="flex-1 flex flex-col gap-4 min-h-0">
             <div className="flex-1 flex gap-4 min-h-0">
-              {/* ZONE VIDEO/IMAGE PRINCIPALE DESKTOP */}
               <div
                 className="flex-[1.8] relative border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38] overflow-hidden group cursor-pointer"
                 onClick={() => activeProject.video && setIsPlaying(true)}
@@ -296,35 +257,28 @@ export default function ProjetPage() {
                       exit={{ opacity: 0 }}
                       className="absolute inset-0 bg-black"
                     >
-                      {/* VIDEO OPTIMISÉE DESKTOP */}
                       <video
                         ref={videoRef}
-                        key={activeProject.video} // Crucial pour le changement de projet
+                        key={activeProject.video}
                         autoPlay
                         muted
                         loop
                         playsInline
-                        controls // Ajouté pour faciliter la lecture sur connexions lentes
+                        controls
                         preload="metadata"
                         className="w-full h-full object-contain"
                       >
                         <source src={activeProject.video} type="video/mp4" />
                       </video>
-                      <div className="absolute top-6 right-6 flex gap-4 z-50">
-                        <button
-                          onClick={handleFullscreen}
-                          className="bg-white border-4 border-[#1A2F38] px-4 py-2 font-black uppercase text-sm shadow-[4px_4px_0_0_#1A2F38] flex items-center gap-2"
-                        >
-                          <Maximize2 size={20} /> Plein Écran
-                        </button>
+                      <div className="absolute top-6 right-6 z-50">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setIsPlaying(false);
                           }}
-                          className="bg-white border-4 border-[#1A2F38] px-4 py-2 font-black uppercase text-sm shadow-[4px_4px_0_0_#1A2F38] flex items-center gap-2"
+                          className="bg-white border-4 border-[#1A2F38] px-4 py-2 font-black uppercase text-sm shadow-[4px_4px_0_0_#1A2F38] flex items-center gap-2 hover:bg-[#1A2F38] hover:text-white transition-colors"
                         >
-                          <X size={20} /> Fermer
+                          <X size={20} /> Fermer l'aperçu
                         </button>
                       </div>
                     </motion.div>
@@ -356,7 +310,6 @@ export default function ProjetPage() {
                 </AnimatePresence>
               </div>
 
-              {/* Colonne de texte Desktop */}
               <div className="flex-1 bg-white border-[4px] border-[#1A2F38] shadow-[8px_8px_0_0_#1A2F38] flex flex-col overflow-hidden">
                 <div className="flex-1 p-10 overflow-y-auto">
                   <div className="flex items-center gap-3 mb-8 opacity-30">
@@ -391,7 +344,6 @@ export default function ProjetPage() {
               </div>
             </div>
 
-            {/* Footer de page */}
             <footer className="h-10 flex items-center justify-between px-2 font-black uppercase text-[10px] opacity-40">
               <span className="italic">Deployment_Status: Stable_v1.0</span>
               <span>© {currentYear} Veli Karaca Portfolio</span>
