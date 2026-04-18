@@ -72,7 +72,7 @@ type Project = (typeof projects)[number];
 export default function ProjetPage() {
   const [activeProject, setActiveProject] = useState<Project>(projects[0]);
   const [view, setView] = useState<"base" | "video" | "gallery">("base");
-  const [selectedImage, setSelectedImage] = useState<string | null>(null); // État pour le plein écran
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -93,9 +93,17 @@ export default function ProjetPage() {
 
   if (!mounted) return <div className="h-dvh w-full bg-[#F2EFE9]" />;
 
+  // Petit composant réutilisable pour le bouton play
+  const PlayButtonOverlay = () => (
+    <div className="bg-white border-[3px] lg:border-4 border-[#1A2F38] px-3 py-1.5 lg:px-6 lg:py-3 shadow-[4px_4px_0_0_#1A2F38] lg:shadow-[6px_6px_0_0_#1A2F38] font-black uppercase italic flex items-center gap-2 text-[10px] lg:text-sm">
+      <Play size={14} fill="#1A2F38" className="lg:w-5 lg:h-5" />
+      Lancer la Démo_
+    </div>
+  );
+
   return (
     <div className="fixed inset-0 overflow-hidden bg-[#F2EFE9] select-none touch-none font-mono text-[#1A2F38]">
-      {/* ─── MODAL PLEIN ÉCRAN (LIGHTBOX) ─── */}
+      {/* ─── LIGHTBOX (MODAL IMAGE) ─── */}
       <AnimatePresence>
         {selectedImage && (
           <motion.div
@@ -106,23 +114,24 @@ export default function ProjetPage() {
             className="fixed inset-0 z-[100] bg-[#1A2F38]/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
           >
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
               className="relative w-full h-full max-w-6xl max-h-[85vh]"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={() => setSelectedImage(null)}
-                className="absolute -top-12 right-0 text-white flex items-center gap-2 font-black uppercase italic hover:text-red-400 transition-colors"
+                className="absolute -top-10 right-0 text-white flex items-center gap-2 font-black uppercase italic"
               >
-                Fermer <X size={32} />
+                Fermer <X size={24} />
               </button>
-              <div className="w-full h-full relative border-4 border-white shadow-[0_0_40px_rgba(0,0,0,0.5)] bg-white">
+              <div className="w-full h-full relative border-4 border-white bg-white">
                 <Image
                   src={selectedImage}
                   alt="Full view"
                   fill
+                  sizes="100vw"
                   className="object-contain"
                 />
               </div>
@@ -131,8 +140,163 @@ export default function ProjetPage() {
         )}
       </AnimatePresence>
 
-      <main className="hidden xl:flex flex-col h-dvh w-full p-6 gap-4">
-        {/* HEADER */}
+      {/* ─── VUE MOBILE & TABLETTE (< 1024px) ─── */}
+      <main className="lg:hidden flex flex-col h-dvh w-full p-2 sm:p-4 gap-2">
+        <header className="h-14 shrink-0 flex items-center justify-between px-3 border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38]">
+          <Button
+            asChild
+            variant="outline"
+            className="border-2 border-[#1A2F38] h-9 w-9 p-0 rounded-none"
+          >
+            <Link href="/">
+              <ArrowLeft size={18} strokeWidth={3} />
+            </Link>
+          </Button>
+          <div className="w-9 h-9 bg-[#1A2F38] flex items-center justify-center text-white">
+            <Cpu size={18} />
+          </div>
+        </header>
+
+        <nav className="flex gap-1 shrink-0 overflow-x-auto no-scrollbar">
+          {projects.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => setActiveProject(p)}
+              className={`flex-1 min-w-[60px] h-9 border-2 font-black italic text-xs transition-all ${
+                activeProject.id === p.id
+                  ? "bg-[#1A2F38] text-white border-[#1A2F38]"
+                  : "bg-white border-[#1A2F38]/20"
+              }`}
+            >
+              {p.id}
+            </button>
+          ))}
+        </nav>
+
+        <div className="flex-[1.2] min-h-0 relative border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38] overflow-hidden">
+          <AnimatePresence mode="wait">
+            {view === "video" && activeProject.video ? (
+              <motion.div
+                key="vm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="absolute inset-0 bg-black z-10"
+              >
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controls
+                  className="w-full h-full object-cover"
+                >
+                  <source src={activeProject.video} type="video/mp4" />
+                </video>
+                <button
+                  onClick={() => setView("base")}
+                  className="absolute top-2 right-2 bg-white border-2 border-[#1A2F38] p-1 shadow-[2px_2px_0_0_#1A2F38] z-20"
+                >
+                  <X size={16} />
+                </button>
+              </motion.div>
+            ) : view === "gallery" && activeProject.gallery ? (
+              <motion.div
+                key="gm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="absolute inset-0 bg-[#F2EFE9] p-2 overflow-y-auto z-10"
+              >
+                <button
+                  onClick={() => setView("base")}
+                  className="mb-2 text-[10px] font-black uppercase underline"
+                >
+                  Retour
+                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  {activeProject.gallery.map((src, i) => (
+                    <div
+                      key={i}
+                      onClick={() => setSelectedImage(src)}
+                      className="relative aspect-square border-2 border-[#1A2F38]"
+                    >
+                      <Image
+                        src={src}
+                        alt="gal"
+                        fill
+                        sizes="50vw"
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key={activeProject.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={activeProject.image}
+                  alt={activeProject.title}
+                  fill
+                  sizes="100vw"
+                  className="object-cover opacity-90"
+                  priority
+                />
+                <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    {activeProject.video && (
+                      <button onClick={() => setView("video")}>
+                        <PlayButtonOverlay />
+                      </button>
+                    )}
+                    {activeProject.gallery && (
+                      <button
+                        onClick={() => setView("gallery")}
+                        className="bg-white border-[3px] border-[#1A2F38] px-3 py-1.5 shadow-[4px_4px_0_0_#1A2F38] font-black uppercase italic text-[10px] flex items-center gap-2"
+                      >
+                        <ImageIcon size={14} /> Galerie_
+                      </button>
+                    )}
+                  </div>
+                  <h2 className="text-2xl font-black text-white uppercase italic drop-shadow-[2px_2px_0_#1A2F38]">
+                    {activeProject.title}
+                  </h2>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div className="flex-[1] min-h-0 bg-white border-[3px] border-[#1A2F38] shadow-[4px_4px_0_0_#1A2F38] flex flex-col overflow-hidden">
+          <div className="flex-1 p-3 overflow-y-auto font-bold uppercase italic text-xs">
+            <p className="mb-4">{activeProject.description}</p>
+            <div className="flex flex-wrap gap-1">
+              {activeProject.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-[9px] border border-[#1A2F38]/30 px-1.5 py-0.5 bg-[#F2EFE9]"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="p-2 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50">
+            <Button
+              asChild
+              className="w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-[10px]"
+            >
+              <Link href="/brief">Initialiser Contact // Connect</Link>
+            </Button>
+          </div>
+        </div>
+      </main>
+
+      {/* ─── VUE DESKTOP (>= 1024px) ─── */}
+      <main className="hidden lg:flex flex-col h-dvh w-full p-6 gap-4">
         <header className="h-20 shrink-0 flex items-center justify-between px-8 border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38]">
           <Button
             asChild
@@ -149,17 +313,12 @@ export default function ProjetPage() {
         </header>
 
         <div className="flex-1 flex gap-4 min-h-0">
-          {/* NAV GAUCHE */}
           <nav className="w-24 shrink-0 flex flex-col gap-2">
             {projects.map((p) => (
               <button
                 key={p.id}
                 onClick={() => setActiveProject(p)}
-                className={`flex-1 border-[3px] flex items-center justify-center transition-all ${
-                  activeProject.id === p.id
-                    ? "bg-[#1A2F38] text-white border-[#1A2F38]"
-                    : "bg-white border-[#1A2F38]/20 hover:border-[#1A2F38]"
-                }`}
+                className={`flex-1 border-[3px] flex items-center justify-center transition-all ${activeProject.id === p.id ? "bg-[#1A2F38] text-white border-[#1A2F38]" : "bg-white border-[#1A2F38]/20 hover:border-[#1A2F38]"}`}
               >
                 <span className="text-4xl font-black italic -rotate-90">
                   {p.id}
@@ -170,20 +329,17 @@ export default function ProjetPage() {
 
           <div className="flex-1 flex flex-col gap-4 min-h-0">
             <div className="flex-1 flex gap-4 min-h-0">
-              {/* ZONE VISUELLE */}
               <div className="flex-[1.8] relative border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38] overflow-hidden group">
                 <AnimatePresence mode="wait">
-                  {/* VIDÉO */}
                   {view === "video" && activeProject.video ? (
                     <motion.div
-                      key="v-d"
+                      key="vd"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       className="absolute inset-0 bg-black z-10"
                     >
                       <video
-                        ref={videoRef}
                         autoPlay
                         muted
                         loop
@@ -195,15 +351,14 @@ export default function ProjetPage() {
                       </video>
                       <button
                         onClick={() => setView("base")}
-                        className="absolute top-6 right-6 bg-white border-4 border-[#1A2F38] px-4 py-2 font-black uppercase text-sm shadow-[4px_4px_0_0_#1A2F38] flex items-center gap-2 z-20 hover:bg-red-50 transition-colors"
+                        className="absolute top-6 right-6 bg-white border-4 border-[#1A2F38] px-4 py-2 font-black uppercase text-sm shadow-[4px_4px_0_0_#1A2F38] flex items-center gap-2 z-20 hover:bg-red-50"
                       >
-                        <X size={20} /> Fermer l'aperçu
+                        <X size={20} /> Fermer
                       </button>
                     </motion.div>
-                  ) : /* GALERIE AVEC HOVER ZOOM ET CLICK ZOOM */
-                  view === "gallery" && activeProject.gallery ? (
+                  ) : view === "gallery" && activeProject.gallery ? (
                     <motion.div
-                      key="g-d"
+                      key="gd"
                       initial={{ opacity: 0, x: 50 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -50 }}
@@ -211,34 +366,33 @@ export default function ProjetPage() {
                     >
                       <div className="flex justify-between items-center mb-6">
                         <h3 className="text-2xl font-black italic uppercase">
-                          Project_Assets_Gallery // {activeProject.title}
+                          Gallery // {activeProject.title}
                         </h3>
                         <button
                           onClick={() => setView("base")}
-                          className="bg-[#1A2F38] text-white px-4 py-2 font-black uppercase text-xs italic shadow-[4px_4px_0_0_#888] hover:bg-white hover:text-[#1A2F38] transition-all"
+                          className="bg-[#1A2F38] text-white px-4 py-2 font-black uppercase text-xs italic"
                         >
                           Retour [X]
                         </button>
                       </div>
-                      <div className="grid grid-cols-2 gap-6">
+                      <div className="grid grid-cols-2 gap-6 pb-10">
                         {activeProject.gallery.map((src, i) => (
                           <motion.div
                             key={i}
-                            whileHover={{ scale: 1.03, rotate: 1 }} // EFFET HOVER ZOOM
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => setSelectedImage(src)} // CLICK POUR PLEIN ÉCRAN
+                            whileHover={{ scale: 1.03, rotate: 1 }}
+                            onClick={() => setSelectedImage(src)}
                             className="relative aspect-video border-[3px] border-[#1A2F38] bg-white shadow-[6px_6px_0_0_#1A2F38] cursor-zoom-in overflow-hidden group/item"
                           >
                             <Image
                               src={src}
-                              alt={`Capture ${i}`}
+                              alt="gal"
                               fill
+                              sizes="(max-width: 1536px) 40vw, 30vw"
                               className="object-cover"
                             />
-                            {/* Overlay subtile au survol */}
-                            <div className="absolute inset-0 bg-[#1A2F38]/0 group-hover/item:bg-[#1A2F38]/10 transition-colors flex items-center justify-center">
+                            <div className="absolute inset-0 bg-[#1A2F38]/0 group-hover/item:bg-[#1A2F38]/10 flex items-center justify-center transition-colors">
                               <ZoomIn
-                                className="text-white opacity-0 group-hover/item:opacity-100 transition-opacity"
+                                className="text-white opacity-0 group-hover/item:opacity-100"
                                 size={40}
                               />
                             </div>
@@ -247,7 +401,6 @@ export default function ProjetPage() {
                       </div>
                     </motion.div>
                   ) : (
-                    /* VUE PAR DÉFAUT */
                     <motion.div
                       key={activeProject.id}
                       initial={{ opacity: 0 }}
@@ -258,25 +411,23 @@ export default function ProjetPage() {
                         src={activeProject.image}
                         alt={activeProject.title}
                         fill
+                        sizes="60vw"
                         className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                         priority
                       />
-                      <div className="absolute bottom-10 left-10 flex flex-col gap-6 items-start">
-                        <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <div className="absolute bottom-10 left-10 flex flex-col gap-6">
+                        <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-all">
                           {activeProject.video && (
-                            <button
-                              onClick={() => setView("video")}
-                              className="bg-white border-4 border-[#1A2F38] px-6 py-3 shadow-[6px_6px_0_0_#1A2F38] font-black uppercase italic flex items-center gap-2 text-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
-                            >
-                              <Play size={18} fill="#1A2F38" /> Lancer la Démo_
+                            <button onClick={() => setView("video")}>
+                              <PlayButtonOverlay />
                             </button>
                           )}
                           {activeProject.gallery && (
                             <button
                               onClick={() => setView("gallery")}
-                              className="bg-white border-4 border-[#1A2F38] px-6 py-3 shadow-[6px_6px_0_0_#1A2F38] font-black uppercase italic flex items-center gap-2 text-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
+                              className="bg-white border-4 border-[#1A2F38] px-6 py-3 shadow-[6px_6px_0_0_#1A2F38] font-black uppercase italic flex items-center gap-2 text-sm hover:translate-x-1"
                             >
-                              <ImageIcon size={18} /> Gallery_
+                              <ImageIcon size={18} /> Galerie_
                             </button>
                           )}
                         </div>
@@ -289,7 +440,6 @@ export default function ProjetPage() {
                 </AnimatePresence>
               </div>
 
-              {/* INFOS DROITE */}
               <div className="flex-1 bg-white border-[4px] border-[#1A2F38] shadow-[8px_8px_0_0_#1A2F38] flex flex-col overflow-hidden">
                 <div className="flex-1 p-10 overflow-y-auto">
                   <div className="flex items-center gap-3 mb-8 opacity-30">
@@ -316,16 +466,15 @@ export default function ProjetPage() {
                 <div className="p-8 border-t-[4px] border-[#1A2F38] bg-[#F2EFE9]/50">
                   <Button
                     asChild
-                    className="min-h-[72px] w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-lg text-center"
+                    className="min-h-[72px] w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-lg"
                   >
                     <Link href="/brief">Initialiser Contact // Connect</Link>
                   </Button>
                 </div>
               </div>
             </div>
-
             <footer className="h-10 flex items-center justify-between px-2 font-black uppercase text-[10px] opacity-40">
-              <span className="italic">Deployment_Status: Stable_v1.0</span>
+              <span>Status: Stable_v1.0</span>
               <span>© {currentYear} Veli Karaca Portfolio</span>
             </footer>
           </div>
