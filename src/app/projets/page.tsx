@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Sparkles, Target, Cpu, X, Play } from "lucide-react";
+import { ArrowLeft, Target, Cpu, X, Play } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
@@ -63,7 +63,6 @@ export default function ProjetPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const currentYear = new Date().getFullYear();
-  const lastUpdate = "16.03.2026";
 
   useEffect(() => {
     setIsPlaying(false);
@@ -142,12 +141,10 @@ export default function ProjetPage() {
                   loop
                   playsInline
                   controls
-                  preload="metadata"
                   className="w-full h-full object-cover"
                 >
                   <source src={activeProject.video} type="video/mp4" />
                 </video>
-                {/* Uniquement le bouton fermer, le plein écran est géré par la vidéo elle-même */}
                 <div className="absolute top-2 right-2 z-50">
                   <button
                     onClick={(e) => {
@@ -200,9 +197,10 @@ export default function ProjetPage() {
             </div>
           </div>
           <div className="p-2 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50">
+            {/* AJUSTEMENT MOBILE : text-[10px] et whitespace-nowrap */}
             <Button
               asChild
-              className="w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-[11px]"
+              className="w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-[10px] whitespace-nowrap overflow-hidden"
             >
               <Link href="/brief">Initialiser Contact // Connect</Link>
             </Button>
@@ -265,7 +263,6 @@ export default function ProjetPage() {
                         loop
                         playsInline
                         controls
-                        preload="metadata"
                         className="w-full h-full object-contain"
                       >
                         <source src={activeProject.video} type="video/mp4" />
@@ -334,9 +331,10 @@ export default function ProjetPage() {
                   </div>
                 </div>
                 <div className="p-8 border-t-[4px] border-[#1A2F38] bg-[#F2EFE9]/50">
+                  {/* AJUSTEMENT DESKTOP : text-lg, text-center et whitespace-nowrap */}
                   <Button
                     asChild
-                    className="min-h-[72px] w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-xl shadow-[6px_6px_0_0_#1A2F38]/10"
+                    className="min-h-[72px] w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-lg text-center whitespace-nowrap overflow-hidden px-4"
                   >
                     <Link href="/brief">Initialiser Contact // Connect</Link>
                   </Button>
