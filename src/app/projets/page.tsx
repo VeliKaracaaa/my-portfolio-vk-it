@@ -21,8 +21,8 @@ const projects = [
     title: "E-Commerce Custom",
     category: "Headless Commerce",
     description:
-      "Une solution de vente en ligne complète avec un back-office robuste et un font-end entièrement sur mesure. Architecture MedusaJS pour une liberté totale.",
-    tags: ["Next.js", "MedusaJS", "Tailwind", "Framer Motion"],
+      "Une solution de vente en ligne complète avec un back-office robuste et un font-end entièrement sur mesure. Architecture headless e-commerce pour une liberté totale.",
+    tags: ["Next.js", "headless e-commerce", "Tailwind", "Framer Motion"],
     image:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000",
   },
