@@ -74,7 +74,6 @@ export default function ProjetPage() {
   const [view, setView] = useState<"base" | "video" | "gallery">("base");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   const currentYear = new Date().getFullYear();
 
@@ -93,7 +92,6 @@ export default function ProjetPage() {
 
   if (!mounted) return <div className="h-dvh w-full bg-[#F2EFE9]" />;
 
-  // Petit composant réutilisable pour le bouton play
   const PlayButtonOverlay = () => (
     <div className="bg-white border-[3px] lg:border-4 border-[#1A2F38] px-3 py-1.5 lg:px-6 lg:py-3 shadow-[4px_4px_0_0_#1A2F38] lg:shadow-[6px_6px_0_0_#1A2F38] font-black uppercase italic flex items-center gap-2 text-[10px] lg:text-sm">
       <Play size={14} fill="#1A2F38" className="lg:w-5 lg:h-5" />
@@ -103,7 +101,7 @@ export default function ProjetPage() {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-[#F2EFE9] select-none touch-none font-mono text-[#1A2F38]">
-      {/* ─── LIGHTBOX (MODAL IMAGE) ─── */}
+      {/* ─── LIGHTBOX (ZOOM IMAGE) ─── */}
       <AnimatePresence>
         {selectedImage && (
           <motion.div
@@ -111,28 +109,29 @@ export default function ProjetPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedImage(null)}
-            className="fixed inset-0 z-[100] bg-[#1A2F38]/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
+            className="fixed inset-0 z-[100] bg-[#1A2F38]/95 backdrop-blur-md flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
           >
             <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              className="relative w-full h-full max-w-6xl max-h-[85vh]"
+              initial={{ scale: 0.8, rotate: -2 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="relative w-full h-full max-w-7xl max-h-[90vh] flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={() => setSelectedImage(null)}
-                className="absolute -top-10 right-0 text-white flex items-center gap-2 font-black uppercase italic"
+                className="absolute -top-12 right-0 text-white flex items-center gap-2 font-black uppercase italic hover:text-red-400 transition-colors"
               >
-                Fermer <X size={24} />
+                Fermer l'aperçu <X size={28} />
               </button>
-              <div className="w-full h-full relative border-4 border-white bg-white">
+              <div className="w-full h-full relative border-[6px] border-white bg-white shadow-[20px_20px_0_0_rgba(0,0,0,0.3)] overflow-hidden">
                 <Image
                   src={selectedImage}
-                  alt="Full view"
+                  alt="Full view zoom"
                   fill
                   sizes="100vw"
-                  className="object-contain"
+                  className="object-contain" // Permet de voir l'image entière sans crop
+                  priority
                 />
               </div>
             </motion.div>
@@ -140,7 +139,7 @@ export default function ProjetPage() {
         )}
       </AnimatePresence>
 
-      {/* ─── VUE MOBILE & TABLETTE (< 1024px) ─── */}
+      {/* ─── VUE MOBILE & TABLETTE ─── */}
       <main className="lg:hidden flex flex-col h-dvh w-full p-2 sm:p-4 gap-2">
         <header className="h-14 shrink-0 flex items-center justify-between px-3 border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38]">
           <Button
@@ -217,7 +216,7 @@ export default function ProjetPage() {
                     <div
                       key={i}
                       onClick={() => setSelectedImage(src)}
-                      className="relative aspect-square border-2 border-[#1A2F38]"
+                      className="relative aspect-square border-2 border-[#1A2F38] active:scale-95 transition-transform"
                     >
                       <Image
                         src={src}
@@ -241,7 +240,7 @@ export default function ProjetPage() {
                   src={activeProject.image}
                   alt={activeProject.title}
                   fill
-                  sizes="100vw"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover opacity-90"
                   priority
                 />
@@ -287,7 +286,7 @@ export default function ProjetPage() {
           <div className="p-2 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50">
             <Button
               asChild
-              className="w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-[10px]"
+              className="w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-[10px] py-6 h-auto whitespace-normal leading-tight text-center"
             >
               <Link href="/brief">Initialiser Contact // Connect</Link>
             </Button>
@@ -295,7 +294,7 @@ export default function ProjetPage() {
         </div>
       </main>
 
-      {/* ─── VUE DESKTOP (>= 1024px) ─── */}
+      {/* ─── VUE DESKTOP ─── */}
       <main className="hidden lg:flex flex-col h-dvh w-full p-6 gap-4">
         <header className="h-20 shrink-0 flex items-center justify-between px-8 border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38]">
           <Button
@@ -379,7 +378,7 @@ export default function ProjetPage() {
                         {activeProject.gallery.map((src, i) => (
                           <motion.div
                             key={i}
-                            whileHover={{ scale: 1.03, rotate: 1 }}
+                            whileHover={{ scale: 1.02 }}
                             onClick={() => setSelectedImage(src)}
                             className="relative aspect-video border-[3px] border-[#1A2F38] bg-white shadow-[6px_6px_0_0_#1A2F38] cursor-zoom-in overflow-hidden group/item"
                           >
@@ -388,13 +387,12 @@ export default function ProjetPage() {
                               alt="gal"
                               fill
                               sizes="(max-width: 1536px) 40vw, 30vw"
-                              className="object-cover"
+                              className="object-cover transition-transform duration-500 group-hover/item:scale-110"
                             />
-                            <div className="absolute inset-0 bg-[#1A2F38]/0 group-hover/item:bg-[#1A2F38]/10 flex items-center justify-center transition-colors">
-                              <ZoomIn
-                                className="text-white opacity-0 group-hover/item:opacity-100"
-                                size={40}
-                              />
+                            <div className="absolute inset-0 bg-[#1A2F38]/40 opacity-0 group-hover/item:opacity-100 flex items-center justify-center transition-all">
+                              <div className="bg-white p-3 border-2 border-[#1A2F38] shadow-[4px_4px_0_0_#1A2F38]">
+                                <ZoomIn size={24} />
+                              </div>
                             </div>
                           </motion.div>
                         ))}
@@ -411,7 +409,7 @@ export default function ProjetPage() {
                         src={activeProject.image}
                         alt={activeProject.title}
                         fill
-                        sizes="60vw"
+                        sizes="(max-width: 1024px) 100vw, 60vw"
                         className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
                         priority
                       />
@@ -466,7 +464,7 @@ export default function ProjetPage() {
                 <div className="p-8 border-t-[4px] border-[#1A2F38] bg-[#F2EFE9]/50">
                   <Button
                     asChild
-                    className="min-h-[72px] w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-lg"
+                    className="min-h-[72px] w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-base xl:text-lg px-6 py-4 h-auto whitespace-normal leading-tight text-center shadow-[4px_4px_0_0_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
                   >
                     <Link href="/brief">Initialiser Contact // Connect</Link>
                   </Button>
