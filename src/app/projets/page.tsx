@@ -680,7 +680,7 @@ export default function ProjetPage() {
                 <div className="p-8 border-t-[4px] border-[#1A2F38] bg-[#F2EFE9]/50">
                   <Button
                     asChild
-                    className="min-h-[72px] w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-lg"
+                    className="min-h-[72px] w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-sm text-center whitespace-normal leading-tight px-4"
                   >
                     <Link href="/brief">Initialiser Contact // Connect</Link>
                   </Button>
