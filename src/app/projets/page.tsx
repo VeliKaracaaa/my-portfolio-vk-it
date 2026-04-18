@@ -2,19 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowLeft,
-  Sparkles,
-  Target,
-  Cpu,
-  ExternalLink,
-  Github,
-} from "lucide-react";
+import { ArrowLeft, Sparkles, Target, Cpu, X, Play } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+// Configuration des projets
 const projects = [
   {
     id: "01",
@@ -25,6 +19,8 @@ const projects = [
     tags: ["Next.js", "headless e-commerce", "Tailwind", "Framer Motion"],
     image:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000",
+    video:
+      "https://3akicq0noudnjffn.public.blob.vercel-storage.com/e-commerce-custom.mp4",
   },
   {
     id: "02",
@@ -62,9 +58,14 @@ type Project = (typeof projects)[number];
 
 export default function ProjetPage() {
   const [activeProject, setActiveProject] = useState<Project>(projects[0]);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [mounted, setMounted] = useState(false);
   const currentYear = new Date().getFullYear();
   const lastUpdate = "16.03.2026";
+
+  useEffect(() => {
+    setIsPlaying(false);
+  }, [activeProject]);
 
   useEffect(() => {
     setMounted(true);
@@ -78,11 +79,18 @@ export default function ProjetPage() {
 
   if (!mounted) return <div className="h-dvh w-full bg-[#F2EFE9]" />;
 
+  // Composant réutilisable pour le bouton "Lancer la démo"
+  const PlayButtonOverlay = () => (
+    <div className="bg-white border-[3px] xl:border-4 border-[#1A2F38] px-3 py-1.5 xl:px-6 xl:py-3 shadow-[4px_4px_0_0_#1A2F38] xl:shadow-[6px_6px_0_0_#1A2F38] font-black uppercase italic flex items-center gap-2 text-[10px] xl:text-sm">
+      <Play size={14} fill="#1A2F38" className="xl:w-5 xl:h-5" />
+      Lancer la Démo_
+    </div>
+  );
+
   return (
     <div className="fixed inset-0 overflow-hidden bg-[#F2EFE9] select-none touch-none">
-      {/* ── MOBILE / TABLETTE VIEW (< xl) ── */}
+      {/* ── MOBILE VIEW ── */}
       <main className="xl:hidden flex flex-col h-dvh w-full p-2 sm:p-4 gap-2 font-mono text-[#1A2F38]">
-        {/* HEADER MOBILE - REMPLACEMENT PROJ_ PAR DATE */}
         <header className="h-14 shrink-0 flex items-center justify-between px-3 border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38]">
           <Button
             asChild
@@ -93,7 +101,6 @@ export default function ProjetPage() {
               <ArrowLeft size={18} strokeWidth={3} />
             </Link>
           </Button>
-
           <div className="flex items-center gap-3">
             <div className="text-right">
               <p className="text-[7px] font-black opacity-40 uppercase leading-none">
@@ -109,7 +116,6 @@ export default function ProjetPage() {
           </div>
         </header>
 
-        {/* NAVIGATION TABS */}
         <nav className="flex gap-1 shrink-0">
           {projects.map((p) => (
             <button
@@ -126,39 +132,75 @@ export default function ProjetPage() {
           ))}
         </nav>
 
-        {/* IMAGE ZONE */}
-        <div className="flex-[1.2] min-h-0 relative border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38] overflow-hidden">
+        {/* VISUAL ZONE MOBILE */}
+        <div
+          className="flex-[1.2] min-h-0 relative border-[3px] border-[#1A2F38] bg-white shadow-[4px_4px_0_0_#1A2F38] overflow-hidden"
+          onClick={() => activeProject.video && setIsPlaying(true)}
+        >
           <AnimatePresence mode="wait">
-            <motion.div
-              key={activeProject.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0"
-            >
-              <Image
-                src={activeProject.image}
-                alt={activeProject.title}
-                fill
-                className="object-cover opacity-90"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1A2F38] via-transparent to-transparent opacity-60" />
-              <div className="absolute bottom-3 left-3 right-3">
-                <Badge className="bg-[#1A2F38] text-white rounded-none border-0 mb-1 text-[8px] font-black uppercase italic">
-                  {activeProject.category}
-                </Badge>
-                <h2 className="text-2xl font-black text-white uppercase italic leading-none drop-shadow-[2px_2px_0_#1A2F38]">
-                  {activeProject.title}
-                </h2>
-              </div>
-            </motion.div>
+            {isPlaying && activeProject.video ? (
+              <motion.div
+                key="v-m"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black"
+              >
+                <video
+                  src={activeProject.video}
+                  autoPlay
+                  muted
+                  playsInline
+                  loop
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPlaying(false);
+                  }}
+                  className="absolute top-2 right-2 z-50 bg-white border-2 border-[#1A2F38] p-1 shadow-[2px_2px_0_0_#1A2F38]"
+                >
+                  <X size={16} />
+                </button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key={activeProject.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={activeProject.image}
+                  alt={activeProject.title}
+                  fill
+                  className="object-cover opacity-90"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1A2F38] via-transparent to-transparent opacity-60" />
+
+                {/* Overlay Bouton + Titre MOBILE */}
+                <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-3 items-start">
+                  {activeProject.video && <PlayButtonOverlay />}
+                  <div>
+                    <Badge className="bg-[#1A2F38] text-white rounded-none border-0 mb-1 text-[8px] font-black uppercase italic">
+                      {activeProject.category}
+                    </Badge>
+                    <h2 className="text-2xl font-black text-white uppercase italic leading-none drop-shadow-[2px_2px_0_#1A2F38]">
+                      {activeProject.title}
+                    </h2>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
 
-        {/* DETAILS ZONE */}
+        {/* DETAILS ZONE MOBILE */}
         <div className="flex-[1] min-h-0 bg-white border-[3px] border-[#1A2F38] shadow-[4px_4px_0_0_#1A2F38] flex flex-col overflow-hidden">
-          <div className="flex-1 p-3 overflow-y-auto touch-auto scrollbar-hide">
+          <div className="flex-1 p-3 overflow-y-auto">
             <div className="flex items-center gap-2 mb-2 opacity-40">
               <Target size={14} />
               <span className="text-[10px] font-black uppercase italic tracking-tighter">
@@ -179,24 +221,14 @@ export default function ProjetPage() {
               ))}
             </div>
           </div>
-
-          <div className="p-2 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50 flex flex-col gap-2 shrink-0">
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                className="flex-1 h-10 border-2 border-[#1A2F38] rounded-none bg-transparent font-black uppercase text-[10px]"
-              >
-                <Github size={14} className="mr-1" /> Code
-              </Button>
-              <Button
-                variant="outline"
-                className="flex-1 h-10 border-2 border-[#1A2F38] rounded-none bg-transparent font-black uppercase text-[10px]"
-              >
-                <ExternalLink size={14} className="mr-1" /> Live
-              </Button>
-            </div>
-            <Button className="w-full min-h-[44px] h-auto py-2 whitespace-normal leading-tight bg-[#1A2F38] hover:bg-[#1A2F38]/90 text-white rounded-none font-black uppercase italic text-xs gap-2">
-              <Sparkles className="shrink-0" size={14} /> Initialiser Contact
+          <div className="p-2 border-t-[3px] border-[#1A2F38] bg-[#F2EFE9]/50 shrink-0">
+            <Button
+              asChild
+              className="w-full min-h-[48px] bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-xs gap-2"
+            >
+              <Link href="/brief">
+                <Sparkles size={14} /> Initialiser Contact // Connect
+              </Link>
             </Button>
           </div>
         </div>
@@ -207,9 +239,8 @@ export default function ProjetPage() {
         </footer>
       </main>
 
-      {/* ── DESKTOP VIEW (xl+) ── */}
+      {/* ── DESKTOP VIEW ── */}
       <main className="hidden xl:flex flex-col h-dvh w-full p-6 gap-4 font-mono text-[#1A2F38]">
-        {/* HEADER DESKTOP */}
         <header className="h-20 shrink-0 flex items-center justify-between px-8 border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38]">
           <Button
             asChild
@@ -236,7 +267,6 @@ export default function ProjetPage() {
         </header>
 
         <div className="flex-1 flex gap-4 min-h-0">
-          {/* SIDEBAR NAVIGATION */}
           <nav className="w-24 shrink-0 flex flex-col gap-2">
             {projects.map((p) => (
               <button
@@ -257,39 +287,77 @@ export default function ProjetPage() {
 
           <div className="flex-1 flex flex-col gap-4 min-h-0">
             <div className="flex-1 flex gap-4 min-h-0">
-              {/* MAIN VISUAL */}
-              <div className="flex-[1.8] relative border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38] overflow-hidden group">
+              {/* MAIN VISUAL DESKTOP */}
+              <div
+                className="flex-[1.8] relative border-[4px] border-[#1A2F38] bg-white shadow-[8px_8px_0_0_#1A2F38] overflow-hidden group cursor-pointer"
+                onClick={() => activeProject.video && setIsPlaying(true)}
+              >
                 <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeProject.id}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.4 }}
-                    className="absolute inset-0"
-                  >
-                    <Image
-                      src={activeProject.image}
-                      alt={activeProject.title}
-                      fill
-                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-                    />
-                    <div className="absolute inset-0 bg-[#1A2F38]/10" />
+                  {isPlaying && activeProject.video ? (
+                    <motion.div
+                      key="v-d"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0 bg-black"
+                    >
+                      <video
+                        src={activeProject.video}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="w-full h-full object-contain"
+                      />
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsPlaying(false);
+                        }}
+                        className="absolute top-6 right-6 z-50 bg-white border-4 border-[#1A2F38] px-4 py-2 font-black uppercase text-sm hover:bg-[#1A2F38] hover:text-white shadow-[4px_4px_0_0_#1A2F38] flex items-center gap-2"
+                      >
+                        <X size={20} /> Fermer Démo
+                      </button>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key={activeProject.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      className="absolute inset-0"
+                    >
+                      <Image
+                        src={activeProject.image}
+                        alt={activeProject.title}
+                        fill
+                        className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                      />
+                      <div className="absolute inset-0 bg-[#1A2F38]/10" />
 
-                    <div className="absolute top-6 left-6">
-                      <Badge className="bg-[#1A2F38] text-white rounded-none border-0 px-3 py-1 font-black uppercase italic text-xs">
-                        {activeProject.category}
-                      </Badge>
-                    </div>
+                      <div className="absolute top-6 left-6">
+                        <Badge className="bg-[#1A2F38] text-white rounded-none border-0 px-3 py-1 font-black uppercase italic text-xs">
+                          {activeProject.category}
+                        </Badge>
+                      </div>
 
-                    <h2 className="absolute bottom-10 left-10 text-8xl font-black text-white italic uppercase drop-shadow-[6px_6px_0_#1A2F38] leading-none">
-                      {activeProject.title}
-                    </h2>
-                  </motion.div>
+                      {/* Overlay Bouton + Titre DESKTOP */}
+                      <div className="absolute bottom-10 left-10 flex flex-col gap-6 items-start">
+                        {activeProject.video && (
+                          <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
+                            <PlayButtonOverlay />
+                          </div>
+                        )}
+                        <h2 className="text-8xl font-black text-white italic uppercase drop-shadow-[6px_6px_0_#1A2F38] leading-none">
+                          {activeProject.title}
+                        </h2>
+                      </div>
+                    </motion.div>
+                  )}
                 </AnimatePresence>
               </div>
 
-              {/* PANEL INFO */}
+              {/* PANEL INFO DESKTOP */}
               <div className="flex-1 bg-white border-[4px] border-[#1A2F38] shadow-[8px_8px_0_0_#1A2F38] flex flex-col overflow-hidden">
                 <div className="flex-1 p-10 overflow-y-auto">
                   <div className="flex items-center gap-3 mb-8 opacity-30">
@@ -320,29 +388,16 @@ export default function ProjetPage() {
                     ))}
                   </div>
                 </div>
-
-                <div className="p-8 border-t-[4px] border-[#1A2F38] bg-[#F2EFE9]/50 flex flex-col gap-4 shrink-0">
-                  <div className="grid grid-cols-2 gap-4">
-                    <Button
-                      variant="outline"
-                      className="h-14 border-[3px] border-[#1A2F38] rounded-none font-black uppercase text-sm hover:bg-[#1A2F38] hover:text-white"
-                    >
-                      Github Source
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="h-14 border-[3px] border-[#1A2F38] rounded-none font-black uppercase text-sm hover:bg-[#1A2F38] hover:text-white"
-                    >
-                      Launch Live
-                    </Button>
-                  </div>
-                  <Button className="min-h-[64px] h-auto whitespace-normal leading-tight bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-sm sm:text-base lg:text-lg xl:text-xl shadow-[6px_6px_0_0_#1A2F38]/10 hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform">
-                    Initialiser Contact // Connect
+                <div className="p-8 border-t-[4px] border-[#1A2F38] bg-[#F2EFE9]/50 shrink-0">
+                  <Button
+                    asChild
+                    className="min-h-[72px] w-full bg-[#1A2F38] text-white rounded-none font-black uppercase italic text-xl shadow-[6px_6px_0_0_#1A2F38]/10 hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform"
+                  >
+                    <Link href="/brief">Initialiser Contact // Connect</Link>
                   </Button>
                 </div>
               </div>
             </div>
-
             <footer className="h-10 flex items-center justify-between px-2 font-black uppercase text-[10px] opacity-40">
               <span className="italic">Deployment_Status: Stable_v1.0</span>
               <span>© {currentYear} Veli Karaca Portfolio</span>
