@@ -35,8 +35,7 @@ const projects = [
     tags: ["Next.js", "headless e-commerce", "Tailwind", "Framer Motion"],
     image:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000",
-    video:
-      "https://3akicq0noudnjffn.public.blob.vercel-storage.com/e-commerce-custom.mp4",
+    video: "/projets/ecommerce/video/e-commerce-custom.mp4",
     gallery: [
       "/projets/ecommerce/ecommerce1.png",
       "/projets/ecommerce/ecommerce2.png",
