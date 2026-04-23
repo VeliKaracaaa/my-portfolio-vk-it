@@ -17,7 +17,8 @@ const ratelimit = new Ratelimit({
   analytics: true,
 });
 
-const RESSOURCES_PASSWORD = process.env.RESSOURCES_PASSWORD || "VK-Inspire-2026!";
+const RESSOURCES_PASSWORD =
+  process.env.RESSOURCES_PASSWORD || "VK-Inspire-2027!";
 
 // 2. Vérifier le mot de passe
 export async function verifyRessourcesPassword(password: string) {
@@ -46,17 +47,19 @@ export async function submitInspirationAction(rawData: unknown) {
     const parsedInput = InspirationFormSchema.parse(rawData);
 
     // a. Application du rate limit basé sur l'IP
-    let ip = "global_inspiration_limit"; 
+    let ip = "global_inspiration_limit";
     try {
       const headersList = await headers();
       ip = headersList.get("x-forwarded-for") || "anonymous_ip";
     } catch {
       // Ignorer si les headers ne sont pas accessibles
     }
-    
+
     const { success } = await ratelimit.limit(ip);
     if (!success) {
-      throw new Error("Vous avez atteint la limite de soumissions. Réessayez demain.");
+      throw new Error(
+        "Vous avez atteint la limite de soumissions. Réessayez demain.",
+      );
     }
 
     // b. Insertion dans PostgreSQL
@@ -67,14 +70,19 @@ export async function submitInspirationAction(rawData: unknown) {
       phone: parsedInput.phone || null,
       colorPersonality: parsedInput.colorPersonality,
       websitePersonality: parsedInput.websitePersonality,
-      likedElements: parsedInput.likedElements?.trim() ? parsedInput.likedElements : "Aucune information renseignée",
+      likedElements: parsedInput.likedElements?.trim()
+        ? parsedInput.likedElements
+        : "Aucune information renseignée",
       status: "pending",
     });
 
     // c. Revalider la page admin
     revalidatePath("/admin/ressources");
 
-    return { success: true, message: "Vos ressources ont bien été enregistrées !" };
+    return {
+      success: true,
+      message: "Vos ressources ont bien été enregistrées !",
+    };
   });
 }
 
@@ -101,7 +109,8 @@ export async function deleteInspiration(id: string) {
 // 6. Marquer comme lu/révisé (admin)
 export async function markInspirationAsReviewed(id: string) {
   return withSafeAction("markInspirationAsReviewed", async () => {
-    await db.update(clientInspirations)
+    await db
+      .update(clientInspirations)
       .set({ status: "reviewed" })
       .where(eq(clientInspirations.id, id));
     revalidatePath("/admin/ressources");
