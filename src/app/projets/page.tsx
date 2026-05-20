@@ -85,7 +85,7 @@ const projects = [
     category: "SaaS Métier",
     description:
       "Outil de gestion de chantier et suivi de production en temps réel dédié aux artisans du bâtiment.",
-    tags: ["Next.js", "Supabase", "Vercel"],
+    tags: ["Confidentiel"],
     image:
       "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1000",
   },
@@ -402,11 +402,10 @@ export default function ProjetPage() {
             <button
               key={p.id}
               onClick={() => setActiveProject(p)}
-              className={`flex-1 min-w-[60px] h-9 border-2 font-black italic text-xs transition-all ${
-                activeProject.id === p.id
+              className={`flex-1 min-w-[60px] h-9 border-2 font-black italic text-xs transition-all ${activeProject.id === p.id
                   ? "bg-[#1A2F38] text-white border-[#1A2F38]"
                   : "bg-white border-[#1A2F38]/20"
-              }`}
+                }`}
             >
               {p.id}
             </button>
@@ -560,11 +559,10 @@ export default function ProjetPage() {
               <button
                 key={p.id}
                 onClick={() => setActiveProject(p)}
-                className={`flex-1 border-[3px] flex items-center justify-center transition-all ${
-                  activeProject.id === p.id
+                className={`flex-1 border-[3px] flex items-center justify-center transition-all ${activeProject.id === p.id
                     ? "bg-[#1A2F38] text-white border-[#1A2F38]"
                     : "bg-white border-[#1A2F38]/20 hover:border-[#1A2F38]"
-                }`}
+                  }`}
               >
                 <span className="text-4xl font-black italic -rotate-90">
                   {p.id}
