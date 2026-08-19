@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { submitInspirationAction, verifyRessourcesPassword } from "../actions/inspirations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

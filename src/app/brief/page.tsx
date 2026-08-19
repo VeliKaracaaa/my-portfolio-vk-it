@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { submitBrief, type BriefFormData } from "@/app/actions/brief";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";

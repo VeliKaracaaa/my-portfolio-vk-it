@@ -6,7 +6,7 @@ import {
   AnimatePresence,
   useMotionValue,
   animate,
-} from "framer-motion";
+} from "motion/react";
 import {
   ArrowLeft,
   Target,

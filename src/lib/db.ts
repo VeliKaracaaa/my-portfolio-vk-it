@@ -1,15 +1,22 @@
-import { drizzle } from "drizzle-orm/vercel-postgres";
-import { sql } from "@vercel/postgres";
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
 import * as schema from "./schema";
 
 /**
- * Client Drizzle ORM initialisé avec Vercel Postgres.
+ * Client Drizzle ORM initialisé avec Neon Serverless (HTTP).
  * 
- * L'utilisation de 'sql' du package @vercel/postgres permet à Drizzle
- * de s'interfacer directement avec les variables d'environnement de Vercel (POSTGRES_URL).
- * On lui passe le schéma complet pour bénéficier de l'auto-complétion et de la sécurité des types.
+ * Utilise la connexion HTTP ultra-rapide adaptée aux environnements Serverless / Edge.
+ * Inclus un garde-fou explicite Fail-Fast sur la présence des variables d'environnement.
  */
-export const db = drizzle(sql, { schema });
+const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
-// Exportation globale pour faciliter les requêtes SQL brutes si nécessaire
+if (!connectionString) {
+  throw new Error(
+    "Erreur DB : Aucune variable d'environnement de connexion trouvée (DATABASE_URL ou POSTGRES_URL)."
+  );
+}
+
+const sql = neon(connectionString);
+export const db = drizzle({ client: sql, schema });
+
 export { sql };
