@@ -402,6 +402,7 @@ export default function AdminShortsPage() {
               <div
                 key={job.id}
                 data-testid="history-item"
+                data-job-id={job.id}
                 className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-300 transition-all"
               >
                 <div className="space-y-1.5 flex-1 min-w-0">
@@ -444,6 +445,7 @@ export default function AdminShortsPage() {
                   <button
                     type="button"
                     data-testid="delete-job-btn"
+                    data-job-id={job.id}
                     onClick={() => handleDeleteJob(job.id)}
                     title="Supprimer cet enregistrement"
                     className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"

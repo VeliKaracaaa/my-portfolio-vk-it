@@ -1,14 +1,17 @@
 import { test, expect } from "./fixtures/auth";
+import { db } from "@/lib/db";
+import { mediaGenerationJobs } from "@/modules/media-studio/schema";
+import { eq } from "drizzle-orm";
 
 test.describe("Studio Shorts Persistence & History Flow (Étape 2)", () => {
-  test("🟢 [PERSIST-01] should save audio job to database and display it in the history list upon reload", async ({
+  test("🟢 [PERSIST-01] should save audio job to database and verify persistence both in UI and directly in PostgreSQL", async ({
     adminPage,
   }) => {
     // 1. Accès à la page Studio Shorts
     await adminPage.goto("/admin/shorts");
     await adminPage.locator('[data-hydrated="true"]').waitFor({ timeout: 10000 });
 
-    const uniqueScript = `Test Persistance ${Date.now()} : Annonce révolutionnaire de l'IA pour la production de contenu.`;
+    const uniqueScript = `Test Persistance DB ${Date.now()} : L'intelligence artificielle transforme la création de contenu.`;
 
     // 2. Saisie du texte et génération
     const scriptInput = adminPage.locator("textarea#scriptContent");
@@ -21,18 +24,29 @@ test.describe("Studio Shorts Persistence & History Flow (Étape 2)", () => {
     const mainPlayer = adminPage.locator("audio").first();
     await expect(mainPlayer).toBeVisible({ timeout: 15000 });
 
-    // 4. Vérification de la présence de l'élément dans la section Historique
+    // 4. Vérification de l'apparition dans la section Historique de l'interface
     const historySection = adminPage.locator('[data-testid="history-section"]');
     await expect(historySection).toBeVisible();
 
     const historyItem = historySection.locator(`text=${uniqueScript.slice(0, 30)}`);
     await expect(historyItem).toBeVisible({ timeout: 5000 });
 
-    // 5. TEST CRUCIAL DE PERSISTANCE : Rechargement complet de la page (F5)
+    // 5. VÉRIFICATION DIRECTE DANS LA BASE DE DONNÉES POSTGRESQL (NEON)
+    const [dbRow] = await db
+      .select()
+      .from(mediaGenerationJobs)
+      .where(eq(mediaGenerationJobs.scriptContent, uniqueScript))
+      .limit(1);
+
+    expect(dbRow).toBeDefined();
+    expect(dbRow.scriptContent).toBe(uniqueScript);
+    expect(dbRow.status).toBe("AUDIO_READY");
+    expect(dbRow.audioUrl).toBeTruthy();
+
+    // 6. Test de persistance après rechargement du navigateur (F5)
     await adminPage.reload();
     await adminPage.locator('[data-hydrated="true"]').waitFor({ timeout: 10000 });
 
-    // L'élément DOIT toujours être présent après rechargement car sauvegardé en base de données
     await expect(
       historySection.locator(`text=${uniqueScript.slice(0, 30)}`)
     ).toBeVisible({ timeout: 10000 });
@@ -57,7 +71,7 @@ test.describe("Studio Shorts Persistence & History Flow (Étape 2)", () => {
     expect(src?.length).toBeGreaterThan(10);
   });
 
-  test("🟢 [PERSIST-03] should delete an audio job from history and database", async ({
+  test("🟢 [PERSIST-03] should delete an audio job and verify deletion directly in PostgreSQL", async ({
     adminPage,
   }) => {
     await adminPage.goto("/admin/shorts");
@@ -66,38 +80,54 @@ test.describe("Studio Shorts Persistence & History Flow (Étape 2)", () => {
     const historySection = adminPage.locator('[data-testid="history-section"]');
     await expect(historySection).toBeVisible();
 
-    // Récupération du premier bouton de suppression dans l'historique
-    const deleteBtn = historySection.locator('button[data-testid="delete-job-btn"]').first();
-    await expect(deleteBtn).toBeVisible();
-
-    // Récupération de l'identifiant ou de l'élément parent
+    // Récupération du premier élément de l'historique et de son ID en base
     const firstItem = historySection.locator('[data-testid="history-item"]').first();
-    const itemText = await firstItem.innerText();
+    await expect(firstItem).toBeVisible();
 
-    // Clic sur supprimer
+    const jobId = await firstItem.getAttribute("data-job-id");
+    expect(jobId).toBeTruthy();
+
+    // Vérification initiale : le job EXISTE bien dans PostgreSQL avant la suppression
+    const beforeDb = await db
+      .select()
+      .from(mediaGenerationJobs)
+      .where(eq(mediaGenerationJobs.id, jobId!));
+    expect(beforeDb.length).toBe(1);
+
+    // Clic sur le bouton de suppression dans l'UI
+    const deleteBtn = firstItem.locator('button[data-testid="delete-job-btn"]');
     await deleteBtn.click();
 
-    // L'élément doit disparaître de l'interface
-    await expect(historySection.locator(`text=${itemText.slice(0, 20)}`)).not.toBeVisible({
-      timeout: 5000,
-    });
+    // 1. Vérification côté interface : disparition immédiate du DOM
+    await expect(
+      historySection.locator(`[data-testid="history-item"][data-job-id="${jobId}"]`)
+    ).not.toBeVisible({ timeout: 5000 });
 
-    // Rechargement pour vérifier la suppression réelle en base
+    // 2. VÉRIFICATION DIRECTE DANS POSTGRESQL : la ligne DOIT être supprimée de la table
+    const afterDb = await db
+      .select()
+      .from(mediaGenerationJobs)
+      .where(eq(mediaGenerationJobs.id, jobId!));
+
+    expect(afterDb.length).toBe(0); // Garanti 0 enregistrement en base de données !
+
+    // 3. Vérification après rechargement complet de la page (F5)
     await adminPage.reload();
     await adminPage.locator('[data-hydrated="true"]').waitFor({ timeout: 10000 });
-    await expect(historySection.locator(`text=${itemText.slice(0, 20)}`)).not.toBeVisible();
+    await expect(
+      historySection.locator(`[data-testid="history-item"][data-job-id="${jobId}"]`)
+    ).not.toBeVisible();
   });
 
   test("🔴 [PERSIST-04] should handle deletion of a non-existent job ID gracefully (404 Not Found)", async ({
     request,
     adminPage,
   }) => {
-    // 1. Appel direct de l'API DELETE avec un UUID inexistant
+    // Appel direct de l'API DELETE avec un UUID inexistant
     const response = await request.delete(
       "/api/admin/media-studio/jobs/00000000-0000-0000-0000-000000000000",
       {
         headers: {
-          // Utilisation du contexte admin existant
           cookie: (await adminPage.context().cookies())
             .map((c) => `${c.name}=${c.value}`)
             .join("; "),
