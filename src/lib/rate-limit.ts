@@ -1,6 +1,17 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { redis } from "./redis";
 
+export class RateLimitError extends Error {
+  readonly digest = "RATE_LIMIT_EXCEEDED";
+  readonly reset: number;
+
+  constructor(message = "Rate limit exceeded", reset: number = Date.now()) {
+    super(message);
+    this.name = "RateLimitError";
+    this.reset = reset;
+  }
+}
+
 /**
  * Common rate limiters for different action types.
  * Using "sliding window" for smoother limiting.
@@ -40,11 +51,9 @@ export async function checkRateLimit(
   const { success, limit, reset, remaining } = await limiter.limit(limitKey);
 
   if (!success) {
-    const error = new Error("Rate limit exceeded");
-    (error as any).digest = "RATE_LIMIT_EXCEEDED";
-    (error as any).reset = reset;
-    throw error;
+    throw new RateLimitError("Rate limit exceeded", reset);
   }
 
   return { limit, remaining, reset };
 }
+

@@ -13,10 +13,19 @@ import { Redis } from "@upstash/redis";
  * 3. Support natif du Edge Runtime.
  */
 
-// Initialisation du client via les variables d'environnement Vercel KV
+// Initialisation robuste du client Upstash Redis avec tous les fallbacks Vercel / Upstash
+const redisUrl =
+  process.env.KV_REST_API_URL ||
+  process.env.UPSTASH_REDIS_REST_URL ||
+  process.env.KV_URL;
+
+const redisToken =
+  process.env.KV_REST_API_TOKEN ||
+  process.env.UPSTASH_REDIS_REST_TOKEN;
+
 const redis = new Redis({
-  url: process.env.KV_REST_API_URL,
-  token: process.env.KV_REST_API_TOKEN,
+  url: redisUrl || "https://placeholder-url.upstash.io",
+  token: redisToken || "placeholder-token",
 });
 
 /**

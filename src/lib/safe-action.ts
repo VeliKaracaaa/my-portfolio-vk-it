@@ -1,6 +1,7 @@
 import { unstable_rethrow } from "next/navigation";
 import { headers } from "next/headers";
-import { checkRateLimit } from "./rate-limit";
+import { ZodError } from "zod";
+import { checkRateLimit, RateLimitError } from "./rate-limit";
 
 export type ActionResponse<T> =
   | { success: true; data: T }
@@ -8,7 +9,7 @@ export type ActionResponse<T> =
 
 /**
  * Standard error handler for Server Actions.
- * Handles rate limiting, Next.js internal rethrows, and secure error masking.
+ * Handles rate limiting, Next.js internal rethrows, authorization errors, and secure error masking.
  */
 export async function withSafeAction<T>(
   actionName: string,
@@ -26,12 +27,12 @@ export async function withSafeAction<T>(
     // 2. Execute the action
     const data = await fn();
     return { success: true, data };
-  } catch (error: any) {
+  } catch (error: unknown) {
     // 3. Handle Next.js internal control-flow (redirects/not-found)
     unstable_rethrow(error);
 
     // 4. Handle known "Expected" validation/rate-limit errors
-    if (error.digest === "RATE_LIMIT_EXCEEDED") {
+    if (error instanceof RateLimitError) {
       return {
         success: false,
         error: "Trop de requêtes. Veuillez patienter un instant.",
@@ -40,21 +41,30 @@ export async function withSafeAction<T>(
       };
     }
 
-    // Handle Zod validation errors
-    if (error.name === "ZodError" || error instanceof Error && "issues" in error) {
-      const zodError = error as any;
+    // Handle Authorization errors
+    if (error instanceof Error && error.message.startsWith("UNAUTHORIZED")) {
       return {
         success: false,
-        error: zodError.issues?.[0]?.message || "Données invalides.",
+        error: "Session administrateur requise pour cette action.",
+        code: "UNAUTHORIZED",
+      };
+    }
+
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      return {
+        success: false,
+        error: error.issues?.[0]?.message || "Données invalides.",
         code: "VALIDATION_ERROR",
       };
     }
 
     // 5. Securely log and mask unexpected server errors
+    const err = error instanceof Error ? error : new Error(String(error));
     console.error(`[Server Action Error] ${actionName}:`, {
-      message: error.message,
-      stack: error.stack,
-      digest: error.digest,
+      message: err.message,
+      stack: err.stack,
+      digest: (err as { digest?: string }).digest,
     });
 
     return {
@@ -64,3 +74,4 @@ export async function withSafeAction<T>(
     };
   }
 }
+

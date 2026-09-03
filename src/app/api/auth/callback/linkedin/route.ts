@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import * as linkedinData from "@/data/linkedin";
+import { cookies } from "next/headers";
+import { saveLinkedinTokens } from "@/modules/publishing/server";
 
 /**
  * ============================================================
@@ -7,13 +8,23 @@ import * as linkedinData from "@/data/linkedin";
  * ============================================================
  * 
  * Cette route gère le retour de LinkedIn après l'autorisation.
- * Elle échange le 'code' contre un 'access_token' et stocke
- * ce dernier dans la base de données Postgres (Vercel Postgres).
+ * Elle vérifie le token anti-CSRF (state), échange le 'code' contre
+ * un 'access_token' et stocke ce dernier dans la base de données.
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
+  const state = searchParams.get("state");
   const baseUrl = new URL(request.url).origin;
+
+  const cookieStore = await cookies();
+  const savedState = cookieStore.get("oauth_state")?.value;
+
+  // Validation anti-CSRF
+  if (!state || !savedState || state !== savedState) {
+    console.error(" [LinkedIn Callback] Échec de validation du token CSRF state.");
+    return NextResponse.redirect(`${baseUrl}/admin?error=csrf_state_invalid`);
+  }
 
   if (!code) {
     return NextResponse.redirect(`${baseUrl}/admin?error=no_code`);
@@ -62,12 +73,17 @@ export async function GET(request: Request) {
 
     // 3. Sauvegarde dans Postgres via le DAL (Data Access Layer)
     // On abandonne Redis pour les tokens persistants
-    await linkedinData.saveLinkedinTokens(tokenData.access_token, userUrn);
+    await saveLinkedinTokens(tokenData.access_token, userUrn);
 
-    // Redirection vers l'admin avec un message de succès
-    return NextResponse.redirect(`${baseUrl}/admin?success=linkedin_connected`);
+    // Redirection vers l'admin avec un message de succès et nettoyage du cookie state
+    const response = NextResponse.redirect(`${baseUrl}/admin?success=linkedin_connected`);
+    response.cookies.delete("oauth_state");
+    return response;
   } catch (error) {
     console.error(" [LinkedIn Callback] Erreur critique :", error);
-    return NextResponse.redirect(`${baseUrl}/admin?error=server_error`);
+    const response = NextResponse.redirect(`${baseUrl}/admin?error=server_error`);
+    response.cookies.delete("oauth_state");
+    return response;
   }
 }
+
