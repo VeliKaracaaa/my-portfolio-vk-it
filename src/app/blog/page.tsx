@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { getAllPosts } from "@/data/posts";
-import type { SelectPost as Post } from "@/lib/schema";
+import { getAllPosts, type SelectPost as Post } from "@/modules/publishing/server";
 
 /**
  * ============================================================

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { submitBrief, type BriefFormData } from "@/app/actions/brief";
+import { submitBrief, type BriefFormData } from "@/modules/portfolio/actions";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";

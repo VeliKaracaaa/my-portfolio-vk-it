@@ -1,19 +1,14 @@
 import "server-only";
 import { db } from "@/lib/db";
-import { linkedinTokens, posts } from "@/lib/schema";
+import { linkedinTokens, posts } from "../schema";
 import { eq } from "drizzle-orm";
 
 /**
  * ============================================================
- * DATA ACCESS LAYER (DAL) — LINKEDIN
+ * DATA ACCESS LAYER (DAL) — LINKEDIN (MODULE PUBLISHING)
  * ============================================================
- * 
- * Centralise la gestion des tokens OAuth et de l'état de publication.
  */
 
-/**
- * Récupère le token d'accès LinkedIn actuel.
- */
 export async function getLinkedinToken() {
   try {
     return await db.query.linkedinTokens.findFirst({
@@ -25,9 +20,6 @@ export async function getLinkedinToken() {
   }
 }
 
-/**
- * Enregistre ou met à jour les tokens LinkedIn.
- */
 export async function saveLinkedinTokens(accessToken: string, userUrn: string) {
   try {
     await db
@@ -52,9 +44,6 @@ export async function saveLinkedinTokens(accessToken: string, userUrn: string) {
   }
 }
 
-/**
- * Supprime les tokens LinkedIn (déconnexion).
- */
 export async function deleteLinkedinTokens() {
   try {
     await db.delete(linkedinTokens).where(eq(linkedinTokens.id, "current"));
@@ -63,9 +52,6 @@ export async function deleteLinkedinTokens() {
   }
 }
 
-/**
- * Marque un post comme publié sur LinkedIn.
- */
 export async function markPostAsPublished(postId: string, linkedInPostId: string) {
   try {
     await db

@@ -5,7 +5,7 @@ import {
   getInspirationsForAdmin,
   deleteInspiration,
   markInspirationAsReviewed,
-} from "@/app/actions/inspirations";
+} from "@/modules/portfolio/actions";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

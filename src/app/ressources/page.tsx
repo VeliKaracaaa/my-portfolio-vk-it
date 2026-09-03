@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { submitInspirationAction, verifyRessourcesPassword } from "../actions/inspirations";
+import { submitInspirationAction, verifyRessourcesPassword } from "@/modules/portfolio/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

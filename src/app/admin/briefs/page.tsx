@@ -5,8 +5,8 @@ import {
   getBriefs,
   deleteBrief,
   markBriefAsRead,
-} from "@/app/actions/brief";
-import type { Brief } from "@/data/briefs";
+} from "@/modules/portfolio/actions";
+import type { Brief } from "@/modules/portfolio/dal";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
