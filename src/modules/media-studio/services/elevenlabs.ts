@@ -35,6 +35,14 @@ export interface ElevenLabsCharacterAlignment {
   character_end_times_seconds: number[];
 }
 
+export const DEFAULT_STUDIO_VOICES: VoiceOption[] = [
+  { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah (Journaliste Pro)", gender: "female", description: "Professionnelle & posée" },
+  { id: "CwhRBWXzGAHq8TQ4Fs17", name: "Roger (Présentateur Actus)", gender: "male", description: "Classique & résonant" },
+  { id: "IKne3meq5aSn9XLyUdCD", name: "Charlie (Chroniqueur Tech)", gender: "male", description: "Énergique & dynamique" },
+  { id: "FGY2WhTYpPnrIDTdsKH5", name: "Laura (Format Court)", gender: "female", description: "Enjouée & engageante" },
+  { id: "JBFqnCBsd6RMkjVDRZzb", name: "George (Narrateur)", gender: "male", description: "Chaleureux & captivant" },
+];
+
 /**
  * Récupère et valide la clé API ElevenLabs depuis l'environnement.
  */
@@ -159,10 +167,16 @@ export async function generateSpeechWithTimestamps({
   );
 
   if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(
-      `Erreur ElevenLabs TTS (${response.status}): ${errorBody}`
-    );
+    let cleanMessage = `Erreur ElevenLabs (${response.status})`;
+    try {
+      const errorJson = await response.json();
+      cleanMessage = errorJson?.detail?.message || errorJson?.message || cleanMessage;
+    } catch {
+      // Si la réponse n'est pas du JSON, on limite la longueur du texte
+      const errorText = await response.text();
+      if (errorText) cleanMessage = `${cleanMessage}: ${errorText.slice(0, 150)}`;
+    }
+    throw new Error(cleanMessage);
   }
 
   const data = await response.json();

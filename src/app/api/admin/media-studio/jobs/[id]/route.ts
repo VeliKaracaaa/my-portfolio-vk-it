@@ -25,9 +25,10 @@ export async function DELETE(
 
   const { id } = await context.params;
 
-  if (!id) {
+  const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!id || !UUID_REGEX.test(id)) {
     return NextResponse.json(
-      { error: { code: "BAD_REQUEST", message: "Identifiant manquant." } },
+      { error: { code: "BAD_REQUEST", message: "Format d'identifiant UUID invalide." } },
       { status: 400 }
     );
   }

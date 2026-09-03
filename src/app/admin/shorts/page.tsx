@@ -43,18 +43,12 @@ interface SavedJob {
   createdAt: string;
 }
 
-const DEFAULT_VOICES: VoiceOption[] = [
-  { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah (Journaliste Pro)", gender: "female", description: "Professionnelle & posée" },
-  { id: "CwhRBWXzGAHq8TQ4Fs17", name: "Roger (Présentateur Actus)", gender: "male", description: "Classique & résonant" },
-  { id: "IKne3meq5aSn9XLyUdCD", name: "Charlie (Chroniqueur Tech)", gender: "male", description: "Énergique & dynamique" },
-  { id: "FGY2WhTYpPnrIDTdsKH5", name: "Laura (Format Court)", gender: "female", description: "Enjouée & engageante" },
-  { id: "JBFqnCBsd6RMkjVDRZzb", name: "George (Narrateur)", gender: "male", description: "Chaleureux & captivant" },
-];
+import { DEFAULT_STUDIO_VOICES } from "@/modules/media-studio/services/elevenlabs";
 
 export default function AdminShortsPage() {
   const [scriptContent, setScriptContent] = useState("");
   const [voiceId, setVoiceId] = useState("EXAVITQu4vr4xnSDxMaL");
-  const [voices, setVoices] = useState<VoiceOption[]>(DEFAULT_VOICES);
+  const [voices, setVoices] = useState<VoiceOption[]>(DEFAULT_STUDIO_VOICES);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);

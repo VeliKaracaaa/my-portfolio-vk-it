@@ -8,10 +8,16 @@ export const dynamic = "force-dynamic";
 const GenerateTTSInputSchema = z.object({
   text: z
     .string()
+    .trim()
     .min(10, "Le texte doit contenir au moins 10 caractères")
     .max(2500, "Le texte ne doit pas dépasser 2500 caractères"),
-  voiceId: z.string().optional(),
-  modelId: z.string().optional(),
+  voiceId: z
+    .string()
+    .regex(/^[a-zA-Z0-9_-]{10,60}$/, "Identifiant de voix invalide.")
+    .optional(),
+  modelId: z
+    .enum(["eleven_multilingual_v2", "eleven_turbo_v2_5", "eleven_monolingual_v1"])
+    .optional(),
 });
 
 export async function POST(request: Request) {
