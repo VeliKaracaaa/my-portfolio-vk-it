@@ -1,9 +1,19 @@
 import { test, expect } from "./fixtures/auth";
 import { db } from "@/lib/db";
 import { mediaGenerationJobs } from "@/modules/media-studio/schema";
-import { eq } from "drizzle-orm";
+import { eq, like } from "drizzle-orm";
 
 test.describe("Studio Shorts Persistence & History Flow (Étape 2)", () => {
+  // Nettoyage automatique systématique de la base de données après les tests
+  test.afterAll(async () => {
+    try {
+      await db
+        .delete(mediaGenerationJobs)
+        .where(like(mediaGenerationJobs.scriptContent, "Test Persistance%"));
+    } catch (err) {
+      console.warn("Avertissement lors du nettoyage DB après tests:", err);
+    }
+  });
   test("🟢 [PERSIST-01] should save audio job to database and verify persistence both in UI and directly in PostgreSQL", async ({
     adminPage,
   }) => {
