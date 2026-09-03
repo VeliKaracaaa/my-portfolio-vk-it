@@ -1,7 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Mic, Volume2, Sparkles, AlertCircle, Clock, FileText, CheckCircle2 } from "lucide-react";
+import {
+  Mic,
+  Volume2,
+  Sparkles,
+  AlertCircle,
+  Clock,
+  FileText,
+  CheckCircle2,
+  History,
+  Trash2,
+} from "lucide-react";
 
 interface VoiceOption {
   id: string;
@@ -22,6 +32,17 @@ interface TTSResult {
   durationSeconds: number;
 }
 
+interface SavedJob {
+  id: string;
+  title: string | null;
+  scriptContent: string;
+  voiceId: string | null;
+  audioUrl: string | null;
+  durationSeconds: number | null;
+  status: string;
+  createdAt: string;
+}
+
 const DEFAULT_VOICES: VoiceOption[] = [
   { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah (Journaliste Pro)", gender: "female", description: "Professionnelle & posée" },
   { id: "CwhRBWXzGAHq8TQ4Fs17", name: "Roger (Présentateur Actus)", gender: "male", description: "Classique & résonant" },
@@ -38,6 +59,7 @@ export default function AdminShortsPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [result, setResult] = useState<TTSResult | null>(null);
+  const [jobs, setJobs] = useState<SavedJob[]>([]);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -56,16 +78,34 @@ export default function AdminShortsPage() {
           }
         }
       } catch {
-        // En cas d'échec réseau, on conserve les voix de fallback
+        // Fallback par défaut
       }
     }
     loadVoices();
   }, []);
 
+  // Chargement de l'historique des jobs sauvegardés
+  const loadJobs = async () => {
+    try {
+      const res = await fetch("/api/admin/media-studio/jobs");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.jobs)) {
+          setJobs(data.jobs);
+        }
+      }
+    } catch (e) {
+      console.error("Erreur chargement historique:", e);
+    }
+  };
+
+  useEffect(() => {
+    loadJobs();
+  }, []);
+
   // Calcul du nombre de mots et durée estimée
   const trimmedScript = scriptContent.trim();
   const wordCount = trimmedScript ? trimmedScript.split(/\s+/).length : 0;
-  // Débit moyen journaliste tech : ~2.5 mots / seconde (150 mots / minute)
   const estimatedSeconds = Math.round(wordCount / 2.5);
 
   const handleGenerate = async () => {
@@ -101,12 +141,37 @@ export default function AdminShortsPage() {
       }
 
       setResult(data);
+
+      // Si un job a été persisté, on l'ajoute directement à l'historique
+      if (data.job) {
+        setJobs((prev) => [data.job, ...prev.filter((j) => j.id !== data.job.id)]);
+      } else {
+        // Fallback : rechargement de l'historique complet
+        await loadJobs();
+      }
     } catch (err: any) {
       setErrorMessage(
         err?.message || "Erreur de communication avec ElevenLabs"
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteJob = async (id: string) => {
+    try {
+      const res = await fetch(`/api/admin/media-studio/jobs/${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setJobs((prev) => prev.filter((j) => j.id !== id));
+      } else {
+        const data = await res.json();
+        setErrorMessage(data?.error?.message || "Impossible de supprimer ce projet.");
+      }
+    } catch (err: any) {
+      setErrorMessage(err?.message || "Erreur réseau lors de la suppression.");
     }
   };
 
@@ -124,13 +189,13 @@ export default function AdminShortsPage() {
             </h1>
           </div>
           <p className="text-sm text-slate-500 mt-1">
-            Étape 1 : Rédige ton actualité, choisis la voix de ton MetaHuman et écoute le rendu haute fidélité avec alignement des mots.
+            Étape 2 : Rédige ton actualité, génère la voix et retrouve tes projets sauvegardés en base de données.
           </p>
         </div>
 
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          ElevenLabs Connecté
+          ElevenLabs & Base de Données Connectées
         </div>
       </div>
 
@@ -139,7 +204,7 @@ export default function AdminShortsPage() {
         <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3 text-red-700">
           <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
           <div>
-            <h4 className="font-semibold text-sm">Erreur de génération</h4>
+            <h4 className="font-semibold text-sm">Notification</h4>
             <p className="text-sm mt-0.5">{errorMessage}</p>
           </div>
         </div>
@@ -147,7 +212,7 @@ export default function AdminShortsPage() {
 
       {/* Formulaire principal */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Colonne gauche : Saisie du texte & Choix de voix (2 tiers) */}
+        {/* Colonne gauche : Saisie du texte & Choix de voix */}
         <div className="md:col-span-2 space-y-6">
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
@@ -244,19 +309,19 @@ export default function AdminShortsPage() {
           </div>
         </div>
 
-        {/* Colonne droite : Lecteur & Rendu (1 tiers) */}
+        {/* Colonne droite : Lecteur & Rendu */}
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
             <h3 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
               <Volume2 className="w-4 h-4 text-blue-600" />
-              Aperçu Audio & Karaoké
+              Aperçu Immédiat
             </h3>
 
             {result ? (
               <div className="space-y-4">
                 <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-semibold flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  Audio généré avec succès ({result.durationSeconds}s)
+                  Audio généré ({result.durationSeconds}s)
                 </div>
 
                 {/* Lecteur Audio HTML5 */}
@@ -272,7 +337,7 @@ export default function AdminShortsPage() {
                 {result.wordTimestamps.length > 0 && (
                   <div className="pt-2 border-t border-slate-100">
                     <p className="text-xs font-bold text-slate-500 mb-2">
-                      Alignement des mots ({result.wordTimestamps.length} mots horodatés) :
+                      Alignement des mots ({result.wordTimestamps.length} mots) :
                     </p>
                     <div className="max-h-48 overflow-y-auto p-2.5 bg-slate-50 rounded-xl border border-slate-100 flex flex-wrap gap-1.5 text-xs">
                       {result.wordTimestamps.map((w, index) => (
@@ -298,6 +363,98 @@ export default function AdminShortsPage() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Section Historique (Étape 2) */}
+      <div data-testid="history-section" className="mt-12 pt-8 border-t border-slate-200">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2.5">
+            <span className="p-2 bg-slate-100 text-slate-700 rounded-lg">
+              <History className="w-5 h-5" />
+            </span>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">
+                Historique des Scripts & Audios Sauvegardés
+              </h2>
+              <p className="text-xs text-slate-500">
+                Retrouve, réécoute ou supprime tes enregistrements prêts pour Unreal Engine & MetaHuman.
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md">
+            {jobs.length} enregistrement{jobs.length > 1 ? "s" : ""}
+          </span>
+        </div>
+
+        {jobs.length === 0 ? (
+          <div className="py-12 px-4 text-center border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+            <History className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+            <p className="text-sm text-slate-500 font-medium">
+              Aucun audio généré pour le moment
+            </p>
+            <p className="text-xs text-slate-400 mt-1">
+              Les audios que tu génères seront automatiquement sauvegardés ici.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {jobs.map((job) => (
+              <div
+                key={job.id}
+                data-testid="history-item"
+                className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-300 transition-all"
+              >
+                <div className="space-y-1.5 flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap text-xs text-slate-500">
+                    <span className="font-semibold text-slate-800">
+                      {new Date(job.createdAt).toLocaleDateString("fr-FR", {
+                        day: "2-digit",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                    <span>•</span>
+                    <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-medium">
+                      Voix: {voices.find((v) => v.id === job.voiceId)?.name?.split(" ")[0] || job.voiceId || "Sarah"}
+                    </span>
+                    {job.durationSeconds && (
+                      <>
+                        <span>•</span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {job.durationSeconds}s
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  <p className="text-sm font-medium text-slate-800 line-clamp-2 leading-relaxed">
+                    {job.scriptContent}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0">
+                  {job.audioUrl && (
+                    <audio
+                      controls
+                      src={job.audioUrl}
+                      className="h-9 w-48 sm:w-60 rounded-lg"
+                    />
+                  )}
+                  <button
+                    type="button"
+                    data-testid="delete-job-btn"
+                    onClick={() => handleDeleteJob(job.id)}
+                    title="Supprimer cet enregistrement"
+                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

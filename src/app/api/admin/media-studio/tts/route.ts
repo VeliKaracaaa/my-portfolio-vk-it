@@ -70,7 +70,32 @@ export async function POST(request: Request) {
       modelId,
     });
 
-    return NextResponse.json(result, { status: 200 });
+    // 4. Persistance dans la base de données PostgreSQL (Drizzle)
+    let savedJob = null;
+    try {
+      const { db } = await import("@/lib/db");
+      const { mediaGenerationJobs } = await import("@/modules/media-studio/schema");
+      
+      const [inserted] = await db
+        .insert(mediaGenerationJobs)
+        .values({
+          idempotencyKey: crypto.randomUUID(),
+          title: text.slice(0, 60) + (text.length > 60 ? "..." : ""),
+          scriptContent: text,
+          voiceId: voiceId || "EXAVITQu4vr4xnSDxMaL",
+          audioUrl: result.audioBase64,
+          wordTimestamps: result.wordTimestamps,
+          durationSeconds: result.durationSeconds,
+          formatType: "9:16",
+          status: "AUDIO_READY",
+        })
+        .returning();
+      savedJob = inserted;
+    } catch (dbError) {
+      console.error("Erreur lors de la sauvegarde du job en DB:", dbError);
+    }
+
+    return NextResponse.json({ ...result, job: savedJob }, { status: 200 });
   } catch (error: any) {
     console.error("Erreur génération TTS ElevenLabs:", error);
     return NextResponse.json(
